@@ -1,195 +1,136 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { AnalyticsHeader } from "@/components/admin/analytics/AnalyticsHeader";
+import { BalanceSection } from "@/components/admin/analytics/BalanceSection";
+import { InteractiveChart } from "@/components/admin/analytics/InteractiveChart";
+import { ServicesRealized } from "@/components/admin/analytics/ServicesRealized";
 
-const MonthsFilter = ({ months, active, onSelect }: { months: string[], active: string, onSelect: (m: string) => void }) => (
-    <div className="flex gap-3 overflow-x-auto no-scrollbar py-2 px-6 -mx-6">
-        {months.map((month) => (
-            <button
-                key={month}
-                onClick={() => onSelect(month)}
-                className={`px-5 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${active === month
-                        ? "bg-accent text-black"
-                        : "bg-white/5 text-white/40 hover:bg-white/10"
-                    }`}
-            >
-                {month}
-            </button>
-        ))}
-    </div>
-);
+const getPeriodLabel = (timeframe: string, offset: number) => {
+    const date = new Date();
+    if (timeframe === "ano") {
+        date.setFullYear(date.getFullYear() + offset);
+        return date.getFullYear().toString();
+    }
+    if (timeframe === "mês") {
+        date.setMonth(date.getMonth() + offset);
+        return date.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+    }
+    if (timeframe === "semana") {
+        date.setDate(date.getDate() + (offset * 7));
+        const dayOfWeek = date.getDay();
+        const start = new Date(date);
+        start.setDate(date.getDate() - dayOfWeek);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        const startStr = start.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "");
+        const endStr = end.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "");
+        return `${startStr} a ${endStr}`;
+    }
+    return "";
+};
 
-const ServiceCard = ({ count, name }: { count: number, name: string }) => (
-    <div className="min-w-[140px] bg-white/[0.03] border border-white/5 p-6 rounded-[24px] flex flex-col justify-between aspect-square">
-        <span className="text-5xl font-black text-accent tracking-tighter">{count}</span>
-        <span className="text-white/60 font-bold text-sm leading-tight">{name}</span>
-    </div>
-);
+const MOCK_DB = {
+    semana: {
+        balance: { total: 482.50, bruto: 804.16, comissao: "Com. 60%", atendimentos: 18 },
+        chartData: [
+            { label: "Seg", height: "15%", atendimentos: 1, bruto: "30,00", liquido: "18,00", np: "5,00" },
+            { label: "Ter", height: "40%", atendimentos: 4, bruto: "120,00", liquido: "72,00", np: "15,00" },
+            { label: "Qua", height: "30%", atendimentos: 3, bruto: "90,00", liquido: "54,00", np: "10,00" },
+            { label: "Qui", height: "60%", atendimentos: 6, bruto: "180,00", liquido: "108,00", np: "20,00" },
+            { label: "Sex", height: "90%", atendimentos: 9, bruto: "270,00", liquido: "162,00", np: "30,00" },
+            { label: "Sáb", height: "100%", atendimentos: 12, bruto: "360,00", liquido: "216,00", np: "45,00" },
+            { label: "Dom", height: "0%", atendimentos: 0, bruto: "0,00", liquido: "0,00", np: "0,00" },
+        ],
+        services: [{ name: "Corte", count: 12 }, { name: "Barba", count: 6 }],
+    },
+    mês: {
+        balance: { total: 3420.00, bruto: 5700.00, comissao: "Com. 60%", atendimentos: 142 },
+        chartData: [
+            { label: "Sem 1", height: "60%", atendimentos: 32, bruto: "1.200,00", liquido: "720,00", np: "150,00" },
+            { label: "Sem 2", height: "80%", atendimentos: 45, bruto: "1.800,00", liquido: "1.080,00", np: "200,00" },
+            { label: "Sem 3", height: "50%", atendimentos: 28, bruto: "1.050,00", liquido: "630,00", np: "120,00" },
+            { label: "Sem 4", height: "90%", atendimentos: 37, bruto: "1.650,00", liquido: "990,00", np: "180,00" },
+        ],
+        services: [{ name: "Corte", count: 98 }, { name: "Barba", count: 40 }, { name: "Degradê", count: 4 }],
+    },
+    ano: {
+        balance: { total: 38500.00, bruto: 64166.66, comissao: "Com. 60%", atendimentos: 1540 },
+        chartData: [
+            { label: "Jan", height: "30%", atendimentos: 110, bruto: "4.500", liquido: "2.700", np: "400" },
+            { label: "Fev", height: "40%", atendimentos: 130, bruto: "5.200", liquido: "3.120", np: "450" },
+            { label: "Mar", height: "35%", atendimentos: 125, bruto: "5.000", liquido: "3.000", np: "420" },
+            { label: "Abr", height: "45%", atendimentos: 160, bruto: "6.500", liquido: "3.900", np: "500" },
+            { label: "Mai", height: "55%", atendimentos: 180, bruto: "7.200", liquido: "4.320", np: "600" },
+            { label: "Jun", height: "65%", atendimentos: 200, bruto: "8.500", liquido: "5.100", np: "700" },
+            { label: "Jul", height: "60%", atendimentos: 190, bruto: "7.800", liquido: "4.680", np: "650" },
+            { label: "Ago", height: "70%", atendimentos: 220, bruto: "9.500", liquido: "5.700", np: "800" },
+            { label: "Set", height: "65%", atendimentos: 210, bruto: "9.000", liquido: "5.400", np: "750" },
+            { label: "Out", height: "75%", atendimentos: 230, bruto: "10.000", liquido: "6.000", np: "850" },
+            { label: "Nov", height: "80%", atendimentos: 240, bruto: "10.500", liquido: "6.300", np: "900" },
+            { label: "Dez", height: "100%", atendimentos: 280, bruto: "12.000", liquido: "7.200", np: "1.000" },
+        ],
+        services: [{ name: "Corte", count: 1040 }, { name: "Barba", count: 450 }, { name: "Combo", count: 50 }],
+    }
+};
 
 export default function FaturamentoPage() {
     const router = useRouter();
-    const [activeMonth, setActiveMonth] = useState("ABR");
-    const [selectedDay, setSelectedDay] = useState<number | null>(2);
+    const [activeTimeframe, setActiveTimeframe] = useState<"semana" | "mês" | "ano">("mês");
+    const [periodOffset, setPeriodOffset] = useState(0);
 
-    const months = ["DEZ 23", "JAN", "FEV", "MAR", "ABR"];
-
-    const chartData = [
-        { day: 1, height: "15%", atendimentos: 1, bruto: "30,00", liquido: "18,00", np: "5,00" },
-        { day: 2, height: "50%", atendimentos: 5, bruto: "120,00", liquido: "72,00", np: "19,90" },
-        { day: 3, height: "30%", atendimentos: 3, bruto: "90,00", liquido: "54,00", np: "15,00" },
-        { day: 4, height: "25%", atendimentos: 2, bruto: "60,00", liquido: "36,00", np: "10,00" },
-        { day: 5, height: "90%", atendimentos: 9, bruto: "270,00", liquido: "162,00", np: "45,00" },
-        { day: 6, height: "40%", atendimentos: 4, bruto: "100,00", liquido: "60,00", np: "12,00" },
-        { day: 7, height: "10%", atendimentos: 1, bruto: "20,00", liquido: "12,00", np: "3,00" },
-        { day: 8, height: "15%", atendimentos: 1, bruto: "35,00", liquido: "21,00", np: "5,50" },
-    ];
-
-    const handleBarClick = (day: number) => {
-        if (selectedDay === day) {
-            setSelectedDay(null);
-        } else {
-            setSelectedDay(day);
-        }
+    const handleTimeframeChange = (t: "semana" | "mês" | "ano") => {
+        setActiveTimeframe(t);
+        setPeriodOffset(0);
     };
 
-    const services = [
-        { name: "Corte", count: 44 },
-        { name: "Barba", count: 18 },
-        { name: "Corte degradê", count: 1 },
-    ];
+    const periodLabel = getPeriodLabel(activeTimeframe, periodOffset);
+
+    const currentData = useMemo(() => {
+        const baseData = MOCK_DB[activeTimeframe];
+        const variance = 1 + (periodOffset * 0.15);
+
+        return {
+            balance: {
+                ...baseData.balance,
+                total: (baseData.balance.total * variance).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                bruto: (baseData.balance.bruto * Math.abs(variance)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            },
+            chartData: baseData.chartData.map(item => {
+                const h = parseInt(item.height);
+                const newHeight = Math.max(10, Math.min(100, h * variance));
+                return { ...item, height: `${newHeight}%` };
+            }),
+            services: baseData.services
+        };
+    }, [activeTimeframe, periodOffset]);
 
     return (
         <main className="min-h-screen w-full bg-background max-w-md mx-auto flex flex-col font-sans relative overflow-x-hidden">
 
-            <header className="px-6 pt-12 pb-4 shrink-0">
-                <button
-                    onClick={() => router.back()}
-                    className="w-10 h-10 flex items-center text-white/60 active:scale-95 transition-all mb-4"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                </button>
-                <div>
-                    <p className="text-white/40 text-sm font-medium mb-1">Analisar</p>
-                    <h2 className="text-4xl font-black text-white tracking-tight leading-none mb-6">Faturamento</h2>
-                </div>
-
-                <MonthsFilter months={months} active={activeMonth} onSelect={setActiveMonth} />
-            </header>
+            <AnalyticsHeader
+                onBack={() => router.back()}
+                activeTimeframe={activeTimeframe}
+                onSelectTimeframe={handleTimeframeChange}
+                periodLabel={periodLabel}
+                onPrevPeriod={() => setPeriodOffset(prev => prev - 1)}
+                onNextPeriod={() => setPeriodOffset(prev => prev + 1)}
+            />
 
             <div className="flex-1 overflow-y-auto no-scrollbar px-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-10">
+                <BalanceSection
+                    total={currentData.balance.total}
+                    comissao={currentData.balance.comissao}
+                    bruto={currentData.balance.bruto}
+                    atendimentos={currentData.balance.atendimentos}
+                />
 
-                <section className="mt-4">
-                    <div className="flex justify-between items-center mb-2">
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Balanço Serviços</p>
-                        <button className="flex items-center gap-1 text-[10px] font-black text-white uppercase tracking-widest">
-                            Meu Balanço <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m6 9 6 6 6-6" /></svg>
-                        </button>
-                    </div>
+                <div key={`${activeTimeframe}-${periodOffset}`}>
+                    <InteractiveChart data={currentData.chartData} />
+                </div>
 
-                    <h3 className="text-[2.75rem] font-black text-white leading-none tracking-tighter mb-2">
-                        R$ 923,82
-                    </h3>
-
-                    <div className="space-y-1">
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">
-                            (Com. 60%) | Valor Bruto: R$ 1.539,70
-                        </p>
-                        <p className="text-sm font-bold text-white/60">
-                            <span className="text-white">55</span> atendimentos
-                        </p>
-                    </div>
-                </section>
-
-                <section className="relative mt-12">
-                    <div className="h-44 flex items-end justify-between gap-1 border-b border-white/10 pb-2 relative z-10">
-
-                        <div className="absolute inset-0 flex justify-between px-2 -z-10">
-                            {[...Array(8)].map((_, i) => (
-                                <div key={i} className="w-px h-full border-l border-dashed border-white/10" />
-                            ))}
-                        </div>
-
-                        {chartData.map((data, index) => {
-                            const isActive = selectedDay === data.day;
-                            const isFirst = index === 0;
-                            const isLast = index === chartData.length - 1;
-                            const tooltipPosition = isFirst ? "left-0" : isLast ? "right-0" : "left-1/2 -translate-x-1/2";
-                            const arrowPosition = isFirst ? "left-4" : isLast ? "right-4" : "left-1/2 -translate-x-1/2";
-
-                            return (
-                                <div
-                                    key={data.day}
-                                    className="h-full flex items-end justify-center flex-1 cursor-pointer group"
-                                    onClick={() => handleBarClick(data.day)}
-                                >
-                                    <div className="relative w-full max-w-[28px] flex justify-center" style={{ height: data.height }}>
-
-                                        {isActive && (
-                                            <div className={`absolute bottom-full mb-3 z-30 bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 shadow-2xl shadow-black animate-in zoom-in-95 duration-200 pointer-events-none w-max min-w-[140px] ${tooltipPosition}`}>
-                                                <p className="text-accent font-black text-sm mb-2">Dia {data.day}</p>
-                                                <div className="space-y-1 text-[11px] font-bold">
-                                                    <p className="text-white">{data.atendimentos} Atendimento(s)</p>
-                                                    <p className="text-white">Bruto: R$ {data.bruto}</p>
-                                                    <p className="text-green-500">Líquido: R$ {data.liquido}</p>
-                                                    <p className="text-green-500">N/P: R$ {data.np}</p>
-                                                </div>
-                                                <div className={`absolute -bottom-2 w-4 h-4 bg-[#0a0a0a] border-b border-r border-white/10 rotate-45 ${arrowPosition}`} />
-                                            </div>
-                                        )}
-
-                                        <div
-                                            className={`w-full h-full rounded-t-lg transition-all duration-300 ease-out ${isActive
-                                                    ? 'bg-accent shadow-[0_0_15px_rgba(197,139,109,0.3)]'
-                                                    : 'bg-white/20 group-hover:bg-white/30'
-                                                }`}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="flex justify-between mt-3 px-2">
-                        {chartData.map((data) => (
-                            <span
-                                key={`label-${data.day}`}
-                                onClick={() => handleBarClick(data.day)}
-                                className={`text-xs font-bold flex-1 text-center cursor-pointer transition-colors ${selectedDay === data.day ? 'text-accent' : 'text-white/60'
-                                    }`}
-                            >
-                                {data.day}
-                            </span>
-                        ))}
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-6 opacity-40">
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
-                        <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white whitespace-nowrap">
-                            Arraste para o lado para ver mais
-                        </p>
-                    </div>
-                </section>
-
-                <section className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Filtro:</span>
-                        <button className="px-4 py-2 rounded-xl border border-dashed border-white/20 text-white/60 text-[10px] font-black uppercase tracking-widest hover:border-white/40 transition-colors">
-                            DATA
-                        </button>
-                    </div>
-                </section>
-
-                <section className="space-y-4">
-                    <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Serviços Realizados</p>
-
-                    <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-6 px-6 pb-4">
-                        {services.map(service => (
-                            <ServiceCard key={service.name} count={service.count} name={service.name} />
-                        ))}
-                    </div>
-                </section>
-
+                <ServicesRealized services={currentData.services} />
             </div>
         </main>
     );

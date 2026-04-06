@@ -114,11 +114,16 @@ export default function BarberChat() {
 
           {step >= 3 && (
             <>
-              <ChatBubble text={userData.service} />
-              <ChatBubble isAi isBig text="Ótimo. Escolha o dia e o horário:" />
+              {/* Dentro do step >= 3 */}
               <div className="space-y-6 pt-2">
-                <DateSelector />
-                <TimeGrid />
+                <DateSelector
+                  value={userData.date}
+                  onChange={(date) => setUserData(prev => ({ ...prev, date }))}
+                />
+                <TimeGrid
+                  value={userData.time}
+                  onChange={(time) => setUserData(prev => ({ ...prev, time }))}
+                />
               </div>
             </>
           )}

@@ -9,112 +9,118 @@ import { ServiceSelector } from "@/components/ServiceSelector";
 export default function BarberChat() {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({ name: "", service: "", date: "", time: "" });
+  const [inputValue, setInputValue] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll para a última mensagem
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [step]);
+  }, [step, userData]);
 
-  const handleName = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && userData.name) setStep(2);
+  const handleSendName = () => {
+    if (inputValue.trim().length > 1) {
+      setUserData({ ...userData, name: inputValue });
+      setStep(2);
+      setInputValue("");
+    }
+  };
+
+  // A MÁGICA ANTI-PULO DO iPHONE
+  const handleFocus = () => {
+    // Força o navegador a abortar qualquer tentativa de scroll na página principal
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+    }, 0);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50); // Double check para o tempo da animação do teclado
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-text-primary flex items-center justify-center p-0 md:p-6">
-      <main className="w-full max-w-5xl bg-surface/30 md:glass flex flex-col md:flex-row md:rounded-[32px] overflow-hidden shadow-2xl border-none md:border md:border-white/5 transition-all md:h-[750px]">
+    // position absolute e inset-0 prendem o container nos 4 cantos da tela nativamente
+    <main className="absolute inset-0 flex flex-col bg-[#050505] max-w-2xl mx-auto overflow-hidden">
+      
+      {/* HEADER FIXO */}
+      <header className="p-4 border-b border-white/5 bg-[#0A0A0A] flex items-center gap-3 shrink-0 z-20">
+        <div className="w-10 h-10 rounded-full bg-zinc-800" />
+        <div>
+          <h1 className="font-bold text-[16px] text-white leading-none">InBarber</h1>
+          <p className="text-[11px] text-green-500 font-bold uppercase tracking-widest mt-1 leading-none">Online</p>
+        </div>
+      </header>
 
-        {/* Lado Esquerdo: O Chatbot Ativo */}
-        <aside className="w-full md:w-[450px] flex flex-col bg-black/40 shrink-0 border-b md:border-b-0 md:border-r border-white/5">
-          <header className="p-6 border-b border-white/5 bg-black/20 backdrop-blur-xl shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent-gradient border border-white/10" />
-              <h1 className="font-bold text-base">InBarber Assistant</h1>
-            </div>
-          </header>
+      {/* ÁREA DE MENSAGENS (Aqui o scroll interno flui normalmente) */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar flex flex-col z-10">
+        <div className="mt-auto space-y-6 pb-2">
+          
+          <ChatBubble isAi isBig text="Olá! Bem-vindo. Qual o seu nome?" />
+          
+          {step >= 2 && (
+            <>
+              <ChatBubble text={userData.name} />
+              <ChatBubble isAi isBig text={`Prazer, ${userData.name.split(' ')[0]}! Qual serviço vamos fazer hoje?`} />
+            </>
+          )}
 
-          <div ref={scrollRef} className="flex-1 p-6 space-y-6 overflow-y-auto no-scrollbar scroll-smooth">
-            {/* PERGUNTA 1: NOME */}
-            <ChatBubble isAi text="Olá! Bem-vindo à InBarber. Para começarmos seu agendamento, qual é o seu nome?" />
-
-            {step === 1 && (
-              <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder="Digite seu nome e aperte Enter..."
-                  className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm outline-none focus:border-white/30 transition-all"
-                  onKeyDown={handleName}
-                  onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                />
+          {step >= 3 && (
+            <>
+              <ChatBubble text={userData.service} />
+              <ChatBubble isAi isBig text="Ótimo. Escolha o dia e o horário:" />
+              <div className="space-y-6 pt-2">
+                <DateSelector />
+                <TimeGrid />
               </div>
-            )}
+            </>
+          )}
 
-            {/* PERGUNTA 2: SERVIÇO */}
-            {step >= 2 && (
-              <>
-                <ChatBubble text={userData.name} />
-                <ChatBubble isAi text={`Prazer em te conhecer, ${userData.name.split(' ')[0]}! Qual serviço você deseja realizar hoje?`} />
+          {step === 4 && (
+            <ChatBubble isAi text="Tudo pronto! Seu agendamento foi realizado. ✂️" />
+          )}
 
-                {step === 2 && (
-                  <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-                    <ServiceSelector onSelect={(s) => { setUserData({ ...userData, service: s }); setStep(3); }} />
-                  </div>
-                )}
-              </>
-            )}
+        </div>
+      </div>
 
-            {/* PERGUNTA 3: HORÁRIO */}
-            {step >= 3 && (
-              <>
-                <ChatBubble text={userData.service} />
-                <ChatBubble isAi text="Ótima escolha! Agora, qual o melhor dia e horário para você?" />
-
-                {step === 3 && (
-                  <div className="space-y-4 animate-in fade-in slide-in-from-left-4 duration-500 pb-20">
-                    <DateSelector />
-                    <TimeGrid />
-                    <button
-                      onClick={() => setStep(4)}
-                      className="w-full bg-white text-black py-4 rounded-xl font-bold active:scale-95 transition-all shadow-lg"
-                    >
-                      Confirmar Horário
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* FINALIZAÇÃO */}
-            {step === 4 && (
-              <>
-                <ChatBubble text="Horário selecionado!" />
-                <ChatBubble isAi text={`Tudo pronto, ${userData.name.split(' ')[0]}! Seu agendamento para ${userData.service} foi realizado com sucesso. Te esperamos lá! ✂️`} />
-              </>
-            )}
+      {/* FOOTER FIXO (Preso no rodapé, sobe limpo junto com o teclado) */}
+      <footer className="p-4 bg-[#0A0A0A] border-t border-white/5 shrink-0 z-20 pb-safe">
+        {step === 1 && (
+          <div className="flex gap-3">
+            <input 
+              type="text" 
+              placeholder="Digite seu nome..."
+              // onFocus com a trava aplicada
+              onFocus={handleFocus}
+              className="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-[16px] text-white outline-none focus:bg-white/10"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendName()}
+            />
+            <button 
+              onClick={handleSendName}
+              className="bg-white text-black px-6 rounded-xl font-bold text-[16px] active:scale-95 transition-transform"
+            >
+              Enviar
+            </button>
           </div>
-        </aside>
+        )}
 
-        {/* Lado Direito: Visual de Destaque (Desktop Only) */}
-        <section className="hidden md:flex flex-1 flex-col items-center justify-center p-12 bg-background/20 relative overflow-hidden">
-          {/* Elemento Decorativo: Um preview do que está acontecendo */}
-          <div className="text-center space-y-6 z-10">
-            <div className="w-24 h-24 bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center mx-auto mb-8 rotate-3 shadow-2xl">
-              <span className="text-4xl">🗓️</span>
-            </div>
-            <h2 className="text-4xl font-black opacity-20 uppercase tracking-[0.3em]">Agendamento</h2>
-            <div className="space-y-2 opacity-40 italic">
-              <p>{userData.name || "Aguardando nome..."}</p>
-              <p>{userData.service || "---"}</p>
-              <p>{userData.time || "---"}</p>
-            </div>
+        {step === 2 && (
+          <div className="animate-in fade-in slide-in-from-bottom-2">
+            <ServiceSelector onSelect={(s) => { setUserData({...userData, service: s}); setStep(3); }} />
           </div>
-          {/* Background Blur Decorativo */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-white/5 rounded-full blur-[120px]" />
-        </section>
-      </main>
-    </div>
+        )}
+
+        {step === 3 && (
+          <button 
+            onClick={() => setStep(4)}
+            className="w-full bg-white text-black py-5 rounded-xl font-black text-[16px] uppercase tracking-widest active:scale-95 transition-all shadow-xl"
+          >
+            Confirmar Agendamento
+          </button>
+        )}
+      </footer>
+      
+    </main>
   );
 }

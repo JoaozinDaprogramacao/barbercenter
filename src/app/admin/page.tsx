@@ -5,6 +5,7 @@ import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
 import { AppointmentCard } from "@/components/admin/dashboard/AppointmentCard";
+import { CalendarPickerModal } from "@/components/admin/dashboard/CalendarPickerModal";
 import { Sidebar } from "@/components/admin/Sidebar";
 
 // --- UTILITÁRIOS DE DATA ---
@@ -16,6 +17,8 @@ const getStartOfWeek = (date: Date) => {
     start.setHours(0, 0, 0, 0);
     return start;
 };
+
+
 
 const generateWeekDays = (startDate: Date) => {
     const days = [];
@@ -52,6 +55,8 @@ export default function BarberDashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
 
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -72,6 +77,20 @@ export default function BarberDashboard() {
         const prev = new Date(currentWeekStart);
         prev.setDate(prev.getDate() - 7);
         setCurrentWeekStart(prev);
+    };
+
+    const handleJumpToDate = (dateString: string) => {
+        if (!dateString) return;
+
+        // 1. Cria o objeto Date a partir da escolha (yyyy-mm-dd)
+        const chosenDate = new Date(dateString + 'T12:00:00');
+
+        // 2. Descobre a segunda-feira daquela semana escolhida
+        const newWeekStart = getStartOfWeek(chosenDate);
+
+        // 3. Atualiza os estados
+        setCurrentWeekStart(newWeekStart);
+        setSelectedDate(dateString); // Já seleciona o dia que ele clicou no calendário
     };
 
     return (
@@ -98,6 +117,14 @@ export default function BarberDashboard() {
                     onPrevWeek={prevWeek}
                     rangeText={weekRangeText}
                     agendaData={MOCK_AGENDA}
+                    onOpenPicker={() => setIsCalendarOpen(true)}
+                />
+
+                <CalendarPickerModal
+                    isOpen={isCalendarOpen}
+                    onClose={() => setIsCalendarOpen(false)}
+                    currentData={selectedDate}
+                    onSelect={handleJumpToDate}
                 />
 
                 <SummaryCards

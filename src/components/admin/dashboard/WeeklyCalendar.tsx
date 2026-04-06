@@ -12,7 +12,7 @@ interface WeeklyCalendarProps {
     onSelectDate: (day: string) => void;
     onNextWeek: () => void;
     onPrevWeek: () => void;
-    onOpenPicker: () => void;
+    onOpenPicker: () => void; // Garanta que esta prop existe
     rangeText: string;
     agendaData: Record<string, any[]>;
 }
@@ -25,11 +25,12 @@ export const WeeklyCalendar = ({
     onPrevWeek,
     onOpenPicker,
     rangeText,
-    agendaData
+    agendaData,
 }: WeeklyCalendarProps) => {
     return (
         <div className="px-6 space-y-4 mb-6">
             <div className="flex items-center justify-between">
+                {/* BOTÃO QUE ABRE O MODAL CUSTOMIZADO */}
                 <button
                     onClick={onOpenPicker}
                     className="flex items-center gap-2 text-white font-medium text-xs tracking-tight active:scale-95 transition-all group"
@@ -44,6 +45,7 @@ export const WeeklyCalendar = ({
                 </button>
 
                 <div className="flex gap-4">
+                    {/* SETA VOLTAR SEMANA */}
                     <button
                         onClick={onPrevWeek}
                         className="w-8 h-8 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/40 hover:text-white active:scale-90 transition-all"
@@ -53,6 +55,7 @@ export const WeeklyCalendar = ({
                         </svg>
                     </button>
 
+                    {/* SETA PRÓXIMA SEMANA */}
                     <button
                         onClick={onNextWeek}
                         className="w-8 h-8 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/40 hover:text-white active:scale-90 transition-all"
@@ -82,7 +85,7 @@ export const WeeklyCalendar = ({
                             <span className={`text-[9px] font-black tracking-widest ${isSelected ? 'text-white/70' : 'text-white/30'}`}>
                                 {d.day}
                             </span>
-                            <span className={`text-xl font-black ${isSelected ? 'text-white' : 'text-white'}`}>
+                            <span className="text-xl font-black text-white">
                                 {d.date}
                             </span>
 

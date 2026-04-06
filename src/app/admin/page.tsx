@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
@@ -8,7 +9,6 @@ import { AppointmentCard } from "@/components/admin/dashboard/AppointmentCard";
 import { CalendarPickerModal } from "@/components/admin/dashboard/CalendarPickerModal";
 import { Sidebar } from "@/components/admin/Sidebar";
 
-// --- UTILITÁRIOS DE DATA ---
 const getStartOfWeek = (date: Date) => {
     const day = date.getDay();
     const diff = date.getDate() - day + (day === 0 ? -6 : 1);
@@ -17,8 +17,6 @@ const getStartOfWeek = (date: Date) => {
     start.setHours(0, 0, 0, 0);
     return start;
 };
-
-
 
 const generateWeekDays = (startDate: Date) => {
     const days = [];
@@ -34,7 +32,6 @@ const generateWeekDays = (startDate: Date) => {
     return days;
 };
 
-// --- MOCKS ---
 const MOCK_AGENDA: Record<string, any[]> = {
     "2026-04-13": [{ id: 1, time: "14:00 - 14:40", name: "Carlos Silva", service: "CORTE & BARBA", price: 70.00 }],
     "2026-04-14": [
@@ -52,9 +49,9 @@ const MOCK_STATS: Record<string, { todayRevenue: string; todayCount: number }> =
 };
 
 export default function BarberDashboard() {
+    const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
-
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
@@ -81,16 +78,10 @@ export default function BarberDashboard() {
 
     const handleJumpToDate = (dateString: string) => {
         if (!dateString) return;
-
-        // 1. Cria o objeto Date a partir da escolha (yyyy-mm-dd)
         const chosenDate = new Date(dateString + 'T12:00:00');
-
-        // 2. Descobre a segunda-feira daquela semana escolhida
         const newWeekStart = getStartOfWeek(chosenDate);
-
-        // 3. Atualiza os estados
         setCurrentWeekStart(newWeekStart);
-        setSelectedDate(dateString); // Já seleciona o dia que ele clicou no calendário
+        setSelectedDate(dateString);
     };
 
     return (
@@ -144,7 +135,7 @@ export default function BarberDashboard() {
                                 name={appt.name}
                                 service={appt.service}
                                 price={showValues ? `R$ ${appt.price.toFixed(2).replace('.', ',')}` : 'R$ •••••'}
-                                onClick={() => console.log("Abrir modal para:", appt.name)}
+                                onClick={() => router.push(`/admin/appointment/${appt.id}`)}
                             />
                         ))
                     ) : (

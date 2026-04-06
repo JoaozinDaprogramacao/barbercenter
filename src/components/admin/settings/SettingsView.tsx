@@ -8,7 +8,10 @@ import { ServiceEditForm } from "./ServiceEditForm";
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const [isEditingCompany, setIsEditingCompany] = useState(false);
     const [companyData, setCompanyData] = useState({
-        name: "InBarber", address: "Rua Padre Manuel da Nóbrega, 424 - B4 804", city: "Fanny - Curitiba / Paraná", phone: "+55 (41) 98518-8245",
+        nome: "InBarber", 
+        endereco: "Rua Padre Manuel da Nóbrega, 424 - B4 804",
+        cidade: "Fanny - Curitiba / Paraná",
+        telefone: "+55 (41) 98518-8245", 
     });
     const [services, setServices] = useState([{ id: 1, name: "Corte", price: "30,00" }, { id: 2, name: "Barba", price: "20,00" }, { id: 3, name: "Corte degrade", price: "30,00" }]);
     const [editingService, setEditingService] = useState<any>(null);
@@ -19,28 +22,28 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
             <div className="flex-1 overflow-y-auto px-6 no-scrollbar pb-20">
                 <p className="text-white/40 text-sm font-medium mb-1">Minhas</p>
                 <h2 className="text-4xl font-black text-white mb-10 tracking-tight leading-none">Configurações</h2>
-                
-                <CompanySection 
-                  isEditing={isEditingCompany} data={companyData} 
-                  onEdit={() => setIsEditingCompany(true)} onSave={() => setIsEditingCompany(false)}
-                  onChange={setCompanyData} 
+
+                <CompanySection
+                    isEditing={isEditingCompany} data={companyData}
+                    onEdit={() => setIsEditingCompany(true)} onSave={() => setIsEditingCompany(false)}
+                    onChange={setCompanyData}
                 />
 
-                <ServicesSection 
-                  services={services} editingId={editingService?.id}
-                  onAdd={() => { const ns = { id: Date.now(), name: "Novo", price: "0,00" }; setServices([...services, ns]); setEditingService(ns); }}
-                  onSelect={setEditingService}
+                <ServicesSection
+                    services={services} editingId={editingService?.id}
+                    onAdd={() => { const ns = { id: Date.now(), name: "Novo", price: "0,00" }; setServices([...services, ns]); setEditingService(ns); }}
+                    onSelect={setEditingService}
                 />
 
                 {editingService && (
-                  <ServiceEditForm 
-                    service={editingService} onDone={() => setEditingService(null)}
-                    onRemove={(id: number) => { setServices(services.filter(s => s.id !== id)); setEditingService(null); }}
-                    onUpdate={(id: number, f: string, v: string) => {
-                      setServices(services.map(s => s.id === id ? { ...s, [f]: v } : s));
-                      setEditingService((prev: any) => ({ ...prev, [f]: v }));
-                    }}
-                  />
+                    <ServiceEditForm
+                        service={editingService} onDone={() => setEditingService(null)}
+                        onRemove={(id: number) => { setServices(services.filter(s => s.id !== id)); setEditingService(null); }}
+                        onUpdate={(id: number, f: string, v: string) => {
+                            setServices(services.map(s => s.id === id ? { ...s, [f]: v } : s));
+                            setEditingService((prev: any) => ({ ...prev, [f]: v }));
+                        }}
+                    />
                 )}
             </div>
         </main>

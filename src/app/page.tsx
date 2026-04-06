@@ -119,12 +119,20 @@ export default function BarberChat() {
   return (
     <main className="absolute inset-0 flex flex-col bg-[#050505] max-w-2xl mx-auto overflow-hidden">
       <header className="p-4 border-b border-white/5 bg-[#0A0A0A] flex items-center gap-3 shrink-0 z-20">
-        <div className="w-10 h-10 rounded-full bg-zinc-800" />
-        <div>
-          <h1 className="font-bold text-[16px] text-white">InBarber</h1>
-          <p className="text-[11px] text-green-500 font-bold uppercase tracking-widest mt-1">Online</p>
+        {/* Ícone proprietário arredondado (estilo App) */}
+        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shadow-sm">
+          {/* SVG minimalista simulando lâminas cruzadas/precisão */}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+            <path d="M19 19L5 5" strokeDasharray="4 4" />
+            <path d="M5 19L19 5" />
+          </svg>
         </div>
-      </header>v
+
+        <div>
+          <h1 className="font-bold text-[16px] text-white tracking-wide">InBarber</h1>
+          <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-0.5 leading-none">Agendamento Rápido</p>
+        </div>
+      </header>
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar flex flex-col z-10"

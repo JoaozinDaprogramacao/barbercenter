@@ -7,75 +7,107 @@ import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
 import { AppointmentCard } from "@/components/admin/dashboard/AppointmentCard";
 import { Sidebar } from "@/components/admin/Sidebar";
 
-// MOCKS
+// --- UTILITÁRIOS DE DATA ---
+const getStartOfWeek = (date: Date) => {
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const start = new Date(date);
+    start.setDate(diff);
+    start.setHours(0, 0, 0, 0);
+    return start;
+};
+
+const generateWeekDays = (startDate: Date) => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + i);
+        days.push({
+            day: d.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().replace('.', ''),
+            date: d.getDate().toString().padStart(2, '0'),
+            fullDate: d.toISOString().split('T')[0]
+        });
+    }
+    return days;
+};
+
+// --- MOCKS ---
 const MOCK_AGENDA: Record<string, any[]> = {
-    "15": [{ id: 1, time: "14:00 - 14:40", name: "Carlos Silva", service: "CORTE & BARBA", price: 70.00 }],
-    "16": [
+    "2026-04-13": [{ id: 1, time: "14:00 - 14:40", name: "Carlos Silva", service: "CORTE & BARBA", price: 70.00 }],
+    "2026-04-14": [
         { id: 2, time: "09:00 - 09:40", name: "Lucas Paim", service: "CORTE", price: 44.90 },
         { id: 3, time: "09:40 - 10:20", name: "Alan Gonçalves", service: "CORTE", price: 30.00 },
         { id: 4, time: "10:20 - 10:50", name: "Will", service: "BARBA", price: 20.00 },
     ],
-    "17": [{ id: 5, time: "10:00 - 10:40", name: "Marcos", service: "CORTE", price: 35.00 }]
+    "2026-04-15": [{ id: 5, time: "10:00 - 10:40", name: "Marcos", service: "CORTE", price: 35.00 }]
 };
 
 const MOCK_STATS: Record<string, { todayRevenue: string; todayCount: number }> = {
-    "15": { todayRevenue: "R$ 70,00", todayCount: 1 },
-    "16": { todayRevenue: "R$ 94,90", todayCount: 3 },
-    "17": { todayRevenue: "R$ 35,00", todayCount: 1 },
-    "18": { todayRevenue: "R$ 0,00", todayCount: 0 },
-    "19": { todayRevenue: "R$ 0,00", todayCount: 0 },
-    "20": { todayRevenue: "R$ 0,00", todayCount: 0 },
+    "2026-04-13": { todayRevenue: "R$ 70,00", todayCount: 1 },
+    "2026-04-14": { todayRevenue: "R$ 94,90", todayCount: 3 },
+    "2026-04-15": { todayRevenue: "R$ 35,00", todayCount: 1 },
 };
-
-const WEEK_DAYS = [
-    { day: 'SEG', date: '15' }, { day: 'TER', date: '16' }, { day: 'QUA', date: '17' },
-    { day: 'QUI', date: '18' }, { day: 'SEX', date: '19' }, { day: 'SAB', date: '20' },
-];
 
 export default function BarberDashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
-    const [selectedDate, setSelectedDate] = useState("16");
+
+    const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+    const weekDays = generateWeekDays(currentWeekStart);
+
+    const weekRangeText = `${weekDays[0].date} ${currentWeekStart.toLocaleDateString('pt-BR', { month: 'short' })} à ${weekDays[6].date} ${new Date(weekDays[6].fullDate + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short' })}`;
 
     const todaysAppointments = MOCK_AGENDA[selectedDate] || [];
-
     const currentDayStats = MOCK_STATS[selectedDate] || { todayRevenue: "R$ 0,00", todayCount: 0 };
+
+    const nextWeek = () => {
+        const next = new Date(currentWeekStart);
+        next.setDate(next.getDate() + 7);
+        setCurrentWeekStart(next);
+    };
+
+    const prevWeek = () => {
+        const prev = new Date(currentWeekStart);
+        prev.setDate(prev.getDate() - 7);
+        setCurrentWeekStart(prev);
+    };
 
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-background max-w-md mx-auto relative overflow-hidden font-sans">
-
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             <DashboardHeader
                 userName="Alan"
                 showValues={showValues}
                 onToggleValues={() => setShowValues(!showValues)}
-                onOpenMenu={() => setIsSidebarOpen(true)} // Abre o Sidebar
+                onOpenMenu={() => setIsSidebarOpen(true)}
                 onOpenSchedule={() => { }}
             />
 
             <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
                 <WeeklyCalendar
-                    days={WEEK_DAYS}
-                    selectedDate={selectedDate}
-                    onSelectDate={(date) => {
-                        console.log("Alterando data para:", date);
-                        setSelectedDate(date);
+                    days={weekDays}
+                    selectedDate={selectedDate.split('-')[2]}
+                    onSelectDate={(day) => {
+                        const full = weekDays.find(d => d.date === day)?.fullDate;
+                        if (full) setSelectedDate(full);
                     }}
+                    onNextWeek={nextWeek}
+                    onPrevWeek={prevWeek}
+                    rangeText={weekRangeText}
                     agendaData={MOCK_AGENDA}
                 />
 
                 <SummaryCards
                     showValues={showValues}
-                    // AGORA OS DADOS VÊM DO MOCK BASEADO NA DATA
                     todayRevenue={currentDayStats.todayRevenue}
                     todayCount={currentDayStats.todayCount}
-                    // O faturamento da semana você pode manter fixo ou criar um Mock de semana também
                     weekRevenue="R$ 4.304,90"
                     weekCount={34}
                 />
 
-                {/* LISTA DE AGENDAMENTOS */}
                 <div className="px-6 space-y-4">
                     {todaysAppointments.length > 0 ? (
                         todaysAppointments.map((appt) => (
@@ -85,7 +117,6 @@ export default function BarberDashboard() {
                                 name={appt.name}
                                 service={appt.service}
                                 price={showValues ? `R$ ${appt.price.toFixed(2).replace('.', ',')}` : 'R$ •••••'}
-                                badge={appt.badge}
                                 onClick={() => console.log("Abrir modal para:", appt.name)}
                             />
                         ))

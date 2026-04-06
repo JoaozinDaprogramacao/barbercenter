@@ -19,6 +19,22 @@ export default function BarberChat() {
   const inputRef = useRef<HTMLInputElement>(null);
   const actionLockRef = useRef(false);
 
+  const handleGoBack = () => {
+    if (step === 3) {
+      if (userData.date) {
+        // Se já escolheu a data (está vendo os horários), o "voltar" apenas limpa a data/hora
+        setUserData((prev) => ({ ...prev, date: "", time: "" }));
+      } else {
+        // Se não tem data escolhida, volta para o passo 2 (Serviços) e limpa o serviço
+        setUserData((prev) => ({ ...prev, service: "" }));
+        setStep(2);
+      }
+    } else if (step === 2) {
+      // Se está no passo 2, volta para o passo 1 (Nome)
+      setStep(1);
+    }
+  };
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -88,6 +104,18 @@ export default function BarberChat() {
     }, 50);
   };
 
+  useEffect(() => {
+    if (userData.date && scrollRef.current) {
+      // Pequeno delay para a animação do TimeGrid começar
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth"
+        });
+      }, 100);
+    }
+  }, [userData.date]);
+
   return (
     <main className="absolute inset-0 flex flex-col bg-[#050505] max-w-2xl mx-auto overflow-hidden">
       <header className="p-4 border-b border-white/5 bg-[#0A0A0A] flex items-center gap-3 shrink-0 z-20">
@@ -117,19 +145,33 @@ export default function BarberChat() {
 
           {step >= 3 && (
             <>
-              {/* === CORREÇÃO AQUI: Mostrar o serviço selecionado como resposta do usuário === */}
+              {/* Resposta do usuário para o Serviço */}
               <ChatBubble text={userData.service} />
 
-              <ChatBubble isAi isBig text="Ótimo. Escolha o dia e o horário:" />
+              {/* Pergunta da IA para a Data */}
+              <ChatBubble isAi isBig text="Qual dia fica melhor para você?" />
+
               <div className="space-y-6 pt-2">
                 <DateSelector
                   value={userData.date}
-                  onChange={(date) => setUserData(prev => ({ ...prev, date }))}
+                  onChange={(date) => {
+                    setUserData(prev => ({ ...prev, date }));
+                  }}
                 />
-                <TimeGrid
-                  value={userData.time}
-                  onChange={(time) => setUserData(prev => ({ ...prev, time }))}
-                />
+
+                {/* OS HORÁRIOS SÓ APARECEM SE TIVER UMA DATA SELECIONADA */}
+                {userData.date && (
+                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <ChatBubble isAi isBig text={`Perfeito! Quais destes horários para ${userData.date.replace('-', ' de ')}?`} />
+
+                    <TimeGrid
+                      value={userData.time}
+                      onChange={(time) => setUserData(prev => ({ ...prev, time }))}
+                    />
+
+                    {/* 👇 O BOTÃO QUE FICAVA AQUI FOI REMOVIDO! 👇 */}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -200,7 +242,7 @@ export default function BarberChat() {
             <div className="flex gap-3">
               {/* BOTÃO VOLTAR/CORRIGIR */}
               <button
-                onClick={() => setStep(step - 1)}
+                onClick={handleGoBack}
                 className="flex-1 bg-zinc-900 text-zinc-400 py-4 rounded-xl font-bold border border-white/5 active:scale-95 transition-all"
               >
                 Corrigir anterior

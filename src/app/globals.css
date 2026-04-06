@@ -2,12 +2,14 @@
 
 main {
   height: auto;
-  max-height: 90vh; /* No PC, limita a 90% da tela para manter a margem */
+  max-height: 90vh;
+  /* No PC, limita a 90% da tela para manter a margem */
 }
 
 @media (max-width: 768px) {
   main {
-    max-height: none; /* No mobile, deixa fluir com a página */
+    max-height: none;
+    /* No mobile, deixa fluir com a página */
   }
 }
 
@@ -28,17 +30,54 @@ main {
 
   --radius-xl: 12px;
   --shadow-active: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  --animate-pop-in: pop-in 0.4s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+
+  @keyframes pop-in {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    70% {
+      transform: scale(1.02);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
+
 .glass {
   background: rgba(15, 15, 17, 0.7);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
 
-html, body {
+html,
+body {
   width: 100%;
-  height: 100%; /* Trava o body na tela */ /* Impede scroll global */
-  overscroll-behavior: none; /* Mata o efeito "elástico" e pulos do iOS */
+  height: 100%;
+  /* Trava o body na tela */
+  /* Impede scroll global */
+  overscroll-behavior: none;
+  /* Mata o efeito "elástico" e pulos do iOS */
   background-color: #050505;
   touch-action: manipulation;
   -webkit-overflow-scrolling: touch;
@@ -51,7 +90,8 @@ html, body {
 }
 
 .chat-container {
-  height: 100dvh; /* Dynamic Viewport Height (iOS) */
+  height: 100dvh;
+  /* Dynamic Viewport Height (iOS) */
   display: flex;
   flex-direction: column;
 }
@@ -69,7 +109,28 @@ html, body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
 }

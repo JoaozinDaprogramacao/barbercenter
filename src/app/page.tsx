@@ -50,6 +50,12 @@ export default function BarberChat() {
     }, 300);
   }, [inputValue]);
 
+  const goBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -87,13 +93,10 @@ export default function BarberChat() {
       <header className="p-4 border-b border-white/5 bg-[#0A0A0A] flex items-center gap-3 shrink-0 z-20">
         <div className="w-10 h-10 rounded-full bg-zinc-800" />
         <div>
-          <h1 className="font-bold text-[16px] text-white leading-none">InBarber</h1>
-          <p className="text-[11px] text-green-500 font-bold uppercase tracking-widest mt-1 leading-none">
-            Online
-          </p>
+          <h1 className="font-bold text-[16px] text-white">InBarber</h1>
+          <p className="text-[11px] text-green-500 font-bold uppercase tracking-widest mt-1">Online</p>
         </div>
-      </header>
-
+      </header>v
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar flex flex-col z-10"
@@ -129,72 +132,102 @@ export default function BarberChat() {
           )}
 
           {step === 4 && (
-            <ChatBubble isAi text="Tudo pronto! Seu agendamento foi realizado. ✂️" />
+            <div className="flex flex-col items-center justify-center py-10 animate-in fade-in zoom-in duration-500">
+              <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(34,197,94,0.3)]">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl font-black text-white text-center mb-2">
+                Agendamento Confirmado!
+              </h2>
+              <p className="text-zinc-400 text-center max-w-[250px] text-sm mb-8">
+                Tudo certo, <strong>{userData.name.split(" ")[0]}</strong>! Te esperamos dia {userData.date.split('-')[0]} às {userData.time}.
+              </p>
+
+              <button
+                onClick={() => window.location.reload()} // Ou resetar os estados
+                className="text-white/50 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
+              >
+                Realizar novo agendamento
+              </button>
+            </div>
           )}
         </div>
       </div>
-
       <footer className="p-4 bg-[#0A0A0A] border-t border-white/5 shrink-0 z-20 pb-safe">
+
+        {/* PASSO 1: APENAS INPUT E ENVIAR */}
         {step === 1 && (
           <div className="flex gap-3">
             <input
               ref={inputRef}
               type="text"
-              inputMode="text"
-              autoComplete="off"
-              enterKeyHint="done"
               placeholder="Digite seu nome..."
-              onFocus={handleFocus}
-              className="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-[16px] text-white outline-none focus:bg-white/10"
+              className="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleInputKeyDown}
             />
-
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={handleNextClick}
-              onTouchEnd={handleNextTouchEnd}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  goToNextStepWithName();
-                }
-              }}
-              className="bg-white text-black px-6 rounded-xl font-bold text-[16px] active:scale-95 transition-transform flex items-center justify-center select-none"
-              style={{ WebkitTapHighlightColor: "transparent", touchAction: "manipulation" }}
+            <button
+              onClick={goToNextStepWithName}
+              className="bg-white text-black px-6 rounded-xl font-bold active:scale-95 transition-all"
             >
               Enviar
+            </button>
+          </div>
+        )}
+
+        {/* PASSOS 2 E 3: NAVEGAÇÃO DUPLA (VOLTAR / PRÓXIMO) */}
+        {(step === 2 || step === 3) && (
+          <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-3">
+
+            {/* Se estiver no Step 2, renderiza o seletor de serviço em cima dos botões */}
+            {step === 2 && (
+              <ServiceSelector
+                onSelect={(service) => {
+                  setUserData((prev) => ({ ...prev, service }));
+                  setStep(3);
+                }}
+              />
+            )}
+
+            {/* OS BOTÕES DE CONTROLE ABAIXO DE TUDO */}
+            <div className="flex gap-3">
+              {/* BOTÃO VOLTAR/CORRIGIR */}
+              <button
+                onClick={() => setStep(step - 1)}
+                className="flex-1 bg-zinc-900 text-zinc-400 py-4 rounded-xl font-bold border border-white/5 active:scale-95 transition-all"
+              >
+                Corrigir anterior
+              </button>
+
+              {/* BOTÃO AVANÇAR/CONFIRMAR */}
+              {step === 3 && (
+                <button
+                  disabled={!userData.date || !userData.time}
+                  onClick={() => setStep(4)}
+                  className={`flex-[2] py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl
+              ${(!userData.date || !userData.time)
+                      ? 'bg-zinc-800 text-zinc-600 opacity-50'
+                      : 'bg-white text-black active:scale-95'}`}
+                >
+                  Confirmar
+                </button>
+              )}
             </div>
           </div>
         )}
 
-        {step === 2 && (
-          <div className="animate-in fade-in slide-in-from-bottom-2">
-            <ServiceSelector
-              onSelect={(service) => {
-                setUserData((prev) => ({ ...prev, service }));
-                setStep(3);
-              }}
-            />
-          </div>
-        )}
-
-        {step === 3 && (
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => setStep(4)}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              setStep(4);
-            }}
-            className="w-full bg-white text-black py-5 rounded-xl font-black text-[16px] uppercase tracking-widest active:scale-95 transition-all shadow-xl text-center select-none"
-            style={{ WebkitTapHighlightColor: "transparent", touchAction: "manipulation" }}
+        {/* PASSO 4: FINALIZADO (Botão para reiniciar ou fechar) */}
+        {step === 4 && (
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-4 bg-white/5 text-white/50 rounded-xl text-sm font-bold"
           >
-            Confirmar Agendamento
-          </div>
+            Novo Agendamento
+          </button>
         )}
       </footer>
     </main>

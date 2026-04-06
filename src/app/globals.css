@@ -14,8 +14,12 @@ main {
 }
 
 @theme inline {
-  --color-background: #050505;
-  --color-surface: #0f0f11;
+  --color-background: #0E0F11;
+  /* Fundo super escuro, quase preto */
+  --color-surface: #202125;
+  /* Cinza dos cards (ex: card do Lucas Paim) */
+  --color-surface-light: #2A2C31;
+  /* Cinza mais claro para hovers */
   --color-glass: rgba(255, 255, 255, 0.05);
 
   --color-text-primary: #FFFFFF;
@@ -33,6 +37,17 @@ main {
 
   --animate-pop-in: pop-in 0.4s ease-out forwards;
   --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+
+  --color-accent: #B27B5C;
+  /* O tom de cobre/caramelo dos botões ativos */
+  --color-accent-light: #C49174;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #9CA3AF;
+  /* Cinza para textos menores */
+
+  --color-success: #82D173;
+  /* Verde para badges (ex: 17/24) */
 
   @keyframes pop-in {
     0% {

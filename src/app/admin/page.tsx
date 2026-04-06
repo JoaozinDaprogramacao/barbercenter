@@ -18,6 +18,15 @@ const MOCK_AGENDA: Record<string, any[]> = {
     "17": [{ id: 5, time: "10:00 - 10:40", name: "Marcos", service: "CORTE", price: 35.00 }]
 };
 
+const MOCK_STATS: Record<string, { todayRevenue: string; todayCount: number }> = {
+    "15": { todayRevenue: "R$ 70,00", todayCount: 1 },
+    "16": { todayRevenue: "R$ 94,90", todayCount: 3 },
+    "17": { todayRevenue: "R$ 35,00", todayCount: 1 },
+    "18": { todayRevenue: "R$ 0,00", todayCount: 0 },
+    "19": { todayRevenue: "R$ 0,00", todayCount: 0 },
+    "20": { todayRevenue: "R$ 0,00", todayCount: 0 },
+};
+
 const WEEK_DAYS = [
     { day: 'SEG', date: '15' }, { day: 'TER', date: '16' }, { day: 'QUA', date: '17' },
     { day: 'QUI', date: '18' }, { day: 'SEX', date: '19' }, { day: 'SAB', date: '20' },
@@ -29,6 +38,8 @@ export default function BarberDashboard() {
     const [selectedDate, setSelectedDate] = useState("16");
 
     const todaysAppointments = MOCK_AGENDA[selectedDate] || [];
+
+    const currentDayStats = MOCK_STATS[selectedDate] || { todayRevenue: "R$ 0,00", todayCount: 0 };
 
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-background max-w-md mx-auto relative overflow-hidden font-sans">
@@ -56,9 +67,11 @@ export default function BarberDashboard() {
 
                 <SummaryCards
                     showValues={showValues}
-                    todayRevenue="R$ 320,00"
-                    todayCount={16}
-                    weekRevenue="R$ 4304,90"
+                    // AGORA OS DADOS VÊM DO MOCK BASEADO NA DATA
+                    todayRevenue={currentDayStats.todayRevenue}
+                    todayCount={currentDayStats.todayCount}
+                    // O faturamento da semana você pode manter fixo ou criar um Mock de semana também
+                    weekRevenue="R$ 4.304,90"
                     weekCount={34}
                 />
 

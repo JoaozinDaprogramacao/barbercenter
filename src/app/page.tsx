@@ -117,7 +117,10 @@ export default function BarberChat() {
 
           {step >= 3 && (
             <>
-              {/* Dentro do step >= 3 */}
+              {/* === CORREÇÃO AQUI: Mostrar o serviço selecionado como resposta do usuário === */}
+              <ChatBubble text={userData.service} />
+
+              <ChatBubble isAi isBig text="Ótimo. Escolha o dia e o horário:" />
               <div className="space-y-6 pt-2">
                 <DateSelector
                   value={userData.date}

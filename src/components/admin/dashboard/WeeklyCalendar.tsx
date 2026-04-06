@@ -33,7 +33,7 @@ export const WeeklyCalendar = ({ days, selectedDate, onSelectDate, agendaData }:
                 : 'bg-surface text-text-secondary hover:bg-surface-light'}`}
           >
             <span className="text-[10px] font-bold">{d.day}</span>
-            <span className={`text-xl font-bold ${selectedDate === d.date ? 'text-white' : 'text-text-primary'}`}>{d.date}</span>
+            <span className={`text-xl font-bold ${String(selectedDate) === String(d.date) ? 'bg-accent ...' : 'bg-surface ...'}`}>{d.date}</span>
             {agendaData[d.date] && <span className="w-1.5 h-1.5 rounded-full bg-success"></span>}
           </button>
         ))}

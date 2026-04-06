@@ -47,7 +47,10 @@ export default function BarberDashboard() {
                 <WeeklyCalendar
                     days={WEEK_DAYS}
                     selectedDate={selectedDate}
-                    onSelectDate={setSelectedDate}
+                    onSelectDate={(date) => {
+                        console.log("Alterando data para:", date);
+                        setSelectedDate(date);
+                    }}
                     agendaData={MOCK_AGENDA}
                 />
 

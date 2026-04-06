@@ -13,7 +13,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const menuItems = [
     { name: "Agenda", icon: "📅", href: "/admin" },
-    { name: "Faturamento", icon: "📊", href: "/admin/faturamento" },
+    { name: "Faturamento", icon: "📊", href: "/admin/analytics" },
     { name: "Configurações", icon: "⚙️", href: "/admin/settings" },
   ];
 

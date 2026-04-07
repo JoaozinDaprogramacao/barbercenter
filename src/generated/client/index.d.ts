@@ -1107,15 +1107,15 @@ export namespace Prisma {
    */
 
   export type BarbershopCountOutputType = {
-    appointments: number
     users: number
     services: number
+    appointments: number
   }
 
   export type BarbershopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    appointments?: boolean | BarbershopCountOutputTypeCountAppointmentsArgs
     users?: boolean | BarbershopCountOutputTypeCountUsersArgs
     services?: boolean | BarbershopCountOutputTypeCountServicesArgs
+    appointments?: boolean | BarbershopCountOutputTypeCountAppointmentsArgs
   }
 
   // Custom InputTypes
@@ -1132,13 +1132,6 @@ export namespace Prisma {
   /**
    * BarbershopCountOutputType without action
    */
-  export type BarbershopCountOutputTypeCountAppointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AppointmentWhereInput
-  }
-
-  /**
-   * BarbershopCountOutputType without action
-   */
   export type BarbershopCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
   }
@@ -1148,6 +1141,13 @@ export namespace Prisma {
    */
   export type BarbershopCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceWhereInput
+  }
+
+  /**
+   * BarbershopCountOutputType without action
+   */
+  export type BarbershopCountOutputTypeCountAppointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppointmentWhereInput
   }
 
 
@@ -1219,6 +1219,7 @@ export namespace Prisma {
     name: number
     phone: number
     address: number
+    businessHours: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1248,6 +1249,7 @@ export namespace Prisma {
     name?: true
     phone?: true
     address?: true
+    businessHours?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1327,9 +1329,10 @@ export namespace Prisma {
 
   export type BarbershopGroupByOutputType = {
     id: string
-    name: string
+    name: string | null
     phone: string | null
     address: string | null
+    businessHours: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: BarbershopCountAggregateOutputType | null
@@ -1356,11 +1359,12 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     address?: boolean
+    businessHours?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     users?: boolean | Barbershop$usersArgs<ExtArgs>
     services?: boolean | Barbershop$servicesArgs<ExtArgs>
+    appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     _count?: boolean | BarbershopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["barbershop"]>
 
@@ -1371,30 +1375,32 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     address?: boolean
+    businessHours?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BarbershopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["barbershop"]>
+  export type BarbershopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "address" | "businessHours" | "createdAt" | "updatedAt", ExtArgs["result"]["barbershop"]>
   export type BarbershopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     users?: boolean | Barbershop$usersArgs<ExtArgs>
     services?: boolean | Barbershop$servicesArgs<ExtArgs>
+    appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     _count?: boolean | BarbershopCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $BarbershopPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Barbershop"
     objects: {
-      appointments: Prisma.$AppointmentPayload<ExtArgs>[]
       users: Prisma.$UserPayload<ExtArgs>[]
       services: Prisma.$ServicePayload<ExtArgs>[]
+      appointments: Prisma.$AppointmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string
+      name: string | null
       phone: string | null
       address: string | null
+      businessHours: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["barbershop"]>
@@ -1737,9 +1743,9 @@ export namespace Prisma {
    */
   export interface Prisma__BarbershopClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    appointments<T extends Barbershop$appointmentsArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     users<T extends Barbershop$usersArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     services<T extends Barbershop$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    appointments<T extends Barbershop$appointmentsArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1773,6 +1779,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Barbershop", 'String'>
     readonly phone: FieldRef<"Barbershop", 'String'>
     readonly address: FieldRef<"Barbershop", 'String'>
+    readonly businessHours: FieldRef<"Barbershop", 'Json'>
     readonly createdAt: FieldRef<"Barbershop", 'DateTime'>
     readonly updatedAt: FieldRef<"Barbershop", 'DateTime'>
   }
@@ -2123,30 +2130,6 @@ export namespace Prisma {
   }
 
   /**
-   * Barbershop.appointments
-   */
-  export type Barbershop$appointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Appointment
-     */
-    select?: AppointmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Appointment
-     */
-    omit?: AppointmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AppointmentInclude<ExtArgs> | null
-    where?: AppointmentWhereInput
-    orderBy?: AppointmentOrderByWithRelationInput | AppointmentOrderByWithRelationInput[]
-    cursor?: AppointmentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: AppointmentScalarFieldEnum | AppointmentScalarFieldEnum[]
-  }
-
-  /**
    * Barbershop.users
    */
   export type Barbershop$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2192,6 +2175,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
+  }
+
+  /**
+   * Barbershop.appointments
+   */
+  export type Barbershop$appointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Appointment
+     */
+    select?: AppointmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Appointment
+     */
+    omit?: AppointmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppointmentInclude<ExtArgs> | null
+    where?: AppointmentWhereInput
+    orderBy?: AppointmentOrderByWithRelationInput | AppointmentOrderByWithRelationInput[]
+    cursor?: AppointmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AppointmentScalarFieldEnum | AppointmentScalarFieldEnum[]
   }
 
   /**
@@ -5217,6 +5224,7 @@ export namespace Prisma {
     name: 'name',
     phone: 'phone',
     address: 'address',
+    businessHours: 'businessHours',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -5270,6 +5278,31 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
   export const NullsOrder: {
@@ -5336,6 +5369,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -5364,26 +5411,28 @@ export namespace Prisma {
     OR?: BarbershopWhereInput[]
     NOT?: BarbershopWhereInput | BarbershopWhereInput[]
     id?: StringFilter<"Barbershop"> | string
-    name?: StringFilter<"Barbershop"> | string
+    name?: StringNullableFilter<"Barbershop"> | string | null
     phone?: StringNullableFilter<"Barbershop"> | string | null
     address?: StringNullableFilter<"Barbershop"> | string | null
+    businessHours?: JsonNullableFilter<"Barbershop">
     createdAt?: DateTimeFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeFilter<"Barbershop"> | Date | string
-    appointments?: AppointmentListRelationFilter
     users?: UserListRelationFilter
     services?: ServiceListRelationFilter
+    appointments?: AppointmentListRelationFilter
   }
 
   export type BarbershopOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
+    name?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    businessHours?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    appointments?: AppointmentOrderByRelationAggregateInput
     users?: UserOrderByRelationAggregateInput
     services?: ServiceOrderByRelationAggregateInput
+    appointments?: AppointmentOrderByRelationAggregateInput
     _relevance?: BarbershopOrderByRelevanceInput
   }
 
@@ -5392,21 +5441,23 @@ export namespace Prisma {
     AND?: BarbershopWhereInput | BarbershopWhereInput[]
     OR?: BarbershopWhereInput[]
     NOT?: BarbershopWhereInput | BarbershopWhereInput[]
-    name?: StringFilter<"Barbershop"> | string
+    name?: StringNullableFilter<"Barbershop"> | string | null
     phone?: StringNullableFilter<"Barbershop"> | string | null
     address?: StringNullableFilter<"Barbershop"> | string | null
+    businessHours?: JsonNullableFilter<"Barbershop">
     createdAt?: DateTimeFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeFilter<"Barbershop"> | Date | string
-    appointments?: AppointmentListRelationFilter
     users?: UserListRelationFilter
     services?: ServiceListRelationFilter
+    appointments?: AppointmentListRelationFilter
   }, "id">
 
   export type BarbershopOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
+    name?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    businessHours?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BarbershopCountOrderByAggregateInput
@@ -5419,9 +5470,10 @@ export namespace Prisma {
     OR?: BarbershopScalarWhereWithAggregatesInput[]
     NOT?: BarbershopScalarWhereWithAggregatesInput | BarbershopScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Barbershop"> | string
-    name?: StringWithAggregatesFilter<"Barbershop"> | string
+    name?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
     address?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
+    businessHours?: JsonNullableWithAggregatesFilter<"Barbershop">
     createdAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
   }
@@ -5641,75 +5693,82 @@ export namespace Prisma {
 
   export type BarbershopCreateInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     users?: UserCreateNestedManyWithoutBarbershopInput
     services?: ServiceCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     users?: UserUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopCreateManyInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type BarbershopUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BarbershopUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5957,6 +6016,29 @@ export namespace Prisma {
     search?: string
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -5967,12 +6049,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type AppointmentListRelationFilter = {
-    every?: AppointmentWhereInput
-    some?: AppointmentWhereInput
-    none?: AppointmentWhereInput
   }
 
   export type UserListRelationFilter = {
@@ -5987,13 +6063,15 @@ export namespace Prisma {
     none?: ServiceWhereInput
   }
 
+  export type AppointmentListRelationFilter = {
+    every?: AppointmentWhereInput
+    some?: AppointmentWhereInput
+    none?: AppointmentWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type AppointmentOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type UserOrderByRelationAggregateInput = {
@@ -6001,6 +6079,10 @@ export namespace Prisma {
   }
 
   export type ServiceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AppointmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6015,6 +6097,7 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    businessHours?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6071,6 +6154,32 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6280,13 +6389,6 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type AppointmentCreateNestedManyWithoutBarbershopInput = {
-    create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
-    connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
-    createMany?: AppointmentCreateManyBarbershopInputEnvelope
-    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
-  }
-
   export type UserCreateNestedManyWithoutBarbershopInput = {
     create?: XOR<UserCreateWithoutBarbershopInput, UserUncheckedCreateWithoutBarbershopInput> | UserCreateWithoutBarbershopInput[] | UserUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: UserCreateOrConnectWithoutBarbershopInput | UserCreateOrConnectWithoutBarbershopInput[]
@@ -6301,7 +6403,7 @@ export namespace Prisma {
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
-  export type AppointmentUncheckedCreateNestedManyWithoutBarbershopInput = {
+  export type AppointmentCreateNestedManyWithoutBarbershopInput = {
     create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
     createMany?: AppointmentCreateManyBarbershopInputEnvelope
@@ -6322,6 +6424,13 @@ export namespace Prisma {
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
+  export type AppointmentUncheckedCreateNestedManyWithoutBarbershopInput = {
+    create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
+    createMany?: AppointmentCreateManyBarbershopInputEnvelope
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -6332,20 +6441,6 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type AppointmentUpdateManyWithoutBarbershopNestedInput = {
-    create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
-    connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
-    upsert?: AppointmentUpsertWithWhereUniqueWithoutBarbershopInput | AppointmentUpsertWithWhereUniqueWithoutBarbershopInput[]
-    createMany?: AppointmentCreateManyBarbershopInputEnvelope
-    set?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
-    disconnect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
-    delete?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
-    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
-    update?: AppointmentUpdateWithWhereUniqueWithoutBarbershopInput | AppointmentUpdateWithWhereUniqueWithoutBarbershopInput[]
-    updateMany?: AppointmentUpdateManyWithWhereWithoutBarbershopInput | AppointmentUpdateManyWithWhereWithoutBarbershopInput[]
-    deleteMany?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
   }
 
   export type UserUpdateManyWithoutBarbershopNestedInput = {
@@ -6376,7 +6471,7 @@ export namespace Prisma {
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
-  export type AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput = {
+  export type AppointmentUpdateManyWithoutBarbershopNestedInput = {
     create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
     upsert?: AppointmentUpsertWithWhereUniqueWithoutBarbershopInput | AppointmentUpsertWithWhereUniqueWithoutBarbershopInput[]
@@ -6416,6 +6511,20 @@ export namespace Prisma {
     update?: ServiceUpdateWithWhereUniqueWithoutBarbershopInput | ServiceUpdateWithWhereUniqueWithoutBarbershopInput[]
     updateMany?: ServiceUpdateManyWithWhereWithoutBarbershopInput | ServiceUpdateManyWithWhereWithoutBarbershopInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
+  }
+
+  export type AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput = {
+    create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
+    upsert?: AppointmentUpsertWithWhereUniqueWithoutBarbershopInput | AppointmentUpsertWithWhereUniqueWithoutBarbershopInput[]
+    createMany?: AppointmentCreateManyBarbershopInputEnvelope
+    set?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    disconnect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    delete?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    update?: AppointmentUpdateWithWhereUniqueWithoutBarbershopInput | AppointmentUpdateWithWhereUniqueWithoutBarbershopInput[]
+    updateMany?: AppointmentUpdateManyWithWhereWithoutBarbershopInput | AppointmentUpdateManyWithWhereWithoutBarbershopInput[]
+    deleteMany?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
   }
 
   export type BarbershopCreateNestedOneWithoutUsersInput = {
@@ -6630,6 +6739,29 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -6686,35 +6818,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type AppointmentCreateWithoutBarbershopInput = {
-    clientName: string
-    date: string
-    time: string
-    status?: string
-    createdAt?: Date | string
-    service: ServiceCreateNestedOneWithoutAppointmentsInput
-  }
-
-  export type AppointmentUncheckedCreateWithoutBarbershopInput = {
-    id?: number
-    clientName: string
-    date: string
-    time: string
-    status?: string
-    serviceId: string
-    createdAt?: Date | string
-  }
-
-  export type AppointmentCreateOrConnectWithoutBarbershopInput = {
-    where: AppointmentWhereUniqueInput
-    create: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput>
-  }
-
-  export type AppointmentCreateManyBarbershopInputEnvelope = {
-    data: AppointmentCreateManyBarbershopInput | AppointmentCreateManyBarbershopInput[]
-    skipDuplicates?: boolean
   }
 
   export type UserCreateWithoutBarbershopInput = {
@@ -6775,34 +6878,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type AppointmentUpsertWithWhereUniqueWithoutBarbershopInput = {
+  export type AppointmentCreateWithoutBarbershopInput = {
+    clientName: string
+    date: string
+    time: string
+    status?: string
+    createdAt?: Date | string
+    service: ServiceCreateNestedOneWithoutAppointmentsInput
+  }
+
+  export type AppointmentUncheckedCreateWithoutBarbershopInput = {
+    id?: number
+    clientName: string
+    date: string
+    time: string
+    status?: string
+    serviceId: string
+    createdAt?: Date | string
+  }
+
+  export type AppointmentCreateOrConnectWithoutBarbershopInput = {
     where: AppointmentWhereUniqueInput
-    update: XOR<AppointmentUpdateWithoutBarbershopInput, AppointmentUncheckedUpdateWithoutBarbershopInput>
     create: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput>
   }
 
-  export type AppointmentUpdateWithWhereUniqueWithoutBarbershopInput = {
-    where: AppointmentWhereUniqueInput
-    data: XOR<AppointmentUpdateWithoutBarbershopInput, AppointmentUncheckedUpdateWithoutBarbershopInput>
-  }
-
-  export type AppointmentUpdateManyWithWhereWithoutBarbershopInput = {
-    where: AppointmentScalarWhereInput
-    data: XOR<AppointmentUpdateManyMutationInput, AppointmentUncheckedUpdateManyWithoutBarbershopInput>
-  }
-
-  export type AppointmentScalarWhereInput = {
-    AND?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
-    OR?: AppointmentScalarWhereInput[]
-    NOT?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
-    id?: IntFilter<"Appointment"> | number
-    clientName?: StringFilter<"Appointment"> | string
-    date?: StringFilter<"Appointment"> | string
-    time?: StringFilter<"Appointment"> | string
-    status?: StringFilter<"Appointment"> | string
-    serviceId?: StringFilter<"Appointment"> | string
-    barbershopId?: StringFilter<"Appointment"> | string
-    createdAt?: DateTimeFilter<"Appointment"> | Date | string
+  export type AppointmentCreateManyBarbershopInputEnvelope = {
+    data: AppointmentCreateManyBarbershopInput | AppointmentCreateManyBarbershopInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithWhereUniqueWithoutBarbershopInput = {
@@ -6863,26 +6965,58 @@ export namespace Prisma {
     barbershopId?: StringFilter<"Service"> | string
   }
 
+  export type AppointmentUpsertWithWhereUniqueWithoutBarbershopInput = {
+    where: AppointmentWhereUniqueInput
+    update: XOR<AppointmentUpdateWithoutBarbershopInput, AppointmentUncheckedUpdateWithoutBarbershopInput>
+    create: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput>
+  }
+
+  export type AppointmentUpdateWithWhereUniqueWithoutBarbershopInput = {
+    where: AppointmentWhereUniqueInput
+    data: XOR<AppointmentUpdateWithoutBarbershopInput, AppointmentUncheckedUpdateWithoutBarbershopInput>
+  }
+
+  export type AppointmentUpdateManyWithWhereWithoutBarbershopInput = {
+    where: AppointmentScalarWhereInput
+    data: XOR<AppointmentUpdateManyMutationInput, AppointmentUncheckedUpdateManyWithoutBarbershopInput>
+  }
+
+  export type AppointmentScalarWhereInput = {
+    AND?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
+    OR?: AppointmentScalarWhereInput[]
+    NOT?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
+    id?: IntFilter<"Appointment"> | number
+    clientName?: StringFilter<"Appointment"> | string
+    date?: StringFilter<"Appointment"> | string
+    time?: StringFilter<"Appointment"> | string
+    status?: StringFilter<"Appointment"> | string
+    serviceId?: StringFilter<"Appointment"> | string
+    barbershopId?: StringFilter<"Appointment"> | string
+    createdAt?: DateTimeFilter<"Appointment"> | Date | string
+  }
+
   export type BarbershopCreateWithoutUsersInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     services?: ServiceCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateWithoutUsersInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopCreateOrConnectWithoutUsersInput = {
@@ -6903,24 +7037,26 @@ export namespace Prisma {
 
   export type BarbershopUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type ServiceCreateWithoutAppointmentsInput = {
@@ -6950,9 +7086,10 @@ export namespace Prisma {
 
   export type BarbershopCreateWithoutAppointmentsInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     users?: UserCreateNestedManyWithoutBarbershopInput
@@ -6961,9 +7098,10 @@ export namespace Prisma {
 
   export type BarbershopUncheckedCreateWithoutAppointmentsInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
@@ -7019,9 +7157,10 @@ export namespace Prisma {
 
   export type BarbershopUpdateWithoutAppointmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserUpdateManyWithoutBarbershopNestedInput
@@ -7030,9 +7169,10 @@ export namespace Prisma {
 
   export type BarbershopUncheckedUpdateWithoutAppointmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
@@ -7041,24 +7181,26 @@ export namespace Prisma {
 
   export type BarbershopCreateWithoutServicesInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     users?: UserCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateWithoutServicesInput = {
     id?: string
-    name: string
+    name?: string | null
     phone?: string | null
     address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopCreateOrConnectWithoutServicesInput = {
@@ -7108,24 +7250,26 @@ export namespace Prisma {
 
   export type BarbershopUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     users?: UserUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type AppointmentUpsertWithWhereUniqueWithoutServiceInput = {
@@ -7142,16 +7286,6 @@ export namespace Prisma {
   export type AppointmentUpdateManyWithWhereWithoutServiceInput = {
     where: AppointmentScalarWhereInput
     data: XOR<AppointmentUpdateManyMutationInput, AppointmentUncheckedUpdateManyWithoutServiceInput>
-  }
-
-  export type AppointmentCreateManyBarbershopInput = {
-    id?: number
-    clientName: string
-    date: string
-    time: string
-    status?: string
-    serviceId: string
-    createdAt?: Date | string
   }
 
   export type UserCreateManyBarbershopInput = {
@@ -7172,33 +7306,14 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type AppointmentUpdateWithoutBarbershopInput = {
-    clientName?: StringFieldUpdateOperationsInput | string
-    date?: StringFieldUpdateOperationsInput | string
-    time?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    service?: ServiceUpdateOneRequiredWithoutAppointmentsNestedInput
-  }
-
-  export type AppointmentUncheckedUpdateWithoutBarbershopInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    clientName?: StringFieldUpdateOperationsInput | string
-    date?: StringFieldUpdateOperationsInput | string
-    time?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AppointmentUncheckedUpdateManyWithoutBarbershopInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    clientName?: StringFieldUpdateOperationsInput | string
-    date?: StringFieldUpdateOperationsInput | string
-    time?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type AppointmentCreateManyBarbershopInput = {
+    id?: number
+    clientName: string
+    date: string
+    time: string
+    status?: string
+    serviceId: string
+    createdAt?: Date | string
   }
 
   export type UserUpdateWithoutBarbershopInput = {
@@ -7255,6 +7370,35 @@ export namespace Prisma {
     duration?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppointmentUpdateWithoutBarbershopInput = {
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    service?: ServiceUpdateOneRequiredWithoutAppointmentsNestedInput
+  }
+
+  export type AppointmentUncheckedUpdateWithoutBarbershopInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppointmentUncheckedUpdateManyWithoutBarbershopInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AppointmentCreateManyServiceInput = {

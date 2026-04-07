@@ -4,23 +4,24 @@ import { SettingsHeader } from "./SettingsHeader";
 import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
+import { BusinessHoursSection } from "./BusinessHoursSection";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useServices } from "@/hooks/useServices"; // <-- 1. Importamos o Hook novo
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     // Dados da Empresa
-    const { 
-        companyData, setCompanyData, 
-        isEditingCompany, setIsEditingCompany, 
-        isLoading: isLoadingCompany, isSaving: isSavingCompany, saveCompanyData 
+    const {
+        companyData, setCompanyData,
+        isEditingCompany, setIsEditingCompany,
+        isLoading: isLoadingCompany, isSaving: isSavingCompany, saveCompanyData
     } = useCompanySettings();
 
     // Dados dos Serviços
-    const { 
-        services, 
-        isLoading: isLoadingServices, 
-        saveService, 
-        deleteService 
+    const {
+        services,
+        isLoading: isLoadingServices,
+        saveService,
+        deleteService
     } = useServices();
 
     // Estado do formulário de edição do serviço
@@ -56,10 +57,21 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     <div className="animate-pulse bg-white/5 h-40 rounded-[32px] w-full mb-12"></div>
                 ) : (
                     <CompanySection
-                        isEditing={isEditingCompany} 
+                        isEditing={isEditingCompany}
                         data={companyData}
                         isSaving={isSavingCompany}
-                        onEdit={() => setIsEditingCompany(true)} 
+                        onEdit={() => setIsEditingCompany(true)}
+                        onSave={saveCompanyData}
+                        onChange={setCompanyData}
+                    />
+                )}
+
+                {isLoadingCompany ? null : (
+                    <BusinessHoursSection
+                        isEditing={isEditingCompany} // Usamos o mesmo controle de edição da empresa
+                        data={companyData}
+                        isSaving={isSavingCompany}
+                        onEdit={() => setIsEditingCompany(true)}
                         onSave={saveCompanyData}
                         onChange={setCompanyData}
                     />
@@ -70,7 +82,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     <div className="animate-pulse bg-white/5 h-40 rounded-[32px] w-full"></div>
                 ) : (
                     <ServicesSection
-                        services={services} 
+                        services={services}
                         editingId={editingService?.id}
                         onAdd={() => {
                             // Cria um item temporário. O ID curto garante que a API vai criar (POST) em vez de editar
@@ -79,10 +91,10 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         onSelect={(service) => {
                             // Pulo do gato: Quando editamos, o preço vem como Float do banco (ex: 30.5). 
                             // Convertemos para string "3050" para a sua máscara de moeda funcionar perfeitamente no input.
-                            const priceFormatted = typeof service.price === 'number' 
-                                ? (service.price * 100).toFixed(0) 
+                            const priceFormatted = typeof service.price === 'number'
+                                ? (service.price * 100).toFixed(0)
                                 : service.price;
-                                
+
                             setEditingService({ ...service, price: priceFormatted });
                         }}
                     />

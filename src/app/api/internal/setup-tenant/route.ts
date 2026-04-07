@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import prisma from "@/lib/prisma"; // Ajuste este caminho se o seu arquivo prisma.ts estiver em outro lugar
+import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -10,6 +10,12 @@ export async function POST(req: Request) {
     // Verifica se os dados vieram
     if (!barbershopName || !userName || !userEmail || !userPassword) {
       return NextResponse.json({ error: "Faltam dados!" }, { status: 400 });
+    }
+
+    // Evita erro 500 do Prisma caso o e-mail já exista
+    const userExists = await prisma.user.findUnique({ where: { email: userEmail } });
+    if (userExists) {
+      return NextResponse.json({ error: "E-mail já cadastrado!" }, { status: 400 });
     }
 
     // Hash da senha (segurança)
@@ -24,16 +30,23 @@ export async function POST(req: Request) {
             name: userName,
             email: userEmail,
             password: hashedPassword,
-            role: "OWNER"
+            role: "OWNER" // Lembre-se: o campo 'role' precisa existir no schema.prisma!
           }
         }
       },
       include: { users: true }
     });
 
-    return NextResponse.json({ 
-      message: "Sucesso! SaaS rodando.", 
-      tenant: newTenant 
+    // Remove a senha antes de devolver no JSON
+    const { password, ...userWithoutPassword } = newTenant.users[0];
+
+    return NextResponse.json({
+      message: "Sucesso! SaaS rodando.",
+      tenant: {
+        id: newTenant.id,
+        name: newTenant.name,
+        user: userWithoutPassword
+      }
     }, { status: 201 });
 
   } catch (error) {

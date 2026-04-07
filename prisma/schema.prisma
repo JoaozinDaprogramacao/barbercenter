@@ -9,19 +9,22 @@ datasource db {
 }
 
 model Barbershop {
-  id        String   @id @default(uuid())
-  name      String   
-  phone     String?  
-  address   String?  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  name          String?
+  phone         String?
+  address       String?
   
-  appointments Appointment[]
-  users     User[]
-  services Service[]
+  // 👇 CAMPO NOVO (Apague os antigos openTime, closeTime e workDays)
+  businessHours Json?    
+
+  users         User[]
+  services      Service[]
+  appointments  Appointment[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("barbershops")
-  
 }
 
 model User {

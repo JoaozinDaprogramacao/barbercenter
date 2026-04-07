@@ -1,10 +1,11 @@
 import { maskMoeda } from "@/utils/masks";
+import { DurationInput } from "./DurationInput"; // Importe o novo componente
 
 interface ServiceEditFormProps {
     service: any;
     isOpen: boolean;
-    onUpdate: (id: number, f: string, v: string) => void;
-    onRemove: (id: number) => void;
+    onUpdate: (id: any, f: string, v: any) => void;
+    onRemove: (id: any) => void;
     onDone: () => void;
 }
 
@@ -13,23 +14,17 @@ export const ServiceEditForm = ({ service, isOpen, onUpdate, onRemove, onDone }:
 
     return (
         <>
-            {/* OVERLAY (Fundo escuro que fecha ao clicar) */}
-            <div
-                onClick={onDone}
-                className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                    }`}
-            />
+            {/* Overlay */}
+            <div onClick={onDone} className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`} />
 
-            {/* BOTTOM SHEET CONTAINER */}
-            <div
-                className={`fixed bottom-0 left-0 right-0 z-[70] bg-[#121212] border-t border-white/10 rounded-t-[40px] px-8 pt-4 pb-10 transition-transform duration-500 ease-out max-w-md mx-auto ${isOpen ? "translate-y-0" : "translate-y-full"
-                    }`}
-            >
-                {/* HANDLE (A barrinha de puxar visual) */}
+            {/* Bottom Sheet */}
+            <div className={`fixed bottom-0 left-0 right-0 z-[70] bg-[#121212] border-t border-white/10 rounded-t-[40px] px-8 pt-4 pb-10 transition-transform duration-500 ease-out max-w-md mx-auto ${isOpen ? "translate-y-0" : "translate-y-full"}`}>
                 <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8" />
 
                 <div className="flex justify-between items-center mb-8">
-                    <h4 className="text-xl font-bold text-white">Editar Serviço</h4>
+                    <h4 className="text-xl font-bold text-white">
+                        {String(service?.id).length > 15 ? "Editar" : "Novo"} Serviço
+                    </h4>
                     <button
                         onClick={() => onRemove(service?.id)}
                         className="text-[10px] font-black text-red-500 bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20 active:scale-95 transition-all"
@@ -39,6 +34,7 @@ export const ServiceEditForm = ({ service, isOpen, onUpdate, onRemove, onDone }:
                 </div>
 
                 <div className="space-y-6">
+                    {/* Input Nome */}
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-accent uppercase px-1 tracking-widest">Nome do Serviço</label>
                         <input
@@ -49,22 +45,27 @@ export const ServiceEditForm = ({ service, isOpen, onUpdate, onRemove, onDone }:
                             placeholder="Ex: Corte Degradê"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-accent uppercase px-1 tracking-widest">
-                            Preço do Serviço
-                        </label>
-                        <input
-                            type="tel" // Mantém teclado numérico no celular
-                            className="w-full bg-white/5 border border-white/10 p-5 rounded-[24px] text-white outline-none focus:border-accent transition-all text-lg font-medium"
-                            // Aplica a máscara no valor que vem do estado
-                            value={maskMoeda(service?.price || "")}
-                            onChange={(e) => {
-                                // Pega apenas os números digitados
-                                const valorBruto = e.target.value.replace(/\D/g, "");
-                                // Atualiza o estado apenas com os números (ex: "3000" para 30,00)
-                                onUpdate(service.id, 'price', valorBruto);
-                            }}
-                            placeholder="R$ 0,00"
+                    
+                    <div className="grid grid-cols-1 gap-6">
+                        {/* Input Preço */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-accent uppercase px-1 tracking-widest">Preço</label>
+                            <input
+                                type="tel"
+                                className="w-full bg-white/5 border border-white/10 p-5 rounded-[24px] text-white outline-none focus:border-accent transition-all text-lg font-medium"
+                                value={maskMoeda(String(service?.price || ""))}
+                                onChange={(e) => {
+                                    const valorBruto = e.target.value.replace(/\D/g, "");
+                                    onUpdate(service.id, 'price', valorBruto);
+                                }}
+                                placeholder="R$ 0,00"
+                            />
+                        </div>
+
+                        {/* NOVO INPUT DE DURAÇÃO */}
+                        <DurationInput 
+                            value={service?.duration || 30} 
+                            onChange={(newVal) => onUpdate(service.id, 'duration', newVal)} 
                         />
                     </div>
 
@@ -72,7 +73,7 @@ export const ServiceEditForm = ({ service, isOpen, onUpdate, onRemove, onDone }:
                         onClick={onDone}
                         className="w-full bg-white text-black py-5 rounded-[24px] font-black uppercase tracking-[0.2em] mt-4 active:scale-[0.98] transition-all shadow-xl"
                     >
-                        Concluir
+                        Concluir e Salvar
                     </button>
                 </div>
             </div>

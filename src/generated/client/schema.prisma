@@ -18,6 +18,7 @@ model Barbershop {
 
   appointments Appointment[]
   users        User[]
+  services     Service[]
 
   @@map("barbershops")
 }
@@ -39,17 +40,33 @@ model User {
 model Appointment {
   id         Int    @id @default(autoincrement())
   clientName String
-  service    String
-  price      Float
-  date       String // Formato: "YYYY-MM-DD"
-  time       String // Formato: "09:00 - 09:40"
-  status     String @default("CONFIRMED") // Pode ser CONFIRMED, CANCELED, etc.
+  date       String // "YYYY-MM-DD"
+  time       String // "09:00 - 09:40"
+  status     String @default("CONFIRMED")
 
-  createdAt DateTime @default(now())
+  // RELAÇÃO COM SERVIÇO
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
 
-  // Relação com a Barbearia (O coração do SaaS multi-tenant)
   barbershopId String
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+
   @@map("appointments")
+}
+
+model Service {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  duration  Int // Tempo em minutos (ex: 30, 45, 60)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  barbershopId String
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@map("services")
 }

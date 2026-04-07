@@ -4,19 +4,44 @@ import { SettingsHeader } from "./SettingsHeader";
 import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
-import { useCompanySettings } from "@/hooks/useCompanySettings"; // Importe o hook
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useServices } from "@/hooks/useServices"; // <-- 1. Importamos o Hook novo
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
-    // Puxando tudo do nosso Hook
+    // Dados da Empresa
     const { 
         companyData, setCompanyData, 
         isEditingCompany, setIsEditingCompany, 
-        isLoading, isSaving, saveCompanyData 
+        isLoading: isLoadingCompany, isSaving: isSavingCompany, saveCompanyData 
     } = useCompanySettings();
 
-    // Mock temporário dos serviços (depois faremos um Hook igual para eles)
-    const [services, setServices] = useState([{ id: 1, name: "Corte", price: "30,00" }]);
+    // Dados dos Serviços
+    const { 
+        services, 
+        isLoading: isLoadingServices, 
+        saveService, 
+        deleteService 
+    } = useServices();
+
+    // Estado do formulário de edição do serviço
     const [editingService, setEditingService] = useState<any>(null);
+
+    // Funções para lidar com o modal
+    const handleSaveService = async () => {
+        if (!editingService) return;
+        await saveService(editingService);
+        setEditingService(null); // Fecha o modal depois de salvar
+    };
+
+    const handleDeleteService = async (id: any) => {
+        // Se for um ID numérico (temporário, não salvo no banco ainda), só fecha o modal
+        if (typeof id === 'number' || String(id).length < 15) {
+            setEditingService(null);
+            return;
+        }
+        await deleteService(id);
+        setEditingService(null);
+    };
 
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-background max-w-md mx-auto overflow-hidden animate-in fade-in slide-in-from-right duration-300">
@@ -26,40 +51,51 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                 <p className="text-white/40 text-sm font-medium mb-1">Minhas</p>
                 <h2 className="text-4xl font-black text-white mb-10 tracking-tight leading-none">Configurações</h2>
 
-                {isLoading ? (
+                {/* Seção da Empresa */}
+                {isLoadingCompany ? (
                     <div className="animate-pulse bg-white/5 h-40 rounded-[32px] w-full mb-12"></div>
                 ) : (
                     <CompanySection
                         isEditing={isEditingCompany} 
                         data={companyData}
-                        isSaving={isSaving} // Passando estado de salvamento
+                        isSaving={isSavingCompany}
                         onEdit={() => setIsEditingCompany(true)} 
-                        onSave={saveCompanyData} // Chama a função de salvar do Hook
+                        onSave={saveCompanyData}
                         onChange={setCompanyData}
                     />
                 )}
 
-                <ServicesSection
-                    services={services} editingId={editingService?.id}
-                    onAdd={() => {
-                        const ns = { id: Date.now(), name: "", price: "" };
-                        setServices([...services, ns]);
-                        setEditingService(ns);
-                    }}
-                    onSelect={setEditingService}
-                />
+                {/* Seção de Serviços */}
+                {isLoadingServices ? (
+                    <div className="animate-pulse bg-white/5 h-40 rounded-[32px] w-full"></div>
+                ) : (
+                    <ServicesSection
+                        services={services} 
+                        editingId={editingService?.id}
+                        onAdd={() => {
+                            // Cria um item temporário. O ID curto garante que a API vai criar (POST) em vez de editar
+                            setEditingService({ id: Date.now(), name: "", price: "", duration: 30 });
+                        }}
+                        onSelect={(service) => {
+                            // Pulo do gato: Quando editamos, o preço vem como Float do banco (ex: 30.5). 
+                            // Convertemos para string "3050" para a sua máscara de moeda funcionar perfeitamente no input.
+                            const priceFormatted = typeof service.price === 'number' 
+                                ? (service.price * 100).toFixed(0) 
+                                : service.price;
+                                
+                            setEditingService({ ...service, price: priceFormatted });
+                        }}
+                    />
+                )}
             </div>
 
             <ServiceEditForm
                 service={editingService}
                 isOpen={!!editingService}
-                onDone={() => setEditingService(null)}
-                onRemove={(id: number) => {
-                    setServices(services.filter(s => s.id !== id));
-                    setEditingService(null);
-                }}
-                onUpdate={(id: number, f: string, v: string) => {
-                    setServices(services.map(s => s.id === id ? { ...s, [f]: v } : s));
+                onDone={handleSaveService}
+                onRemove={handleDeleteService}
+                onUpdate={(id: any, f: string, v: any) => {
+                    // Atualiza o estado temporário enquanto o usuário digita
                     setEditingService((prev: any) => ({ ...prev, [f]: v }));
                 }}
             />

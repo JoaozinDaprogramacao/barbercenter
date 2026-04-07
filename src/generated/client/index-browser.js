@@ -142,12 +142,21 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.AppointmentScalarFieldEnum = {
   id: 'id',
   clientName: 'clientName',
-  service: 'service',
-  price: 'price',
   date: 'date',
   time: 'time',
   status: 'status',
+  serviceId: 'serviceId',
+  barbershopId: 'barbershopId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  duration: 'duration',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   barbershopId: 'barbershopId'
 };
 
@@ -179,10 +188,16 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AppointmentOrderByRelevanceFieldEnum = {
   clientName: 'clientName',
-  service: 'service',
   date: 'date',
   time: 'time',
   status: 'status',
+  serviceId: 'serviceId',
+  barbershopId: 'barbershopId'
+};
+
+exports.Prisma.ServiceOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
   barbershopId: 'barbershopId'
 };
 
@@ -190,7 +205,8 @@ exports.Prisma.AppointmentOrderByRelevanceFieldEnum = {
 exports.Prisma.ModelName = {
   Barbershop: 'Barbershop',
   User: 'User',
-  Appointment: 'Appointment'
+  Appointment: 'Appointment',
+  Service: 'Service'
 };
 
 /**

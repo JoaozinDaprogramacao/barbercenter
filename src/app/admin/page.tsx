@@ -85,7 +85,8 @@ export default function BarberDashboard() {
     };
 
     return (
-        <main className="h-[100dvh] w-full flex flex-col bg-background max-w-md mx-auto relative overflow-hidden font-sans">
+        // Alterado de h-[100dvh] e overflow-hidden para min-h-screen
+        <main className="min-h-screen w-full flex flex-col bg-background max-w-md mx-auto relative font-sans">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             <DashboardHeader
@@ -96,7 +97,8 @@ export default function BarberDashboard() {
                 onOpenSchedule={() => { }}
             />
 
-            <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+            {/* Removido o overflow-y-auto e no-scrollbar para o scroll ser nativo da página inteira */}
+            <div className="flex-1 pb-24">
                 <WeeklyCalendar
                     days={weekDays}
                     selectedDate={selectedDate.split('-')[2]}

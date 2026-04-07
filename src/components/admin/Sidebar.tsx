@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react"; // <-- Importamos o signOut do NextAuth
+import { signOut, useSession } from "next-auth/react"; // <-- Adicionamos o useSession aqui
 import {
   CalendarDays,
   BarChart3,
@@ -21,6 +21,17 @@ interface SidebarProps {
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const pathname = usePathname();
 
+  // 1. Puxamos a sessão do usuário logado
+  const { data: session, status } = useSession();
+
+  // 2. Formatamos o nome e a função (Role)
+  const userName = status === "loading" ? "..." : session?.user?.name || "Usuário";
+  const userRole = status === "loading"
+    ? "..."
+    : session?.user?.role === "OWNER"
+      ? "Administrador"
+      : "Barbeiro"; // Caso no futuro você adicione funcionários
+
   const menuItems = [
     { name: "Agenda", icon: <CalendarDays size={22} />, href: "/admin" },
     { name: "Faturamento", icon: <BarChart3 size={22} />, href: "/admin/analytics" },
@@ -28,8 +39,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   ];
 
   const handleLogout = async () => {
-    onClose(); // Fecha a sidebar visualmente para não ficar "agarrada"
-    // Executa o logout no NextAuth e manda o usuário de volta para a raiz (login)
+    onClose();
     await signOut({ callbackUrl: "/" });
   };
 
@@ -65,11 +75,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
               <User size={24} />
             </div>
-            <div className="flex-1">
-              <p className="text-white font-bold text-sm">Alan Gonçalves</p>
-              <p className="text-white/30 text-[10px] uppercase font-black tracking-widest">Administrador</p>
+            <div className="flex-1 overflow-hidden">
+              {/* 3. Injetamos o nome dinâmico com truncate para não quebrar o layout se o nome for gigante */}
+              <p className="text-white font-bold text-sm truncate">{userName}</p>
+              {/* 4. Injetamos o cargo dinâmico */}
+              <p className="text-white/30 text-[10px] uppercase font-black tracking-widest">{userRole}</p>
             </div>
-            <ChevronRight size={16} className="text-white/10" />
+            <ChevronRight size={16} className="text-white/10 shrink-0" />
           </div>
         </div>
 

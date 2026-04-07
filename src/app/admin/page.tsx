@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react"; // <-- 1. Importamos o useSession
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
@@ -50,6 +51,14 @@ const MOCK_STATS: Record<string, { todayRevenue: string; todayCount: number }> =
 
 export default function BarberDashboard() {
     const router = useRouter();
+
+    const { data: session, status } = useSession();
+    // 3. Pegamos apenas o primeiro nome (ou mostramos "Barbeiro" enquanto carrega)
+    const firstName = status === "loading"
+        ? "..."
+        : session?.user?.name
+            ? session.user.name.split(' ')[0]
+            : "Barbeiro";
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -85,19 +94,17 @@ export default function BarberDashboard() {
     };
 
     return (
-        // Alterado de h-[100dvh] e overflow-hidden para min-h-screen
         <main className="min-h-screen w-full flex flex-col bg-background max-w-md mx-auto relative font-sans">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             <DashboardHeader
-                userName="Alan"
+                userName={firstName} // <-- 4. Passamos a variável dinâmica aqui!
                 showValues={showValues}
                 onToggleValues={() => setShowValues(!showValues)}
                 onOpenMenu={() => setIsSidebarOpen(true)}
                 onOpenSchedule={() => { }}
             />
 
-            {/* Removido o overflow-y-auto e no-scrollbar para o scroll ser nativo da página inteira */}
             <div className="flex-1 pb-24">
                 <WeeklyCalendar
                     days={weekDays}

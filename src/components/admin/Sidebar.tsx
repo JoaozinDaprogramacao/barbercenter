@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { 
-  CalendarDays, 
-  BarChart3, 
-  Settings, 
-  LogOut, 
-  X, 
-  User, 
-  ChevronRight 
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react"; // <-- Importamos o signOut do NextAuth
+import {
+  CalendarDays,
+  BarChart3,
+  Settings,
+  LogOut,
+  X,
+  User,
+  ChevronRight
 } from "lucide-react";
 
 interface SidebarProps {
@@ -19,7 +20,6 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const pathname = usePathname();
-  const router = useRouter();
 
   const menuItems = [
     { name: "Agenda", icon: <CalendarDays size={22} />, href: "/admin" },
@@ -27,28 +27,25 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { name: "Configurações", icon: <Settings size={22} />, href: "/admin/settings" },
   ];
 
-  const handleLogout = () => {
-    // Aqui você pode limpar cookies ou localStorage se estiver usando
-    // localStorage.removeItem('token');
-    onClose();
-    router.push("/login");
+  const handleLogout = async () => {
+    onClose(); // Fecha a sidebar visualmente para não ficar "agarrada"
+    // Executa o logout no NextAuth e manda o usuário de volta para a raiz (login)
+    await signOut({ callbackUrl: "/" });
   };
 
   return (
     <>
       {/* Overlay (Fundo escuro com blur) */}
-      <div 
+      <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-[99] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-[99] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
       />
 
       {/* Menu Lateral */}
-      <aside className={`fixed top-0 left-0 h-full w-[300px] bg-background border-r border-white/5 z-[100] transition-transform duration-500 ease-in-out flex flex-col ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        
+      <aside className={`fixed top-0 left-0 h-full w-[300px] bg-background border-r border-white/5 z-[100] transition-transform duration-500 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}>
+
         {/* Header da Sidebar */}
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -81,15 +78,14 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link 
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
-                  isActive 
-                  ? 'bg-accent text-white shadow-xl shadow-accent/20 translate-x-2' 
-                  : 'text-white/40 hover:bg-white/5 hover:text-white'
-                }`}
+                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${isActive
+                    ? 'bg-accent text-white shadow-xl shadow-accent/20 translate-x-2'
+                    : 'text-white/40 hover:bg-white/5 hover:text-white'
+                  }`}
               >
                 <span className={`${isActive ? 'text-white' : 'text-accent group-hover:scale-110 transition-transform'}`}>
                   {item.icon}
@@ -102,7 +98,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         {/* Botão de Logout */}
         <div className="p-8 border-t border-white/5">
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center gap-4 px-5 py-4 text-red-500 font-black uppercase tracking-widest text-[11px] hover:bg-red-500/5 rounded-2xl transition-all group"
           >

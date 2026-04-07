@@ -15,10 +15,12 @@ model Barbershop {
   address   String?  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  
+  appointments Appointment[]
   users     User[]
 
   @@map("barbershops")
+  
 }
 
 model User {
@@ -33,4 +35,22 @@ model User {
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
   @@map("users")
+}
+
+model Appointment {
+  id           Int        @id @default(autoincrement())
+  clientName   String
+  service      String
+  price        Float
+  date         String     // Formato: "YYYY-MM-DD"
+  time         String     // Formato: "09:00 - 09:40"
+  status       String     @default("CONFIRMED") // Pode ser CONFIRMED, CANCELED, etc.
+  
+  createdAt    DateTime   @default(now())
+
+  // Relação com a Barbearia (O coração do SaaS multi-tenant)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  @@map("appointments")
 }

@@ -4,16 +4,18 @@ import { SettingsHeader } from "./SettingsHeader";
 import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
+import { useCompanySettings } from "@/hooks/useCompanySettings"; // Importe o hook
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
-    const [isEditingCompany, setIsEditingCompany] = useState(false);
-    const [companyData, setCompanyData] = useState({
-        nome: "InBarber",
-        endereco: "Rua Padre Manuel da Nóbrega, 424 - B4 804",
-        cidade: "Fanny - Curitiba / Paraná",
-        telefone: "+55 (41) 98518-8245",
-    });
-    const [services, setServices] = useState([{ id: 1, name: "Corte", price: "30,00" }, { id: 2, name: "Barba", price: "20,00" }, { id: 3, name: "Corte degrade", price: "30,00" }]);
+    // Puxando tudo do nosso Hook
+    const { 
+        companyData, setCompanyData, 
+        isEditingCompany, setIsEditingCompany, 
+        isLoading, isSaving, saveCompanyData 
+    } = useCompanySettings();
+
+    // Mock temporário dos serviços (depois faremos um Hook igual para eles)
+    const [services, setServices] = useState([{ id: 1, name: "Corte", price: "30,00" }]);
     const [editingService, setEditingService] = useState<any>(null);
 
     return (
@@ -24,11 +26,18 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                 <p className="text-white/40 text-sm font-medium mb-1">Minhas</p>
                 <h2 className="text-4xl font-black text-white mb-10 tracking-tight leading-none">Configurações</h2>
 
-                <CompanySection
-                    isEditing={isEditingCompany} data={companyData}
-                    onEdit={() => setIsEditingCompany(true)} onSave={() => setIsEditingCompany(false)}
-                    onChange={setCompanyData}
-                />
+                {isLoading ? (
+                    <div className="animate-pulse bg-white/5 h-40 rounded-[32px] w-full mb-12"></div>
+                ) : (
+                    <CompanySection
+                        isEditing={isEditingCompany} 
+                        data={companyData}
+                        isSaving={isSaving} // Passando estado de salvamento
+                        onEdit={() => setIsEditingCompany(true)} 
+                        onSave={saveCompanyData} // Chama a função de salvar do Hook
+                        onChange={setCompanyData}
+                    />
+                )}
 
                 <ServicesSection
                     services={services} editingId={editingService?.id}
@@ -41,7 +50,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                 />
             </div>
 
-            {/* O Form agora atua como um Modal/Sheet */}
             <ServiceEditForm
                 service={editingService}
                 isOpen={!!editingService}

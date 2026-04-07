@@ -1,9 +1,10 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 
-const handler = NextAuth({
+// 1. Isolamos as opções e EXPORTAMOS elas
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -16,35 +17,27 @@ const handler = NextAuth({
           throw new Error("E-mail e senha são obrigatórios");
         }
 
-        // 1. Busca o usuário no banco
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
 
-        if (!user) {
-          throw new Error("Usuário não encontrado");
-        }
+        if (!user) throw new Error("Usuário não encontrado");
 
-        // 2. Compara a senha digitada com o Hash do banco
         const isValidPassword = await compare(credentials.password, user.password);
 
-        if (!isValidPassword) {
-          throw new Error("Senha incorreta");
-        }
+        if (!isValidPassword) throw new Error("Senha incorreta");
 
-        // 3. Retorna os dados que vão ficar na sessão (O PULO DO GATO ESTÁ AQUI)
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
-          barbershopId: user.barbershopId, // Essencial para o SaaS
+          barbershopId: user.barbershopId,
         };
       }
     })
   ],
   callbacks: {
-    // Transfere os dados do usuário para o Token (Crachá virtual)
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -53,7 +46,6 @@ const handler = NextAuth({
       }
       return token;
     },
-    // Transfere os dados do Token para a Sessão (O que o seu frontend consegue ler)
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
@@ -64,12 +56,15 @@ const handler = NextAuth({
     }
   },
   pages: {
-    signIn: '/', // Diz pro NextAuth que sua página de login customizada é a home
+    signIn: '/', 
   },
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// 2. Passamos as opções para o NextAuth
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

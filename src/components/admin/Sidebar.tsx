@@ -10,7 +10,8 @@ import {
   LogOut,
   X,
   User,
-  ChevronRight
+  ChevronRight,
+  Share2
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,6 +37,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { name: "Agenda", icon: <CalendarDays size={22} />, href: "/admin" },
     { name: "Faturamento", icon: <BarChart3 size={22} />, href: "/admin/analytics" },
     { name: "Configurações", icon: <Settings size={22} />, href: "/admin/settings" },
+    { name: "Compartilhar", icon: <Share2 size={22} />, href: "/admin/share" },
   ];
 
   const handleLogout = async () => {
@@ -95,8 +97,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 href={item.href}
                 onClick={onClose}
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${isActive
-                    ? 'bg-accent text-white shadow-xl shadow-accent/20 translate-x-2'
-                    : 'text-white/40 hover:bg-white/5 hover:text-white'
+                  ? 'bg-accent text-white shadow-xl shadow-accent/20 translate-x-2'
+                  : 'text-white/40 hover:bg-white/5 hover:text-white'
                   }`}
               >
                 <span className={`${isActive ? 'text-white' : 'text-accent group-hover:scale-110 transition-transform'}`}>

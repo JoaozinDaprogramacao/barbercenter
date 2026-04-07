@@ -1,28 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+// Importe o Hook que acabamos de criar (Ajuste o caminho se a sua pasta hooks estiver em outro lugar)
+import { useLogin } from "@/hooks/useLogin"; 
 
 export default function LoginPage() {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        // Simulação de login
-        setTimeout(() => {
-            setIsLoading(false);
-            router.push("/admin");
-        }, 1500);
-    };
+    // Trazendo toda a lógica e estados de dentro do nosso hook
+    const {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        isLoading,
+        errorMsg,
+        handleLogin
+    } = useLogin();
 
     return (
-        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-background px-6 font-sans">
+        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-background px-6 font-sans relative">
             {/* Background Decorativo (Opcional) */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-accent/5 blur-[120px] rounded-full" />
@@ -43,6 +37,14 @@ export default function LoginPage() {
 
                 {/* Formulário */}
                 <form onSubmit={handleLogin} className="space-y-4">
+                    
+                    {/* Alerta de Erro - Só aparece se errorMsg tiver algum texto */}
+                    {errorMsg && (
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-4 rounded-2xl text-center font-medium animate-in fade-in zoom-in duration-300">
+                            {errorMsg}
+                        </div>
+                    )}
+
                     <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-widest text-accent ml-4">E-mail</label>
                         <input
@@ -76,7 +78,7 @@ export default function LoginPage() {
                         className="w-full h-14 mt-6 bg-accent hover:bg-accent/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_10px_30px_rgba(178,123,92,0.3)] active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center"
                     >
                         {isLoading ? (
-                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-6 h-6 border-2 border-white/30 border-t-transparent rounded-full animate-spin" />
                         ) : (
                             "Entrar no Sistema"
                         )}

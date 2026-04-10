@@ -232,47 +232,69 @@ export default function AppointmentDetailPage() {
                     Cancelar Agendamento
                 </button>
             </div>
-
-            <AppointmentActionSheet isOpen={!!activeSheet} onClose={closeSheet}>
-                {activeSheet === "date" && (
-                    <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-white">Alterar Horário</h3>
-
-                        <div className="space-y-6">
-                            <DateSelector
-                                value={tempDate}
-                                onChange={(date) => {
-                                    setTempDate(date);
-                                    setTempTime(""); // Reseta a hora ao mudar o dia
-                                }}
-                            />
-
-                            {tempDate && (
-                                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Horários Disponíveis</p>
-                                    <TimeGrid
-                                        value={tempTime}
-                                        availableTimes={getAvailableTimesForDate(tempDate)}
-                                        onChange={(time) => setTempTime(time)}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
+            <AppointmentActionSheet
+                isOpen={!!activeSheet}
+                onClose={closeSheet}
+                footer={
+                    activeSheet === "date" && (
                         <button
                             disabled={!tempDate || !tempTime || isUpdating}
                             onClick={handleUpdateDateTime}
-                            className={`w-full py-4 rounded-2xl font-black text-black uppercase tracking-widest transition-all
-                                ${(!tempDate || !tempTime || isUpdating) ? 'bg-zinc-800 text-zinc-600' : 'bg-accent active:scale-95'}`}
+                            className={`w-full py-5 rounded-[24px] font-black uppercase tracking-[0.2em] text-[10px] transition-all
+                    ${(!tempDate || !tempTime || isUpdating)
+                                    ? 'bg-white/5 text-white/10 border border-white/5'
+                                    : 'bg-accent text-black active:scale-95 shadow-lg shadow-accent/10'}`}
                         >
-                            {isUpdating ? "SALVANDO..." : "SALVAR NOVO HORÁRIO"}
+                            {isUpdating ? "Salvando..." : "Confirmar Alteração"}
                         </button>
+                    )
+                }
+            >
+                {activeSheet === "date" && (
+                    <div className="flex flex-col gap-y-6">
+                        {/* Título Fixo dentro do scroll-container para contexto */}
+                        <div className="space-y-1">
+                            <h3 className="text-2xl font-black text-white tracking-tight leading-none">
+                                Alterar Horário
+                            </h3>
+                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">
+                                Selecione data e hora
+                            </p>
+                        </div>
+
+                        {/* Seleção de Data */}
+                        <DateSelector
+                            value={tempDate}
+                            onChange={(date) => {
+                                setTempDate(date);
+                                setTempTime("");
+                            }}
+                        />
+
+                        {/* Seleção de Horário */}
+                        {tempDate && (
+                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-[1px] flex-1 bg-white/5" />
+                                    <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
+                                        Disponíveis
+                                    </span>
+                                    <div className="h-[1px] flex-1 bg-white/5" />
+                                </div>
+
+                                <TimeGrid
+                                    value={tempTime}
+                                    availableTimes={getAvailableTimesForDate(tempDate)}
+                                    onChange={(time) => setTempTime(time)}
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {activeSheet === "services" && (
                     <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-white">Editar Serviços</h3>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Editar Serviços</h3>
                         <div className="space-y-3">
                             {["Corte", "Barba", "Sobrancelha"].map(s => (
                                 <div key={s} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -285,24 +307,24 @@ export default function AppointmentDetailPage() {
                                 </div>
                             ))}
                         </div>
-                        <button onClick={closeSheet} className="w-full py-4 bg-accent rounded-2xl font-black text-black uppercase tracking-widest active:scale-95 transition-all">
+                        <button onClick={closeSheet} className="w-full py-4 bg-accent rounded-2xl font-black text-black uppercase tracking-widest active:scale-95 transition-all text-[10px]">
                             ATUALIZAR SERVIÇOS
                         </button>
                     </div>
                 )}
 
                 {activeSheet === "cancel" && (
-                    <div className="space-y-6 text-center">
+                    <div className="space-y-6 text-center py-4">
                         <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto text-2xl">⚠️</div>
                         <div className="space-y-2">
                             <h3 className="text-2xl font-black text-white leading-tight">Deseja realmente cancelar?</h3>
                             <p className="text-white/40 text-sm">O cliente receberá uma notificação automática.</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-xs active:scale-95 transition-all">
+                            <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">
                                 MANTER
                             </button>
-                            <button onClick={handleConfirmCancel} className="py-4 bg-red-500 rounded-2xl text-white font-black uppercase tracking-widest text-xs active:scale-95 transition-all">
+                            <button onClick={handleConfirmCancel} className="py-4 bg-red-500 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">
                                 CONFIRMAR
                             </button>
                         </div>

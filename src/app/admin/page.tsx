@@ -27,10 +27,16 @@ const generateWeekDays = (startDate: Date) => {
     for (let i = 0; i < 7; i++) {
         const d = new Date(startDate);
         d.setDate(startDate.getDate() + i);
+
+        // Gera o formato "10-abr" para bater com o seu JSON
+        const dayNum = d.getDate().toString().padStart(2, '0');
+        const monthShort = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+        const backendKey = `${dayNum}-${monthShort}`;
+
         days.push({
             day: d.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().replace('.', ''),
-            date: d.getDate().toString().padStart(2, '0'),
-            fullDate: d.toISOString().split('T')[0]
+            date: dayNum,
+            fullDate: backendKey // Agora a chave é "10-abr"
         });
     }
     return days;
@@ -52,7 +58,13 @@ export default function BarberDashboard() {
     const [showValues, setShowValues] = useState(true);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    // No lugar de .toISOString().split('T')[0]
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const d = new Date();
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+        return `${day}-${month}`;
+    });
 
     const weekDays = generateWeekDays(currentWeekStart);
 

@@ -134,11 +134,8 @@ export default function BarberDashboard() {
             <div className="flex-1 pb-24">
                 <WeeklyCalendar
                     days={weekDays}
-                    selectedDate={selectedDate.split('-')[2]}
-                    onSelectDate={(day) => {
-                        const full = weekDays.find(d => d.date === day)?.fullDate;
-                        if (full) setSelectedDate(full);
-                    }}
+                    selectedDate={selectedDate} 
+                    onSelectDate={(fullDate) => setSelectedDate(fullDate)}
                     onNextWeek={nextWeek}
                     onPrevWeek={prevWeek}
                     rangeText={weekRangeText}

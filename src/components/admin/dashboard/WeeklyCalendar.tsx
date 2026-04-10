@@ -9,10 +9,10 @@ interface DayItem {
 interface WeeklyCalendarProps {
     days: DayItem[];
     selectedDate: string;
-    onSelectDate: (day: string) => void;
+    onSelectDate: (fullDate: string) => void;
     onNextWeek: () => void;
     onPrevWeek: () => void;
-    onOpenPicker: () => void; // Garanta que esta prop existe
+    onOpenPicker: () => void;
     rangeText: string;
     agendaData: Record<string, any[]>;
 }
@@ -27,12 +27,21 @@ export const WeeklyCalendar = ({
     rangeText,
     agendaData,
 }: WeeklyCalendarProps) => {
+
+    // Identifica o dia de hoje no formato "10-abr"
+    const todayFullDate = (() => {
+        const d = new Date();
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+        return `${day}-${month}`;
+    })();
+
     return (
-        <div className="px-6 space-y-5 mb-8"> {/* Aumentado espaçamento inferior */}
+        <div className="px-6 space-y-5 mb-8">
             <div className="flex items-center justify-between">
                 <button
                     onClick={onOpenPicker}
-                    className="flex items-center gap-3 text-white font-bold text-sm tracking-tight active:scale-95 transition-all group" // Aumentado texto e gap
+                    className="flex items-center gap-3 text-white font-bold text-sm tracking-tight active:scale-95 transition-all group"
                 >
                     <div className="p-2 bg-surface rounded-lg border border-white/5 group-hover:border-accent/30 transition-colors">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
@@ -44,19 +53,12 @@ export const WeeklyCalendar = ({
                 </button>
 
                 <div className="flex gap-3">
-                    <button
-                        onClick={onPrevWeek}
-                        className="w-10 h-10 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/60 hover:text-white active:scale-90 transition-all" // Botão maior (w-10)
-                    >
+                    <button onClick={onPrevWeek} className="w-10 h-10 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/60 hover:text-white active:scale-90 transition-all">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="m15 18-6-6 6-6" />
                         </svg>
                     </button>
-
-                    <button
-                        onClick={onNextWeek}
-                        className="w-10 h-10 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/60 hover:text-white active:scale-90 transition-all"
-                    >
+                    <button onClick={onNextWeek} className="w-10 h-10 rounded-xl bg-surface border border-white/5 flex items-center justify-center text-white/60 hover:text-white active:scale-90 transition-all">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="m9 18 6-6-6-6" />
                         </svg>
@@ -66,28 +68,38 @@ export const WeeklyCalendar = ({
 
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x">
                 {days.map((d) => {
-                    const isSelected = selectedDate === d.date;
+                    const isSelected = selectedDate === d.fullDate;
+                    const isToday = todayFullDate === d.fullDate;
                     const hasAppointments = !!agendaData[d.fullDate];
 
                     return (
                         <button
                             key={d.fullDate}
-                            onClick={() => onSelectDate(d.date)}
-                            className={`snap-center flex-none w-[70px] h-[95px] rounded-[22px] flex flex-col items-center justify-center gap-2 transition-all active:scale-95 border
+                            onClick={() => onSelectDate(d.fullDate)}
+                            className={`snap-center flex-none w-[70px] h-[95px] rounded-[22px] flex flex-col items-center justify-center gap-1 transition-all active:scale-95 border-2
                                 ${isSelected
                                     ? 'bg-accent border-accent text-white shadow-[0_10px_25px_rgba(178,123,92,0.4)]'
-                                    : 'bg-surface border-white/5 text-white/40 hover:bg-surface-light'
+                                    : isToday
+                                        ? 'bg-surface border-accent/40 text-white hover:border-accent'
+                                        : 'bg-surface border-white/5 text-white/40 hover:bg-white/5 hover:border-white/10'
                                 }`}
                         >
-                            <span className={`text-[11px] font-black tracking-[0.1em] uppercase ${isSelected ? 'text-white/80' : 'text-white/30'}`}>
+                            <span className={`text-[10px] font-black tracking-[0.1em] uppercase 
+                                ${isSelected ? 'text-white/80' : isToday ? 'text-accent' : 'text-white/30'}`}>
                                 {d.day}
                             </span>
-                            <span className="text-2xl font-black text-white"> {/* Data maior */}
+
+                            <span className={`text-2xl font-black ${isSelected || isToday ? 'text-white' : 'text-white/60'}`}>
                                 {d.date}
                             </span>
 
+                            {/* Indicador de Hoje (Pequena linha ou ponto) */}
+                            {isToday && !isSelected && (
+                                <span className="text-[9px] font-bold text-accent uppercase -mt-1">Hoje</span>
+                            )}
+
                             {hasAppointments && (
-                                <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-white' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]'}`} />
+                                <div className={`w-1.5 h-1.5 rounded-full mt-1 ${isSelected ? 'bg-white' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]'}`} />
                             )}
                         </button>
                     );

@@ -9,11 +9,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const barbershop = await prisma.barbershop.findUnique({
             where: { id: barbershopId },
-            select: { 
+            select: {
                 name: true,
-                services: { 
+                businessHours: true, // <--- AQUI ESTÁ A SOLUÇÃO!
+                services: {
                     select: { id: true, name: true, price: true, duration: true }
-                } 
+                }
             }
         });
 

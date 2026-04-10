@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "next/navigation"; // <-- IMPORTANTE: Pega o ID da URL
+import { useParams } from "next/navigation";
 import { ChatBubble } from "@/components/ChatBubble";
 import { DateSelector } from "@/components/DateSelector";
 import { TimeGrid } from "@/components/TimeGrid";
@@ -9,7 +9,7 @@ import { ServiceSelector } from "@/components/ServiceSelector";
 
 export default function BarberChat() {
   const params = useParams();
-  const barbershopId = params.barbershopId as string; // Pega o ID do link
+  const barbershopId = params.barbershopId as string;
 
   // Estados dos dados dinâmicos
   const [shopName, setShopName] = useState("Carregando...");
@@ -19,8 +19,8 @@ export default function BarberChat() {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({
     name: "",
-    serviceId: "", // Mudamos para salvar o ID em vez do nome do serviço
-    serviceName: "", // Guardamos o nome só para exibir no chat
+    serviceId: "",
+    serviceName: "",
     date: "",
     time: "",
   });
@@ -28,22 +28,23 @@ export default function BarberChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const actionLockRef = useRef(false);
+  const [businessHours, setBusinessHours] = useState<any>(null);
 
   // 1. BUSCA OS DADOS DA BARBEARIA ASSIM QUE ABRE O LINK
   useEffect(() => {
     if (!barbershopId) return;
-    
+
     fetch(`/api/public/barbershop/${barbershopId}`)
       .then(res => res.json())
       .then(data => {
         if (data.name) {
           setShopName(data.name);
           setAvailableServices(data.services || []);
+          // Armazena as configurações de horário da barbearia
+          setBusinessHours(data.businessHours);
         }
       });
   }, [barbershopId]);
-
-  // ... (mantenha suas funções handleGoBack, useEffect de scroll, handleNextClick, etc)
 
   const goToNextStepWithName = useCallback(() => {
     if (actionLockRef.current) return;
@@ -104,6 +105,74 @@ export default function BarberChat() {
     }
   };
 
+  const generateSlots = (start: string, end: string) => {
+    const slots = [];
+    let [startHour, startMinute] = start.split(":").map(Number);
+    const [endHour, endMinute] = end.split(":").map(Number);
+
+    const currentTime = new Date();
+    currentTime.setHours(startHour, startMinute, 0, 0);
+
+    const endTime = new Date();
+    endTime.setHours(endHour, endMinute, 0, 0);
+
+    while (currentTime < endTime) {
+      const hour = currentTime.getHours().toString().padStart(2, "0");
+      const minute = currentTime.getMinutes().toString().padStart(2, "0");
+      slots.push(`${hour}:${minute}`);
+
+      // Adiciona 30 minutos por slot - ajuste conforme necessário
+      currentTime.setMinutes(currentTime.getMinutes() + 30);
+    }
+
+    return slots;
+  };
+
+  const getAvailableTimesForDate = (selectedDate: string) => {
+    if (!businessHours || !selectedDate) return [];
+
+    const monthMap: Record<string, number> = {
+      "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5,
+      "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11
+    };
+
+    const parts = selectedDate.split("-");
+    if (parts.length !== 2) return [];
+
+    const day = parseInt(parts[0], 10);
+    const monthStr = parts[1].toLowerCase();
+    const monthIndex = monthMap[monthStr];
+    const currentYear = new Date().getFullYear();
+
+    const dateObj = new Date(currentYear, monthIndex, day);
+    const dayOfWeek = dateObj.getDay();
+
+    const dayConfig = businessHours[dayOfWeek];
+
+    // 👇 AQUI ESTAVA O ERRO: Trocamos start/end por openTime/closeTime
+    if (!dayConfig || !dayConfig.isOpen || !dayConfig.openTime || !dayConfig.closeTime) {
+      return [];
+    }
+
+    // 👇 AQUI TAMBÉM
+    let slots = generateSlots(dayConfig.openTime, dayConfig.closeTime);
+
+    const today = new Date();
+    if (
+      today.getDate() === day &&
+      today.getMonth() === monthIndex &&
+      today.getFullYear() === currentYear
+    ) {
+      const nowTime = today.getHours() * 60 + today.getMinutes();
+      slots = slots.filter(slot => {
+        const [h, m] = slot.split(':').map(Number);
+        return (h * 60 + m) > nowTime + 30;
+      });
+    }
+
+    return slots;
+  };
+
   return (
     <main className="absolute inset-0 flex flex-col bg-[#050505] max-w-2xl mx-auto overflow-hidden">
       <header className="p-4 border-b border-white/5 bg-[#0A0A0A] flex items-center gap-3 shrink-0 z-20">
@@ -119,10 +188,10 @@ export default function BarberChat() {
           <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-0.5 leading-none">Agendamento Rápido</p>
         </div>
       </header>
-      
+
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar flex flex-col z-10">
         <div className="mt-auto space-y-6 pb-2">
-          
+
           <ChatBubble isAi isBig text={`Olá! Bem-vindo(a) à ${shopName}. Qual o seu nome?`} />
 
           {step >= 2 && (
@@ -149,6 +218,7 @@ export default function BarberChat() {
                     <ChatBubble isAi isBig text={`Perfeito! Quais destes horários para ${userData.date.replace('-', ' de ')}?`} />
                     <TimeGrid
                       value={userData.time}
+                      availableTimes={getAvailableTimesForDate(userData.date)} // Função que filtra o businessHours
                       onChange={(time) => setUserData(prev => ({ ...prev, time }))}
                     />
                   </div>
@@ -205,7 +275,7 @@ export default function BarberChat() {
             {step === 2 && (
               <ServiceSelector
                 // PASSA A LISTA DE SERVIÇOS DO BANCO AQUI:
-                services={availableServices} 
+                services={availableServices}
                 onSelect={(serviceId, serviceName) => {
                   setUserData((prev) => ({ ...prev, serviceId, serviceName }));
                   setStep(3);

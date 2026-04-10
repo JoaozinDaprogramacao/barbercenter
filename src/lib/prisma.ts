@@ -2,6 +2,11 @@ import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "@/generated/client";
 
+// Tipagem para o objeto global
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
 const prismaClientSingleton = () => {
   const host = process.env.DB_HOST;
   const port = Number(process.env.DB_PORT ?? 3306);
@@ -15,7 +20,10 @@ const prismaClientSingleton = () => {
     user: user!,
     password: password!,
     database: database!,
-    connectionLimit: 5,
+    // Aumentamos o limite para evitar o timeout que você recebeu
+    connectionLimit: 15,
+    // Opcional: tempo de espera para pegar uma conexão do pool (em ms)
+    connectTimeout: 10000,
   });
 
   return new PrismaClient({
@@ -24,15 +32,10 @@ const prismaClientSingleton = () => {
   });
 };
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: ReturnType<typeof prismaClientSingleton> | undefined;
-}
-
-const prisma = globalThis.prisma ?? prismaClientSingleton();
-
-if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = prisma;
-}
+// Se já existir no global, usa o existente. Se não, cria um novo.
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export default prisma;
+
+// Em desenvolvimento, salva no global para o Hot Reload não criar novas instâncias
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

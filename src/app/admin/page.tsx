@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react"; // Adicionei useMemo para performance
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react"; // <-- 1. Importamos o useSession
+import { useSession } from "next-auth/react";
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
@@ -12,6 +12,7 @@ import { Sidebar } from "@/components/admin/Sidebar";
 
 import { useAgenda } from "@/hooks/useAgenda";
 
+// --- HELPERS ---
 const getStartOfWeek = (date: Date) => {
     const day = date.getDay();
     const diff = date.getDate() - day + (day === 0 ? -6 : 1);
@@ -35,38 +36,57 @@ const generateWeekDays = (startDate: Date) => {
     return days;
 };
 
-const MOCK_STATS: Record<string, { todayRevenue: string; todayCount: number }> = {
-    "2026-04-13": { todayRevenue: "R$ 70,00", todayCount: 1 },
-    "2026-04-14": { todayRevenue: "R$ 94,90", todayCount: 3 },
-    "2026-04-15": { todayRevenue: "R$ 35,00", todayCount: 1 },
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    }).format(value);
 };
 
 export default function BarberDashboard() {
     const router = useRouter();
-
     const { data: session, status } = useSession();
-
     const { agendaData, isLoadingAgenda } = useAgenda();
 
-    // 3. Pegamos apenas o primeiro nome (ou mostramos "Barbeiro" enquanto carrega)
-    const firstName = status === "loading"
-        ? "..."
-        : session?.user?.name
-            ? session.user.name.split(' ')[0]
-            : "Barbeiro";
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
     const weekDays = generateWeekDays(currentWeekStart);
 
-    const weekRangeText = `${weekDays[0].date} ${currentWeekStart.toLocaleDateString('pt-BR', { month: 'short' })} à ${weekDays[6].date} ${new Date(weekDays[6].fullDate + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short' })}`;
+    // --- LÓGICA DE CÁLCULO DINÂMICO ---
 
+    // 1. Dados do Dia Selecionado
     const todaysAppointments = agendaData[selectedDate] || [];
-    const currentDayStats = MOCK_STATS[selectedDate] || { todayRevenue: "R$ 0,00", todayCount: 0 };
+    const todayCount = todaysAppointments.length;
+    const todayRevenue = useMemo(() => {
+        const total = todaysAppointments.reduce((acc, appt) => acc + (appt.price || 0), 0);
+        return formatCurrency(total);
+    }, [todaysAppointments]);
+
+    // 2. Dados da Semana (Soma todos os dias que aparecem no calendário atual)
+    const weekStats = useMemo(() => {
+        let totalRevenue = 0;
+        let totalCount = 0;
+
+        weekDays.forEach(day => {
+            const dayAppointments = agendaData[day.fullDate] || [];
+            totalCount += dayAppointments.length;
+            totalRevenue += dayAppointments.reduce((acc, appt) => acc + (appt.price || 0), 0);
+        });
+
+        return {
+            revenue: formatCurrency(totalRevenue),
+            count: totalCount
+        };
+    }, [agendaData, weekDays]);
+
+    // --- HANDLERS ---
+    const firstName = status === "loading" ? "..." : session?.user?.name?.split(' ')[0] || "Barbeiro";
+
+    const weekRangeText = `${weekDays[0].date} ${currentWeekStart.toLocaleDateString('pt-BR', { month: 'short' })} à ${weekDays[6].date} ${new Date(weekDays[6].fullDate + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short' })}`;
 
     const nextWeek = () => {
         const next = new Date(currentWeekStart);
@@ -83,8 +103,7 @@ export default function BarberDashboard() {
     const handleJumpToDate = (dateString: string) => {
         if (!dateString) return;
         const chosenDate = new Date(dateString + 'T12:00:00');
-        const newWeekStart = getStartOfWeek(chosenDate);
-        setCurrentWeekStart(newWeekStart);
+        setCurrentWeekStart(getStartOfWeek(chosenDate));
         setSelectedDate(dateString);
     };
 
@@ -93,7 +112,7 @@ export default function BarberDashboard() {
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             <DashboardHeader
-                userName={firstName} // <-- 4. Passamos a variável dinâmica aqui!
+                userName={firstName}
                 showValues={showValues}
                 onToggleValues={() => setShowValues(!showValues)}
                 onOpenMenu={() => setIsSidebarOpen(true)}
@@ -124,32 +143,29 @@ export default function BarberDashboard() {
 
                 <SummaryCards
                     showValues={showValues}
-                    todayRevenue={currentDayStats.todayRevenue}
-                    todayCount={currentDayStats.todayCount}
-                    weekRevenue="R$ 4.304,90"
-                    weekCount={34}
+                    todayRevenue={todayRevenue}
+                    todayCount={todayCount}
+                    weekRevenue={weekStats.revenue}
+                    weekCount={weekStats.count}
                 />
 
                 <div className="px-6 space-y-4">
                     {isLoadingAgenda ? (
-                        // Mostra um loading enquanto busca no banco
                         <div className="flex justify-center py-10">
                             <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
                         </div>
                     ) : todaysAppointments.length > 0 ? (
-                        // Mostra os cards se tiver agendamento
                         todaysAppointments.map((appt) => (
                             <AppointmentCard
                                 key={appt.id}
                                 time={appt.time}
                                 name={appt.name}
                                 service={appt.service}
-                                price={`R$ ${appt.price.toFixed(2).replace('.', ',')}`} // Tirei o showValues daqui só pra simplificar a lógica
+                                price={formatCurrency(appt.price)}
                                 onClick={() => router.push(`/admin/appointment/${appt.id}`)}
                             />
                         ))
                     ) : (
-                        // Mostra a mensagem vazia só se tiver certeza que não tem nada
                         <div className="text-center py-10 text-text-secondary border border-white/5 rounded-3xl border-dashed">
                             Nenhum agendamento para este dia.
                         </div>

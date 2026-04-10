@@ -24,41 +24,35 @@ export default function AppointmentDetailPage() {
     // Estados para dados reais da API
     const [appointment, setAppointment] = useState<any>(null);
     const [businessHours, setBusinessHours] = useState<any>(null);
+    const [availableServices, setAvailableServices] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Estados temporários para edição de Data e Hora
+    // Estados temporários para edição
     const [tempDate, setTempDate] = useState("");
     const [tempTime, setTempTime] = useState("");
+    const [tempServiceId, setTempServiceId] = useState("");
 
-    // 1. Busca os detalhes do agendamento e os horários da barbearia
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                // 1. Busca primeiro o agendamento
                 const res = await fetch(`/api/appointments/${params.id}`);
                 if (!res.ok) throw new Error("Agendamento não encontrado");
                 const data = await res.json();
 
-                // Define o agendamento no estado
                 setAppointment(data);
                 setTempDate(data.dateLabel || data.date);
                 setTempTime(data.time);
+                setTempServiceId(data.serviceId);
 
-                // 2. SÓ BUSCA A BARBEARIA SE O ID EXISTIR
                 if (data?.barbershopId) {
                     const shopRes = await fetch(`/api/public/barbershop/${data.barbershopId}`);
                     if (shopRes.ok) {
                         const shopData = await shopRes.json();
                         setBusinessHours(shopData.businessHours);
-                        console.log("✅ BusinessHours carregado com sucesso!");
-                    } else {
-                        console.error("❌ Erro ao buscar dados da barbearia");
+                        setAvailableServices(shopData.services || []);
                     }
-                } else {
-                    console.error("❌ O agendamento veio sem barbershopId");
                 }
-
             } catch (e) {
                 console.error("❌ Erro no fetchData:", e);
             } finally {
@@ -66,12 +60,9 @@ export default function AppointmentDetailPage() {
             }
         };
 
-        if (params.id) {
-            fetchData();
-        }
+        if (params.id) fetchData();
     }, [params.id]);
 
-    // 2. Lógica de Geração e Filtro de Horários (A mesma do Chat)
     const generateSlots = (start: string, end: string) => {
         const slots = [];
         let [startHour, startMinute] = start.split(":").map(Number);
@@ -91,60 +82,35 @@ export default function AppointmentDetailPage() {
     };
 
     const getAvailableTimesForDate = (selectedDate: string) => {
-        // MONITOR 1: O objeto de horários existe?
-        console.log("🛠️ DEBUG [1] - BusinessHours disponível?", !!businessHours);
         if (!businessHours || !selectedDate) return [];
-
         const monthMap: Record<string, number> = {
             "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5,
             "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11
         };
-
         const parts = selectedDate.split("-");
         const day = parseInt(parts[0], 10);
-        const monthStr = parts[1].toLowerCase();
-        const monthIndex = monthMap[monthStr];
+        const monthIndex = monthMap[parts[1].toLowerCase()];
         const currentYear = new Date().getFullYear();
-
-        const selectedDateObj = new Date(currentYear, monthIndex, day);
-        const dayOfWeek = selectedDateObj.getDay();
-
-        // MONITOR 2: Qual dia da semana o sistema detectou?
-        console.log(`🛠️ DEBUG [2] - Dia da semana detectado para ${selectedDate}:`, dayOfWeek, "(0=Dom, 5=Sex, 6=Sáb)");
-
+        const dayOfWeek = new Date(currentYear, monthIndex, day).getDay();
         const dayConfig = businessHours[dayOfWeek];
 
-        // MONITOR 3: A configuração desse dia no banco está aberta?
-        console.log("🛠️ DEBUG [3] - Configuração do banco para esse dia:", dayConfig);
-
-        if (!dayConfig || !dayConfig.isOpen || !dayConfig.openTime || !dayConfig.closeTime) {
-            console.warn("⚠️ AVISO: Barbearia fechada ou sem horas no banco para este dia.");
-            return [];
-        }
+        if (!dayConfig || !dayConfig.isOpen || !dayConfig.openTime || !dayConfig.closeTime) return [];
 
         let slots = generateSlots(dayConfig.openTime, dayConfig.closeTime);
-
-        // MONITOR 4: Filtro de horários passados (caso seja hoje)
         const now = new Date();
         const todayCompare = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
         const selectedCompare = new Date(currentYear, monthIndex, day).getTime();
 
         if (todayCompare === selectedCompare) {
             const nowTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-            console.log("🛠️ DEBUG [4] - É HOJE. Minutos atuais:", nowTimeInMinutes);
-
             slots = slots.filter(slot => {
                 const [h, m] = slot.split(':').map(Number);
-                const slotMinutes = h * 60 + m;
-                return slotMinutes > nowTimeInMinutes + 30;
+                return (h * 60 + m) > nowTimeInMinutes + 30;
             });
         }
-
-        console.log("🛠️ DEBUG [5] - Slots finais gerados:", slots);
         return slots;
     };
 
-    // 3. Ação de Salvar Data/Hora
     const handleUpdateDateTime = async () => {
         setIsUpdating(true);
         try {
@@ -153,14 +119,37 @@ export default function AppointmentDetailPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ date: tempDate, time: tempTime })
             });
-
             if (res.ok) {
-                // Atualiza o estado local para refletir na tela imediatamente
                 setAppointment((prev: any) => ({ ...prev, date: tempDate, dateLabel: tempDate, time: tempTime }));
                 setActiveSheet(null);
             }
         } catch (error) {
             alert("Erro ao atualizar.");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleUpdateService = async () => {
+        setIsUpdating(true);
+        try {
+            const res = await fetch(`/api/appointments/${params.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ serviceId: tempServiceId })
+            });
+            if (res.ok) {
+                const newService = availableServices.find(s => s.id === tempServiceId);
+                setAppointment((prev: any) => ({
+                    ...prev,
+                    serviceId: tempServiceId,
+                    service: newService?.name,
+                    price: newService?.price
+                }));
+                setActiveSheet(null);
+            }
+        } catch (error) {
+            alert("Erro ao atualizar serviço.");
         } finally {
             setIsUpdating(false);
         }
@@ -175,23 +164,18 @@ export default function AppointmentDetailPage() {
 
     const closeSheet = () => !isUpdating && setActiveSheet(null);
 
-    if (isLoading) {
-        return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
-            </div>
-        );
-    }
+    if (isLoading) return (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
+        </div>
+    );
 
     if (!appointment) return null;
 
     const formattedData = {
         date: appointment.dateLabel || appointment.date,
         time: appointment.time,
-        client: {
-            name: appointment.name || "Cliente",
-            phone: appointment.phone || ""
-        },
+        client: { name: appointment.name || "Cliente", phone: appointment.phone || "" },
         services: appointment.services || [{ id: 1, name: appointment.service }],
         total: appointment.price || 0,
         paymentMethod: appointment.paymentMethod || "Presencial"
@@ -199,7 +183,6 @@ export default function AppointmentDetailPage() {
 
     return (
         <main className="min-h-screen w-full bg-background max-w-md mx-auto flex flex-col font-sans relative">
-
             <AppointmentHeader
                 onBack={() => router.back()}
                 onSendReminder={() => {
@@ -225,25 +208,21 @@ export default function AppointmentDetailPage() {
                     }}
                 />
 
-                <button
-                    onClick={() => setActiveSheet("cancel")}
-                    className="w-full py-5 rounded-[24px] border border-red-500/20 text-red-500/40 font-black uppercase tracking-[0.2em] text-[10px] active:bg-red-500 active:text-white transition-all hover:border-red-500/40"
-                >
+                <button onClick={() => setActiveSheet("cancel")} className="w-full py-5 rounded-[24px] border border-red-500/20 text-red-500/40 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:border-red-500/40">
                     Cancelar Agendamento
                 </button>
             </div>
+
             <AppointmentActionSheet
                 isOpen={!!activeSheet}
                 onClose={closeSheet}
                 footer={
-                    activeSheet === "date" && (
+                    (activeSheet === "date" || activeSheet === "services") && (
                         <button
-                            disabled={!tempDate || !tempTime || isUpdating}
-                            onClick={handleUpdateDateTime}
+                            disabled={isUpdating || (activeSheet === "date" && (!tempDate || !tempTime))}
+                            onClick={activeSheet === "date" ? handleUpdateDateTime : handleUpdateService}
                             className={`w-full py-5 rounded-[24px] font-black uppercase tracking-[0.2em] text-[10px] transition-all
-                    ${(!tempDate || !tempTime || isUpdating)
-                                    ? 'bg-white/5 text-white/10 border border-white/5'
-                                    : 'bg-accent text-black active:scale-95 shadow-lg shadow-accent/10'}`}
+                                ${isUpdating ? 'bg-white/5 text-white/10' : 'bg-accent text-black active:scale-95 shadow-lg shadow-accent/10'}`}
                         >
                             {isUpdating ? "Salvando..." : "Confirmar Alteração"}
                         </button>
@@ -252,41 +231,19 @@ export default function AppointmentDetailPage() {
             >
                 {activeSheet === "date" && (
                     <div className="flex flex-col gap-y-6">
-                        {/* Título Fixo dentro do scroll-container para contexto */}
                         <div className="space-y-1">
-                            <h3 className="text-2xl font-black text-white tracking-tight leading-none">
-                                Alterar Horário
-                            </h3>
-                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">
-                                Selecione data e hora
-                            </p>
+                            <h3 className="text-2xl font-black text-white tracking-tight">Alterar Horário</h3>
+                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Selecione data e hora</p>
                         </div>
-
-                        {/* Seleção de Data */}
-                        <DateSelector
-                            value={tempDate}
-                            onChange={(date) => {
-                                setTempDate(date);
-                                setTempTime("");
-                            }}
-                        />
-
-                        {/* Seleção de Horário */}
+                        <DateSelector value={tempDate} onChange={(date) => { setTempDate(date); setTempTime(""); }} />
                         {tempDate && (
                             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                                 <div className="flex items-center gap-3">
                                     <div className="h-[1px] flex-1 bg-white/5" />
-                                    <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-                                        Disponíveis
-                                    </span>
+                                    <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Disponíveis</span>
                                     <div className="h-[1px] flex-1 bg-white/5" />
                                 </div>
-
-                                <TimeGrid
-                                    value={tempTime}
-                                    availableTimes={getAvailableTimesForDate(tempDate)}
-                                    onChange={(time) => setTempTime(time)}
-                                />
+                                <TimeGrid value={tempTime} availableTimes={getAvailableTimesForDate(tempDate)} onChange={(time) => setTempTime(time)} />
                             </div>
                         )}
                     </div>
@@ -294,22 +251,26 @@ export default function AppointmentDetailPage() {
 
                 {activeSheet === "services" && (
                     <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-white tracking-tight">Editar Serviços</h3>
-                        <div className="space-y-3">
-                            {["Corte", "Barba", "Sobrancelha"].map(s => (
-                                <div key={s} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
-                                    <span className="text-white font-bold">{s}</span>
-                                    <input
-                                        type="checkbox"
-                                        className="w-6 h-6 rounded-lg accent-accent bg-transparent border-white/10"
-                                        defaultChecked={formattedData.services.some((ser: any) => ser.name === s)}
-                                    />
-                                </div>
-                            ))}
+                        <div className="space-y-1">
+                            <h3 className="text-2xl font-black text-white tracking-tight">Editar Serviço</h3>
+                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Escolha o novo serviço</p>
                         </div>
-                        <button onClick={closeSheet} className="w-full py-4 bg-accent rounded-2xl font-black text-black uppercase tracking-widest active:scale-95 transition-all text-[10px]">
-                            ATUALIZAR SERVIÇOS
-                        </button>
+                        <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-2 no-scrollbar">
+                            {availableServices.map((s: any) => {
+                                const isSelected = tempServiceId === s.id;
+                                return (
+                                    <button key={s.id} onClick={() => setTempServiceId(s.id)} className={`w-full flex justify-between items-center p-4 rounded-2xl border transition-all ${isSelected ? "bg-accent/10 border-accent shadow-[0_0_20px_rgba(178,123,92,0.1)]" : "bg-white/5 border-white/5 opacity-60"}`}>
+                                        <div className="text-left">
+                                            <span className={`block font-bold ${isSelected ? "text-accent" : "text-white"}`}>{s.name}</span>
+                                            <span className="text-[10px] text-white/40 font-medium">R$ {s.price.toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-accent bg-accent" : "border-white/10"}`}>
+                                            {isSelected && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="4"><polyline points="20 6 9 17 4 12" /></svg>}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 )}
 
@@ -321,12 +282,8 @@ export default function AppointmentDetailPage() {
                             <p className="text-white/40 text-sm">O cliente receberá uma notificação automática.</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">
-                                MANTER
-                            </button>
-                            <button onClick={handleConfirmCancel} className="py-4 bg-red-500 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">
-                                CONFIRMAR
-                            </button>
+                            <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">MANTER</button>
+                            <button onClick={handleConfirmCancel} className="py-4 bg-red-500 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">CONFIRMAR</button>
                         </div>
                     </div>
                 )}

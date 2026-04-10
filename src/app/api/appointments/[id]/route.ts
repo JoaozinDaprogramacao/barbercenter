@@ -30,24 +30,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 }
 
-// 2. ATUALIZAR (O QUE ESTAVA FALTANDO)
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
-        const { date, time } = await req.json();
+        const body = await req.json(); // Pega o que vier no body (date, time ou serviceId)
         const appointmentId = isNaN(Number(id)) ? id : Number(id);
 
         const updated = await prisma.appointment.update({
             where: { id: appointmentId as any },
-            data: {
-                date: date,
-                time: time
-            }
+            data: body // O Prisma é inteligente e só atualizará o que você enviar
         });
 
         return NextResponse.json(updated);
     } catch (error: any) {
-        console.error("ERRO_PATCH:", error.message);
         return NextResponse.json({ error: "500" }, { status: 500 });
     }
 }

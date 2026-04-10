@@ -3,58 +3,36 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export async function GET(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> } // Definimos params como Promise
-) {
+// app/api/appointments/[id]/route.ts
+
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const session = await getServerSession(authOptions);
-
-        if (!session?.user?.barbershopId) {
-            return NextResponse.json({ error: "401" }, { status: 401 });
-        }
-
-        // --- AQUI ESTAVA O ERRO: Precisamos do await no params ---
         const { id } = await params;
 
-        // Tenta converter para número, se falhar mantém como string
-        const appointmentId = isNaN(Number(id)) ? id : Number(id);
-
         const appointment = await prisma.appointment.findUnique({
-            where: {
-                id: appointmentId as any
-            },
+            where: { id: Number(id) },
             include: {
-                service: true
+                service: true,
+                // barbershop: true // Opcional, mas o barbershopId já vem por padrão se você não usar 'select'
             }
         });
 
-        if (!appointment) {
-            return NextResponse.json({ error: "404" }, { status: 404 });
-        }
+        if (!appointment) return NextResponse.json({ error: "404" }, { status: 404 });
 
-        const appt = appointment as any;
-
+        // Retorne o objeto GARANTINDO que o barbershopId está lá
         return NextResponse.json({
-            id: appt.id,
-            dateLabel: appt.date,
-            time: appt.time,
-            name: appt.clientName,
-            phone: "5541999999999",
-            service: appt.service?.name || "Serviço",
-            price: appt.service?.price || 0,
-            paymentMethod: "Presencial"
+            id: appointment.id,
+            barbershopId: appointment.barbershopId, // <--- CERTIFIQUE-SE DISSO
+            date: appointment.date,
+            time: appointment.time,
+            name: appointment.clientName,
+            service: appointment.service.name,
+            price: appointment.service.price,
         });
-
-    } catch (error: any) {
-        console.error("CRITICAL_ERROR_DETAILS:", error);
-        return NextResponse.json({
-            error: "500",
-            message: error.message
-        }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ error: "500" }, { status: 500 });
     }
 }
-
 export async function DELETE(
     req: Request,
     { params }: { params: Promise<{ id: string }> } // Mesma coisa aqui

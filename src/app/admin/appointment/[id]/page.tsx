@@ -8,6 +8,10 @@ import { AppointmentHeader } from "@/components/admin/appointment/AppointmentHea
 import { AppointmentInfoCard } from "@/components/admin/appointment/AppointmentInfoCard";
 import { AppointmentActionSheet } from "@/components/admin/appointment/AppointmentActionSheet";
 
+// Componentes de seleção (os mesmos usados no Chat)
+import { DateSelector } from "@/components/DateSelector";
+import { TimeGrid } from "@/components/TimeGrid";
+
 export default function AppointmentDetailPage() {
     const router = useRouter();
     const params = useParams();
@@ -15,54 +19,162 @@ export default function AppointmentDetailPage() {
     // Estados de controle da UI
     const [activeSheet, setActiveSheet] = useState<"date" | "services" | "cancel" | null>(null);
     const [reminderSent, setReminderSent] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     // Estados para dados reais da API
     const [appointment, setAppointment] = useState<any>(null);
+    const [businessHours, setBusinessHours] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Efeito para buscar os detalhes do agendamento ao carregar a página
+    // Estados temporários para edição de Data e Hora
+    const [tempDate, setTempDate] = useState("");
+    const [tempTime, setTempTime] = useState("");
+
+    // 1. Busca os detalhes do agendamento e os horários da barbearia
     useEffect(() => {
-        const fetchAppointmentDetail = async () => {
+        const fetchData = async () => {
             setIsLoading(true);
             try {
-                // Faz a chamada para sua rota de API dinâmica
+                // 1. Busca primeiro o agendamento
                 const res = await fetch(`/api/appointments/${params.id}`);
                 if (!res.ok) throw new Error("Agendamento não encontrado");
-
                 const data = await res.json();
+
+                // Define o agendamento no estado
                 setAppointment(data);
-            } catch (error) {
-                console.error("Erro ao carregar detalhes do agendamento:", error);
+                setTempDate(data.dateLabel || data.date);
+                setTempTime(data.time);
+
+                // 2. SÓ BUSCA A BARBEARIA SE O ID EXISTIR
+                if (data?.barbershopId) {
+                    const shopRes = await fetch(`/api/public/barbershop/${data.barbershopId}`);
+                    if (shopRes.ok) {
+                        const shopData = await shopRes.json();
+                        setBusinessHours(shopData.businessHours);
+                        console.log("✅ BusinessHours carregado com sucesso!");
+                    } else {
+                        console.error("❌ Erro ao buscar dados da barbearia");
+                    }
+                } else {
+                    console.error("❌ O agendamento veio sem barbershopId");
+                }
+
+            } catch (e) {
+                console.error("❌ Erro no fetchData:", e);
             } finally {
                 setIsLoading(false);
             }
         };
 
         if (params.id) {
-            fetchAppointmentDetail();
+            fetchData();
         }
     }, [params.id]);
 
-    const closeSheet = () => setActiveSheet(null);
+    // 2. Lógica de Geração e Filtro de Horários (A mesma do Chat)
+    const generateSlots = (start: string, end: string) => {
+        const slots = [];
+        let [startHour, startMinute] = start.split(":").map(Number);
+        const [endHour, endMinute] = end.split(":").map(Number);
+        const currentTime = new Date();
+        currentTime.setHours(startHour, startMinute, 0, 0);
+        const endTime = new Date();
+        endTime.setHours(endHour, endMinute, 0, 0);
 
-    // Função para deletar/cancelar o agendamento
-    const handleConfirmCancel = async () => {
+        while (currentTime < endTime) {
+            const hour = currentTime.getHours().toString().padStart(2, "0");
+            const minute = currentTime.getMinutes().toString().padStart(2, "0");
+            slots.push(`${hour}:${minute}`);
+            currentTime.setMinutes(currentTime.getMinutes() + 30);
+        }
+        return slots;
+    };
+
+    const getAvailableTimesForDate = (selectedDate: string) => {
+        // MONITOR 1: O objeto de horários existe?
+        console.log("🛠️ DEBUG [1] - BusinessHours disponível?", !!businessHours);
+        if (!businessHours || !selectedDate) return [];
+
+        const monthMap: Record<string, number> = {
+            "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5,
+            "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11
+        };
+
+        const parts = selectedDate.split("-");
+        const day = parseInt(parts[0], 10);
+        const monthStr = parts[1].toLowerCase();
+        const monthIndex = monthMap[monthStr];
+        const currentYear = new Date().getFullYear();
+
+        const selectedDateObj = new Date(currentYear, monthIndex, day);
+        const dayOfWeek = selectedDateObj.getDay();
+
+        // MONITOR 2: Qual dia da semana o sistema detectou?
+        console.log(`🛠️ DEBUG [2] - Dia da semana detectado para ${selectedDate}:`, dayOfWeek, "(0=Dom, 5=Sex, 6=Sáb)");
+
+        const dayConfig = businessHours[dayOfWeek];
+
+        // MONITOR 3: A configuração desse dia no banco está aberta?
+        console.log("🛠️ DEBUG [3] - Configuração do banco para esse dia:", dayConfig);
+
+        if (!dayConfig || !dayConfig.isOpen || !dayConfig.openTime || !dayConfig.closeTime) {
+            console.warn("⚠️ AVISO: Barbearia fechada ou sem horas no banco para este dia.");
+            return [];
+        }
+
+        let slots = generateSlots(dayConfig.openTime, dayConfig.closeTime);
+
+        // MONITOR 4: Filtro de horários passados (caso seja hoje)
+        const now = new Date();
+        const todayCompare = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const selectedCompare = new Date(currentYear, monthIndex, day).getTime();
+
+        if (todayCompare === selectedCompare) {
+            const nowTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+            console.log("🛠️ DEBUG [4] - É HOJE. Minutos atuais:", nowTimeInMinutes);
+
+            slots = slots.filter(slot => {
+                const [h, m] = slot.split(':').map(Number);
+                const slotMinutes = h * 60 + m;
+                return slotMinutes > nowTimeInMinutes + 30;
+            });
+        }
+
+        console.log("🛠️ DEBUG [5] - Slots finais gerados:", slots);
+        return slots;
+    };
+
+    // 3. Ação de Salvar Data/Hora
+    const handleUpdateDateTime = async () => {
+        setIsUpdating(true);
         try {
             const res = await fetch(`/api/appointments/${params.id}`, {
-                method: 'DELETE',
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: tempDate, time: tempTime })
             });
 
             if (res.ok) {
-                router.back(); // Volta para o dashboard após deletar
-            } else {
-                alert("Erro ao cancelar o agendamento.");
+                // Atualiza o estado local para refletir na tela imediatamente
+                setAppointment((prev: any) => ({ ...prev, date: tempDate, dateLabel: tempDate, time: tempTime }));
+                setActiveSheet(null);
             }
         } catch (error) {
-            console.error("Erro ao cancelar:", error);
+            alert("Erro ao atualizar.");
+        } finally {
+            setIsUpdating(false);
         }
     };
 
-    // 1. Estado de Carregamento (Loading)
+    const handleConfirmCancel = async () => {
+        try {
+            const res = await fetch(`/api/appointments/${params.id}`, { method: 'DELETE' });
+            if (res.ok) router.back();
+        } catch (error) { console.error(error); }
+    };
+
+    const closeSheet = () => !isUpdating && setActiveSheet(null);
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
@@ -71,35 +183,18 @@ export default function AppointmentDetailPage() {
         );
     }
 
-    // 2. Estado caso o agendamento não exista
-    if (!appointment) {
-        return (
-            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 text-2xl">🔍</div>
-                <h2 className="text-white font-bold text-xl mb-2">Agendamento não encontrado</h2>
-                <p className="text-white/40 text-sm mb-6">Este registro pode ter sido removido ou o ID está incorreto.</p>
-                <button
-                    onClick={() => router.push('/admin')}
-                    className="px-6 py-3 bg-accent rounded-xl text-black font-bold text-sm"
-                >
-                    VOLTAR PARA O INÍCIO
-                </button>
-            </div>
-        );
-    }
+    if (!appointment) return null;
 
-    // 3. Formatação dos dados para o componente AppointmentInfoCard
-    // Adaptamos o que vem do seu backend para a estrutura que o componente espera
     const formattedData = {
-        date: appointment.dateLabel || appointment.date, // Ex: "Qua, 17 de abr"
-        time: appointment.time, // Ex: "09:00 às 09:40"
+        date: appointment.dateLabel || appointment.date,
+        time: appointment.time,
         client: {
             name: appointment.name || "Cliente",
             phone: appointment.phone || ""
         },
         services: appointment.services || [{ id: 1, name: appointment.service }],
         total: appointment.price || 0,
-        paymentMethod: appointment.paymentMethod || "A definir"
+        paymentMethod: appointment.paymentMethod || "Presencial"
     };
 
     return (
@@ -108,7 +203,6 @@ export default function AppointmentDetailPage() {
             <AppointmentHeader
                 onBack={() => router.back()}
                 onSendReminder={() => {
-                    // Aqui você poderia disparar uma rota de API para enviar o zap
                     setReminderSent(true);
                     setTimeout(() => setReminderSent(false), 3000);
                 }}
@@ -139,16 +233,39 @@ export default function AppointmentDetailPage() {
                 </button>
             </div>
 
-            {/* Gerenciamento dos Bottom Sheets dinâmicos */}
             <AppointmentActionSheet isOpen={!!activeSheet} onClose={closeSheet}>
                 {activeSheet === "date" && (
                     <div className="space-y-6">
                         <h3 className="text-2xl font-black text-white">Alterar Horário</h3>
-                        <div className="p-10 bg-white/5 rounded-2xl border border-dashed border-white/10 text-center text-white/40 font-bold uppercase tracking-widest">
-                            Calendário Picker
+
+                        <div className="space-y-6">
+                            <DateSelector
+                                value={tempDate}
+                                onChange={(date) => {
+                                    setTempDate(date);
+                                    setTempTime(""); // Reseta a hora ao mudar o dia
+                                }}
+                            />
+
+                            {tempDate && (
+                                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Horários Disponíveis</p>
+                                    <TimeGrid
+                                        value={tempTime}
+                                        availableTimes={getAvailableTimesForDate(tempDate)}
+                                        onChange={(time) => setTempTime(time)}
+                                    />
+                                </div>
+                            )}
                         </div>
-                        <button onClick={closeSheet} className="w-full py-4 bg-accent rounded-2xl font-black text-black uppercase tracking-widest active:scale-95 transition-all">
-                            SALVAR NOVO HORÁRIO
+
+                        <button
+                            disabled={!tempDate || !tempTime || isUpdating}
+                            onClick={handleUpdateDateTime}
+                            className={`w-full py-4 rounded-2xl font-black text-black uppercase tracking-widest transition-all
+                                ${(!tempDate || !tempTime || isUpdating) ? 'bg-zinc-800 text-zinc-600' : 'bg-accent active:scale-95'}`}
+                        >
+                            {isUpdating ? "SALVANDO..." : "SALVAR NOVO HORÁRIO"}
                         </button>
                     </div>
                 )}
@@ -157,7 +274,6 @@ export default function AppointmentDetailPage() {
                     <div className="space-y-6">
                         <h3 className="text-2xl font-black text-white">Editar Serviços</h3>
                         <div className="space-y-3">
-                            {/* Aqui você pode mapear os serviços disponíveis no seu sistema futuramente */}
                             {["Corte", "Barba", "Sobrancelha"].map(s => (
                                 <div key={s} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
                                     <span className="text-white font-bold">{s}</span>
@@ -180,7 +296,7 @@ export default function AppointmentDetailPage() {
                         <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto text-2xl">⚠️</div>
                         <div className="space-y-2">
                             <h3 className="text-2xl font-black text-white leading-tight">Deseja realmente cancelar?</h3>
-                            <p className="text-white/40 text-sm">O cliente receberá uma notificação automática sobre o cancelamento.</p>
+                            <p className="text-white/40 text-sm">O cliente receberá uma notificação automática.</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-xs active:scale-95 transition-all">

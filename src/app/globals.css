@@ -149,3 +149,33 @@ body {
 .delay-500 {
   animation-delay: 500ms;
 }
+
+:root {
+  --card-width: 300px; /* Largura base no mobile */
+  --card-gap: 1.5rem;   /* gap-6 do tailwind */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --card-width: 450px; /* Largura no desktop */
+  }
+}
+
+@keyframes step-scroll {
+  /* 0-20%: Item 1 | 25-45%: Item 2 | 50-70%: Item 3 | 75-95%: Item 4 */
+  0%, 20% { transform: translateX(0); }
+  25%, 45% { transform: translateX(calc((var(--card-width) + var(--card-gap)) * -1)); }
+  50%, 70% { transform: translateX(calc((var(--card-width) + var(--card-gap)) * -2)); }
+  75%, 95% { transform: translateX(calc((var(--card-width) + var(--card-gap)) * -3)); }
+  100% { transform: translateX(calc((var(--card-width) + var(--card-gap)) * -4)); }
+}
+
+.animate-step-scroll {
+  display: flex;
+  width: max-content;
+  animation: step-scroll 20s ease-in-out infinite;
+}
+
+.animate-step-scroll:hover {
+  animation-play-state: paused;
+}

@@ -32,67 +32,69 @@ const stats = [
 
 export function Testimonials() {
   return (
-    <section className="bg-slate-50 py-16 md:py-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 mb-12 md:mb-16 text-center">
-        <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tighter leading-[1.1]">
-          Veja o que nossos parceiros <br className="hidden md:block" /> falam sobre nós "😎"
-        </h2>
-      </div>
-
-      {/* Slider Responsivo */}
-      <div className="relative flex overflow-hidden px-4 md:px-0">
-        <div className="animate-step-scroll space-x-6">
-          {[...testimonials, ...testimonials, ...testimonials].map((item, index) => (
-            <div 
-              key={index} 
-              style={{ width: 'var(--card-width)' }}
-              className="flex-shrink-0 bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-slate-100 relative whitespace-normal"
-            >
-              <div className="flex items-center space-x-1 mb-4">
-                <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
-                </div>
-                <span className="text-xs font-bold text-slate-900 ml-1">5.0</span>
-              </div>
-
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-8 relative z-10">
-                "{item.text}"
-              </p>
-
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-xs uppercase">
-                  {item.name[0]}
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">{item.name}</h4>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider">{item.business}</p>
-                </div>
-              </div>
-
-              <Quote 
-                className="absolute bottom-6 right-8 text-slate-100" 
-                size={48} 
-                strokeWidth={3} 
-              />
-            </div>
-          ))}
+    <section className="w-full bg-slate-50 py-24 overflow-hidden border-y border-slate-100">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 lg:px-16">
+        
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-tight">
+            Veja o que nossos parceiros <br className="hidden md:block" /> falam sobre nós "😎"
+          </h2>
         </div>
-      </div>
 
-      {/* Stats Mobile First: 2 colunas no celular, 4 no desktop */}
-      <div className="max-w-7xl mx-auto px-6 mt-16 md:mt-24">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-4 border-t border-slate-200 pt-12 md:pt-16">
+        {/* Slider Responsivo - Container de Scroll Infinito */}
+        <div className="relative flex overflow-hidden -mx-6 md:-mx-12 lg:-mx-16">
+          <div className="flex animate-step-scroll space-x-8 py-4 px-6 md:px-12 lg:px-16">
+            {[...testimonials, ...testimonials, ...testimonials].map((item, index) => (
+              <div 
+                key={index} 
+                className="w-[320px] md:w-[420px] flex-shrink-0 bg-white p-8 md:p-10 rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative group transition-all duration-500 hover:-translate-y-2"
+              >
+                <div className="flex items-center space-x-2 mb-6">
+                  <div className="flex text-yellow-400">
+                    {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                  </div>
+                  <span className="text-sm font-black text-slate-900">5.0</span>
+                </div>
+
+                <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-10 font-medium italic">
+                  "{item.text}"
+                </p>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow-lg shadow-orange-200">
+                    {item.name[0]}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">{item.name}</h4>
+                    <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">{item.business}</p>
+                  </div>
+                </div>
+
+                <Quote 
+                  className="absolute top-10 right-10 text-slate-50 group-hover:text-orange-50 transition-colors duration-500 -z-0" 
+                  size={64} 
+                  strokeWidth={3} 
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8 mt-24 pt-20 border-t border-slate-200">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center px-2">
-              <p className="text-2xl md:text-4xl font-black text-slate-900 mb-1 tracking-tight">
+            <div key={index} className="flex flex-col items-center lg:items-start group">
+              <p className="text-4xl md:text-5xl font-black text-slate-900 mb-2 tracking-tighter group-hover:text-orange-600 transition-colors duration-300">
                 {stat.value}
               </p>
-              <p className="text-[9px] md:text-xs text-slate-400 uppercase font-bold tracking-[0.2em] leading-tight">
+              <div className="h-1 w-8 bg-orange-500 mb-3 rounded-full group-hover:w-16 transition-all duration-300"></div>
+              <p className="text-[11px] md:text-xs text-slate-500 uppercase font-black tracking-[0.25em]">
                 {stat.label}
               </p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -56,11 +56,14 @@ export async function GET(req: Request) {
                 }
             },
             include: {
-                service: true
+                services: true 
             }
         });
 
-        const brutoTotal = appointments.reduce((acc, app) => acc + (app.service?.price || 0), 0);
+        const brutoTotal = appointments.reduce((acc, app) => {
+            const appTotal = app.services.reduce((sum, s) => sum + s.price, 0);
+            return acc + appTotal;
+        }, 0);
 
         let chartData = [];
 
@@ -70,7 +73,9 @@ export async function GET(req: Request) {
                     const d = new Date(app.createdAt);
                     return d.getDate() === day.getDate() && d.getMonth() === day.getMonth();
                 });
-                const total = dayApps.reduce((acc, app) => acc + (app.service?.price || 0), 0);
+                const total = dayApps.reduce((acc, app) => {
+                    return acc + app.services.reduce((sum, s) => sum + s.price, 0);
+                }, 0);
                 return {
                     label: format(day, "eee", { locale: ptBR }).replace(".", ""),
                     atendimentos: dayApps.length,
@@ -85,7 +90,9 @@ export async function GET(req: Request) {
                     const day = new Date(app.createdAt).getDate();
                     return day > (weekIndex * 7) && day <= ((weekIndex + 1) * 7 + (weekIndex === 3 ? 3 : 0));
                 });
-                const total = weekApps.reduce((acc, app) => acc + (app.service?.price || 0), 0);
+                const total = weekApps.reduce((acc, app) => {
+                    return acc + app.services.reduce((sum, s) => sum + s.price, 0);
+                }, 0);
                 return {
                     label: `Sem ${weekIndex + 1}`,
                     atendimentos: weekApps.length,
@@ -97,7 +104,9 @@ export async function GET(req: Request) {
         } else {
             chartData = eachMonthOfInterval({ start: startDate, end: endDate }).map(month => {
                 const monthApps = appointments.filter(app => new Date(app.createdAt).getMonth() === month.getMonth());
-                const total = monthApps.reduce((acc, app) => acc + (app.service?.price || 0), 0);
+                const total = monthApps.reduce((acc, app) => {
+                    return acc + app.services.reduce((sum, s) => sum + s.price, 0);
+                }, 0);
                 const label = format(month, "MMM", { locale: ptBR }).replace(".", "");
                 return {
                     label: label.charAt(0).toUpperCase() + label.slice(1),
@@ -110,10 +119,19 @@ export async function GET(req: Request) {
         }
 
         const serviceSummary = appointments.reduce((acc: any, app) => {
-            const serviceName = app.service?.name || "Outros";
-            const existing = acc.find((s: any) => s.name === serviceName);
-            if (existing) existing.count += 1;
-            else acc.push({ name: serviceName, count: 1 });
+            if (!app.services || app.services.length === 0) {
+                const existing = acc.find((s: any) => s.name === "Outros");
+                if (existing) existing.count += 1;
+                else acc.push({ name: "Outros", count: 1 });
+                return acc;
+            }
+
+            app.services.forEach(service => {
+                const existing = acc.find((s: any) => s.name === service.name);
+                if (existing) existing.count += 1;
+                else acc.push({ name: service.name, count: 1 });
+            });
+            
             return acc;
         }, []);
 

@@ -18,7 +18,7 @@ export const SummaryCards = ({
   weekCount 
 }: SummaryCardsProps) => {
   return (
-    <div className="flex gap-4 mb-6">
+    <div className="flex gap-4 m-6">
       {/* CARD HOJE (ORANGE ACCENT) */}
       <motion.div 
         whileTap={{ scale: 0.98 }}

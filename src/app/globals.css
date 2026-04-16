@@ -179,3 +179,9 @@ body {
 .animate-step-scroll:hover {
   animation-play-state: paused;
 }
+
+input, 
+textarea, 
+select {
+  font-size: 16px !important;
+}

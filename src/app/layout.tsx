@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InBarber | Admin",
-  description: "Sistema completo de gestão e agendamento para barbearias.",
+  title: "BarberCenter | Gestão Inteligente para sua Barbearia",
+  description: "O sistema mais completo para barbeiros: agendamento online, controle de estoque, gestão de equipe e financeiro na palma da sua mão.",
 };
 
 export default function RootLayout({

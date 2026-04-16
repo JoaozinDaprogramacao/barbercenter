@@ -7,8 +7,10 @@ import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
 import { BusinessHoursSection } from "./BusinessHoursSection";
+import { TrialWorkflow } from "./TrialWorkflow"; // Importando o workflow que criamos
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useServices } from "@/hooks/useServices";
+import { SubscriptionSection } from "./SubscriptionSection";
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const {
@@ -81,6 +83,11 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                                 onChange={setCompanyData}
                             />
                         )}
+                    </section>
+
+                    {/* NOVA SEÇÃO: Assinatura e Trial */}
+                    <section className="px-1">
+                        <SubscriptionSection />
                     </section>
 
                     {/* Seção de Horários */}

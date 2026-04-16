@@ -7,7 +7,6 @@ import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
 import { BusinessHoursSection } from "./BusinessHoursSection";
-import { TrialWorkflow } from "./TrialWorkflow"; // Importando o workflow que criamos
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useServices } from "@/hooks/useServices";
 import { SubscriptionSection } from "./SubscriptionSection";
@@ -45,7 +44,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
 
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-black max-w-md mx-auto relative overflow-hidden font-sans border-x border-zinc-900">
-            {/* Background Glow Estilizado */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
                 <div className="absolute bottom-40 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
@@ -54,7 +52,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
             <SettingsHeader onBack={onBack} />
 
             <div className="flex-1 overflow-y-auto px-6 no-scrollbar pb-32 z-10">
-                {/* Header da Página */}
                 <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -66,7 +63,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                 </motion.div>
 
                 <div className="space-y-12">
-                    {/* Seção da Empresa */}
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Perfil da Barbearia</p>
@@ -85,12 +81,10 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         )}
                     </section>
 
-                    {/* NOVA SEÇÃO: Assinatura e Trial */}
                     <section className="px-1">
                         <SubscriptionSection />
                     </section>
 
-                    {/* Seção de Horários */}
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Horário de Funcionamento</p>
@@ -109,7 +103,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         )}
                     </section>
 
-                    {/* Seção de Serviços */}
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Serviços</p>
@@ -136,7 +129,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                 </div>
             </div>
 
-            {/* Modal de Edição (Estilo Bottom Sheet) */}
             <AnimatePresence>
                 {editingService && (
                     <ServiceEditForm
@@ -150,9 +142,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     />
                 )}
             </AnimatePresence>
-
-            {/* Fade de fundo para o scroll */}
-            <div className="fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none z-20" />
         </main>
     );
 };

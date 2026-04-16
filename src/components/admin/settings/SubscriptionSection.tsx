@@ -12,7 +12,6 @@ export function SubscriptionSection() {
   return (
     <>
       <div className="relative overflow-hidden bg-zinc-900/40 border border-zinc-800 rounded-[2.5rem] p-8 group">
-        {/* Glow de fundo */}
         <div className="absolute -right-10 -top-10 w-32 h-32 bg-orange-600/10 blur-[50px] rounded-full group-hover:bg-orange-600/20 transition-all duration-700" />
 
         <div className="relative z-10 flex flex-col items-center text-center">
@@ -61,16 +60,9 @@ export function SubscriptionSection() {
         </div>
       </div>
 
-      {/* Reutilizamos a lógica do workflow de pagamento que já criamos */}
       <AnimatePresence>
         {isWorkflowOpen && (
-          <div className="fixed inset-0 z-[200]">
-             {/* Aqui chamamos o Workflow. 
-                Dica: Adapte o TrialWorkflow para aceitar uma prop 'forcedOpen' 
-                ou simplesmente mova a lógica do modal para cá.
-             */}
-             <TrialWorkflow forcedOpen={true} onClose={() => setIsWorkflowOpen(false)} />
-          </div>
+          <TrialWorkflow forcedOpen={true} onClose={() => setIsWorkflowOpen(false)} />
         )}
       </AnimatePresence>
     </>

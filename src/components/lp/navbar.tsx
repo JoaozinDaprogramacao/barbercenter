@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Smartphone, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,11 +16,13 @@ export function Navbar() {
     <nav className="relative w-full bg-white border-b border-slate-100 z-50">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-12 flex items-center justify-between h-20">
         
-        {/* Logo - Resumida no Mobile */}
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200 shrink-0">
-            <Smartphone size={20} className="text-white" strokeWidth={3} />
-          </div>
+        {/* Logo - Renderizando apenas a imagem */}
+        <div className="flex items-center gap-3">
+          <img 
+            src="/logo.png" 
+            alt="Logo BarberCenter" 
+            className="h-15 w-auto object-contain shrink-0"
+          />
           <span className="hidden sm:block text-xl font-black text-slate-900 tracking-tighter uppercase">
             Barber<span className="text-orange-600">Center</span>
           </span>

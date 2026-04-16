@@ -9,16 +9,21 @@ datasource db {
 }
 
 model Barbershop {
-  id            String        @id @default(uuid())
-  name          String?
-  phone         String?
-  address       String?
-  businessHours Json?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  appointments  Appointment[]
-  services      Service[]
-  users         User[]
+  id             String        @id @default(uuid())
+  name           String?
+  phone          String?
+  address        String?
+  businessHours  Json?
+  
+  // Controle de Acesso
+  planStatus     String        @default("TRIAL") // "TRIAL", "ACTIVE", "PAST_DUE"
+  trialExpiresAt DateTime      // Data limite do teste (createdAt + 45 dias)
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointments   Appointment[]
+  services       Service[]
+  users          User[]
 
   @@map("barbershops")
 }

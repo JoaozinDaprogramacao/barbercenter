@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Rocket, Zap, ShieldCheck } from 'lucide-react';
+import { Zap, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { TrialWorkflow } from './TrialWorkflow';
+import { useSubscription } from '@/hooks/useSubscription'; // Importando o hook
 
 export function SubscriptionSection() {
   const [isWorkflowOpen, setIsWorkflowOpen] = useState(false);
+  const { daysRemaining, isPlanActive, loading } = useSubscription();
 
   return (
     <>
@@ -15,23 +17,23 @@ export function SubscriptionSection() {
         <div className="absolute -right-10 -top-10 w-32 h-32 bg-orange-600/10 blur-[50px] rounded-full group-hover:bg-orange-600/20 transition-all duration-700" />
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          <motion.div 
+          <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className="relative w-24 h-24 mb-4"
           >
-            <Image 
-              src="/rocket.png" 
-              alt="Foguete" 
-              fill 
-              className="object-contain drop-shadow-[0_10px_20px_rgba(234,88,12,0.3)]" 
+            <Image
+              src="/rocket.png"
+              alt="Foguete"
+              fill
+              className="object-contain drop-shadow-[0_10px_20px_rgba(234,88,12,0.3)]"
             />
           </motion.div>
 
           <h3 className="text-xl font-black text-white tracking-tight mb-2">
             Leve sua barbearia para o <span className="text-orange-600">próximo nível</span>
           </h3>
-          
+
           <p className="text-zinc-500 text-xs font-medium leading-relaxed mb-6 max-w-[240px]">
             Sua barbearia merece uma gestão profissional. Desbloqueie todas as ferramentas e cresça sem limites.
           </p>
@@ -47,16 +49,29 @@ export function SubscriptionSection() {
             </div>
           </div>
 
-          <button 
+          <button
             onClick={() => setIsWorkflowOpen(true)}
-            className="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-orange-900/20 hover:bg-orange-500 transition-all active:scale-[0.98]"
+            disabled={loading}
+            className="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-orange-900/20 hover:bg-orange-500 transition-all active:scale-[0.98] disabled:opacity-50"
           >
-            Fazer Upgrade Agora
+            {isPlanActive ? "Plano Ativo" : "Fazer Upgrade Agora"}
           </button>
-          
-          <p className="mt-4 text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
-            Período de teste: <span className="text-orange-600/80">42 dias restantes</span>
-          </p>
+
+          <div className="mt-4 flex flex-col items-center min-h-[14px]">
+            {loading ? (
+              <div className="h-2 w-24 bg-zinc-800 animate-pulse rounded" />
+            ) : isPlanActive ? (
+              <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">
+                Assinatura Ativa ✨
+              </span>
+            ) : (
+              <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
+                Período de teste: <span className="text-orange-600/80">
+                  {daysRemaining !== null ? `${daysRemaining} dias restantes` : "Expirado"}
+                </span>
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

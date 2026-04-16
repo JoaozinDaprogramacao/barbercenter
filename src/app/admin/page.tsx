@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react"; // Adicionei useMemo para performance
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion"; // Adicionado para animação do banner
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
 import { AppointmentCard } from "@/components/admin/dashboard/AppointmentCard";
 import { CalendarPickerModal } from "@/components/admin/dashboard/CalendarPickerModal";
 import { Sidebar } from "@/components/admin/Sidebar";
+import { TrialBanner } from "@/components/TrialBanner"
+
+import { TrialWorkflow } from '@/components/admin/settings/TrialWorkflow';
 
 import { useAgenda } from "@/hooks/useAgenda";
+import { useSubscription } from "@/hooks/useSubscription"; // Importando seu novo hook
 
 // --- HELPERS ---
 const getStartOfWeek = (date: Date) => {
@@ -28,7 +33,6 @@ const generateWeekDays = (startDate: Date) => {
         const d = new Date(startDate);
         d.setDate(startDate.getDate() + i);
 
-        // Gera o formato "10-abr" para bater com o seu JSON
         const dayNum = d.getDate().toString().padStart(2, '0');
         const monthShort = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
         const backendKey = `${dayNum}-${monthShort}`;
@@ -36,7 +40,7 @@ const generateWeekDays = (startDate: Date) => {
         days.push({
             day: d.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().replace('.', ''),
             date: dayNum,
-            fullDate: backendKey // Agora a chave é "10-abr"
+            fullDate: backendKey
         });
     }
     return days;
@@ -53,12 +57,15 @@ export default function BarberDashboard() {
     const router = useRouter();
     const { data: session, status } = useSession();
     const { agendaData, isLoadingAgenda } = useAgenda();
+    const { isPlanActive } = useSubscription(); // Usado para lógica de permissão se necessário
+
+    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showValues, setShowValues] = useState(true);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
-    // No lugar de .toISOString().split('T')[0]
+
     const [selectedDate, setSelectedDate] = useState(() => {
         const d = new Date();
         const day = d.getDate().toString().padStart(2, '0');
@@ -69,8 +76,6 @@ export default function BarberDashboard() {
     const weekDays = generateWeekDays(currentWeekStart);
 
     // --- LÓGICA DE CÁLCULO DINÂMICO ---
-
-    // 1. Dados do Dia Selecionado
     const todaysAppointments = agendaData[selectedDate] || [];
     const todayCount = todaysAppointments.length;
     const todayRevenue = useMemo(() => {
@@ -78,7 +83,6 @@ export default function BarberDashboard() {
         return formatCurrency(total);
     }, [todaysAppointments]);
 
-    // 2. Dados da Semana (Soma todos os dias que aparecem no calendário atual)
     const weekStats = useMemo(() => {
         let totalRevenue = 0;
         let totalCount = 0;
@@ -98,7 +102,7 @@ export default function BarberDashboard() {
     // --- HANDLERS ---
     const firstName = status === "loading" ? "..." : session?.user?.name?.split(' ')[0] || "Barbeiro";
 
-    const weekRangeText = `${weekDays[0].date} ${currentWeekStart.toLocaleDateString('pt-BR', { month: 'short' })} à ${weekDays[6].date} ${new Date(weekDays[6].fullDate + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short' })}`;
+    const weekRangeText = `${weekDays[0].date} ${currentWeekStart.toLocaleDateString('pt-BR', { month: 'short' })} à ${weekDays[6].date} ${new Date(currentWeekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', { month: 'short' })}`;
 
     const nextWeek = () => {
         const next = new Date(currentWeekStart);
@@ -132,9 +136,17 @@ export default function BarberDashboard() {
             />
 
             <div className="flex-1 pb-24">
+                {/* O Banner agora vive aqui, logo abaixo do Header */}
+                <TrialBanner onUpgradeClick={() => setIsUpgradeOpen(true)} />
+
+                <TrialWorkflow 
+                    forcedOpen={isUpgradeOpen} 
+                    onClose={() => setIsUpgradeOpen(false)} 
+                />
+
                 <WeeklyCalendar
                     days={weekDays}
-                    selectedDate={selectedDate} 
+                    selectedDate={selectedDate}
                     onSelectDate={(fullDate) => setSelectedDate(fullDate)}
                     onNextWeek={nextWeek}
                     onPrevWeek={prevWeek}
@@ -175,7 +187,7 @@ export default function BarberDashboard() {
                             />
                         ))
                     ) : (
-                        <div className="text-center py-10 text-text-secondary border border-white/5 rounded-3xl border-dashed">
+                        <div className="text-center py-10 text-text-secondary border border-white/5 rounded-3xl border-dashed text-xs">
                             Nenhum agendamento para este dia.
                         </div>
                     )}

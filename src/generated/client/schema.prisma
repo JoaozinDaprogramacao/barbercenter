@@ -9,68 +9,67 @@ datasource db {
 }
 
 model Barbershop {
-  id      String  @id @default(uuid())
-  name    String?
-  phone   String?
-  address String?
-
-  // 👇 CAMPO NOVO (Apague os antigos openTime, closeTime e workDays)
+  id            String  @id @default(uuid())
+  name          String?
+  phone         String?
+  address       String?
   businessHours Json?
 
-  users        User[]
-  services     Service[]
-  appointments Appointment[]
+  // Controle de Acesso
+  planStatus     String   @default("TRIAL") // "TRIAL", "ACTIVE", "PAST_DUE"
+  trialExpiresAt DateTime // Data limite do teste (createdAt + 45 dias)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+  services     Service[]
+  users        User[]
 
   @@map("barbershops")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("OWNER")
-  createdAt DateTime @default(now())
-
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  password     String
+  role         String     @default("OWNER")
+  createdAt    DateTime   @default(now())
   barbershopId String
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
+  @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
 }
 
 model Appointment {
-  id         Int    @id @default(autoincrement())
-  clientName String
-  date       String // "YYYY-MM-DD"
-  time       String // "09:00 - 09:40"
-  status     String @default("CONFIRMED")
-
-  // RELAÇÃO COM SERVIÇO
-  serviceId String
-  service   Service @relation(fields: [serviceId], references: [id])
-
+  id           Int        @id @default(autoincrement())
+  clientName   String
+  date         String
+  time         String
+  status       String     @default("CONFIRMED")
+  serviceId    String
   barbershopId String
+  createdAt    DateTime   @default(now())
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  service      Service    @relation(fields: [serviceId], references: [id])
 
-  createdAt DateTime @default(now())
-
+  @@index([barbershopId], map: "appointments_barbershopId_fkey")
+  @@index([serviceId], map: "appointments_serviceId_fkey")
   @@map("appointments")
 }
 
 model Service {
-  id        String   @id @default(uuid())
-  name      String
-  price     Float
-  duration  Int // Tempo em minutos (ex: 30, 45, 60)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id           String        @id @default(uuid())
+  name         String
+  price        Float
+  duration     Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   barbershopId String
-  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments Appointment[]
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
+  @@index([barbershopId], map: "services_barbershopId_fkey")
   @@map("services")
 }

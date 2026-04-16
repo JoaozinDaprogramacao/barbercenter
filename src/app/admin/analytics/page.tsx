@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { AnalyticsHeader } from "@/components/admin/analytics/AnalyticsHeader";
 import { BalanceSection } from "@/components/admin/analytics/BalanceSection";
 import { InteractiveChart } from "@/components/admin/analytics/InteractiveChart";
@@ -19,7 +20,7 @@ const getPeriodLabel = (timeframe: string, offset: number) => {
     }
     if (timeframe === "semana") {
         date.setDate(date.getDate() + (offset * 7));
-        return "Semana Selecionada"; // Simplificado, use a lógica de data anterior se desejar
+        return "Semana Atual"; 
     }
     return "";
 };
@@ -52,10 +53,14 @@ export default function FaturamentoPage() {
         setPeriodOffset(0);
     };
 
-    if (loading && !data) return <div className="min-h-screen bg-background flex items-center justify-center text-white">Carregando...</div>;
-
     return (
-        <main className="min-h-screen w-full bg-background max-w-md mx-auto flex flex-col font-sans relative overflow-x-hidden">
+        <main className="min-h-screen w-full bg-black max-w-md mx-auto flex flex-col font-sans relative overflow-x-hidden border-x border-zinc-900">
+            {/* Background Glow Otimizado */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+                <div className="absolute bottom-20 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+            </div>
+
             <AnalyticsHeader
                 onBack={() => router.back()}
                 activeTimeframe={activeTimeframe}
@@ -65,24 +70,56 @@ export default function FaturamentoPage() {
                 onNextPeriod={() => setPeriodOffset(prev => prev + 1)}
             />
 
-            <div className="flex-1 overflow-y-auto no-scrollbar px-6 pb-20 space-y-10">
-                {data && (
-                    <>
-                        <BalanceSection
-                            total={data.balance.total}
-                            comissao={data.balance.comissao}
-                            bruto={data.balance.bruto}
-                            atendimentos={data.balance.atendimentos}
-                        />
+            <div className="flex-1 overflow-y-auto no-scrollbar px-6 pb-24 z-10">
+                <AnimatePresence mode="wait">
+                    {loading ? (
+                        <motion.div 
+                            key="loader"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex flex-col items-center justify-center py-20"
+                        >
+                            <div className="w-10 h-10 border-2 border-orange-600/20 border-t-orange-600 rounded-full animate-spin" />
+                            <p className="mt-4 text-zinc-500 text-xs font-black uppercase tracking-[0.2em]">Sincronizando Dados</p>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="content"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="space-y-10 will-change-transform"
+                        >
+                            {data && (
+                                <>
+                                    {/* Seção de Saldo/Cards */}
+                                    <BalanceSection
+                                        total={data.balance.total}
+                                        comissao={data.balance.comissao}
+                                        bruto={data.balance.bruto}
+                                        atendimentos={data.balance.atendimentos}
+                                    />
 
-                        <div key={`${activeTimeframe}-${periodOffset}`} className="animate-in fade-in duration-500">
-                            <InteractiveChart data={data.chartData} />
-                        </div>
+                                    {/* Gráfico Interativo com Card Estilizado */}
+                                    <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-[2.5rem] shadow-2xl">
+                                        <div className="px-4 pt-2 mb-6">
+                                            <h3 className="text-white font-black uppercase text-[11px] tracking-[0.2em] opacity-50">Desempenho Financeiro</h3>
+                                        </div>
+                                        <InteractiveChart data={data.chartData} />
+                                    </div>
 
-                        <ServicesRealized services={data.services} />
-                    </>
-                )}
+                                    {/* Lista de Serviços Realizados */}
+                                    <ServicesRealized services={data.services} />
+                                </>
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
+
+            {/* Bottom Blur Effect */}
+            <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent pointer-events-none z-20" />
         </main>
     );
 }

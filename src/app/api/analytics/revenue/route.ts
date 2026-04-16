@@ -18,6 +18,43 @@ import {
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// Conversor super robusto que entende "25-out", "25/10/2023", "2023-10-25", etc.
+function getScheduledDate(dateStr: string): Date {
+    if (!dateStr) return new Date(0);
+    
+    const parts = dateStr.toLowerCase().split(/[-/\s]/);
+    const currentYear = new Date().getFullYear();
+
+    if (parts.length >= 2) {
+        // Se for formato YYYY-MM-DD
+        if (parts[0].length === 4) {
+            return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2] || "1"), 12, 0, 0);
+        }
+
+        const day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10) - 1;
+        
+        // Se o mês for texto (ex: "out", "nov")
+        if (isNaN(month)) {
+            const monthMap: Record<string, number> = { "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5, "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11 };
+            const m = parts[1].substring(0, 3);
+            month = monthMap[m] !== undefined ? monthMap[m] : new Date().getMonth();
+        }
+
+        let year = currentYear;
+        // Se vier o ano junto (ex: 25-out-2024)
+        if (parts.length >= 3) {
+            year = parts[2].length === 2 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
+        }
+
+        // Retorna meio-dia (12:00) para blindar contra bugs de fuso horário
+        return new Date(year, month, day, 12, 0, 0);
+    }
+
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? new Date(0) : d;
+}
+
 export async function GET(req: Request) {
     try {
         const session = await getServerSession(authOptions);
@@ -47,17 +84,18 @@ export async function GET(req: Request) {
             endDate = endOfYear(baseDate);
         }
 
-        const appointments = await prisma.appointment.findMany({
+        const allAppointments = await prisma.appointment.findMany({
             where: {
                 barbershopId: session.user.barbershopId,
-                createdAt: {
-                    gte: startDate,
-                    lte: endDate,
-                }
             },
             include: {
-                services: true 
+                services: true
             }
+        });
+
+        const appointments = allAppointments.filter(app => {
+            const appDate = getScheduledDate(app.date);
+            return appDate >= startDate && appDate <= endDate;
         });
 
         const brutoTotal = appointments.reduce((acc, app) => {
@@ -70,8 +108,8 @@ export async function GET(req: Request) {
         if (timeframe === "semana") {
             chartData = eachDayOfInterval({ start: startDate, end: endDate }).map(day => {
                 const dayApps = appointments.filter(app => {
-                    const d = new Date(app.createdAt);
-                    return d.getDate() === day.getDate() && d.getMonth() === day.getMonth();
+                    const d = getScheduledDate(app.date);
+                    return d.getDate() === day.getDate() && d.getMonth() === day.getMonth() && d.getFullYear() === day.getFullYear();
                 });
                 const total = dayApps.reduce((acc, app) => {
                     return acc + app.services.reduce((sum, s) => sum + s.price, 0);
@@ -87,7 +125,8 @@ export async function GET(req: Request) {
         } else if (timeframe === "mês") {
             chartData = [0, 1, 2, 3].map(weekIndex => {
                 const weekApps = appointments.filter(app => {
-                    const day = new Date(app.createdAt).getDate();
+                    const d = getScheduledDate(app.date);
+                    const day = d.getDate();
                     return day > (weekIndex * 7) && day <= ((weekIndex + 1) * 7 + (weekIndex === 3 ? 3 : 0));
                 });
                 const total = weekApps.reduce((acc, app) => {
@@ -103,7 +142,10 @@ export async function GET(req: Request) {
             });
         } else {
             chartData = eachMonthOfInterval({ start: startDate, end: endDate }).map(month => {
-                const monthApps = appointments.filter(app => new Date(app.createdAt).getMonth() === month.getMonth());
+                const monthApps = appointments.filter(app => {
+                    const d = getScheduledDate(app.date);
+                    return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear();
+                });
                 const total = monthApps.reduce((acc, app) => {
                     return acc + app.services.reduce((sum, s) => sum + s.price, 0);
                 }, 0);

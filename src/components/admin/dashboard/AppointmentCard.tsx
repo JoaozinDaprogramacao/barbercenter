@@ -44,25 +44,6 @@ export const AppointmentCard = ({
             </span>
           )}
         </div>
-
-        <div className="flex gap-2">
-          {/* BOTÃO DE NOTIFICAÇÃO */}
-          <button className="w-10 h-10 rounded-xl bg-zinc-800/50 flex items-center justify-center text-zinc-600 group-hover:text-orange-500 transition-colors">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </button>
-          
-          {/* BOTÃO DE MAIS OPÇÕES */}
-          <button className="w-10 h-10 rounded-xl bg-zinc-800/50 flex items-center justify-center text-zinc-600 group-hover:text-white transition-colors">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="19" cy="12" r="1" />
-              <circle cx="5" cy="12" r="1" />
-            </svg>
-          </button>
-        </div>
       </div>
 
       {/* LINHA INFERIOR: CLIENTE E VALOR */}

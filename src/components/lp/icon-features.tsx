@@ -61,7 +61,7 @@ export function IconFeatures() {
   ];
 
   return (
-    <section className="w-full bg-black py-24 border-t border-zinc-900/50 overflow-hidden">
+    <section className="w-full bg-black py-24 border-t border-zinc-900/50 overflow-hidden" id='beneficios'>
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-16">
           {features.map((feature, idx) => (

@@ -4,20 +4,20 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { SettingsHeader } from "@/components/admin/settings/SettingsHeader";
 import { useRouter } from "next/navigation";
-import { Copy, Check, Share2, ExternalLink } from "lucide-react"; // Tirei o QrCode daqui
-import QRCode from "react-qr-code"; // <-- Importamos a biblioteca real
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Check, Share2, ExternalLink, Sparkles } from "lucide-react";
+import QRCode from "react-qr-code";
 
 export default function SharePage() {
     const { data: session } = useSession();
     const router = useRouter();
     const [copied, setCopied] = useState(false);
-    const [mounted, setMounted] = useState(false); // Para evitar erro de hidratação no Next.js
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // Geramos o link com base no ID da barbearia na sessão
     const shareUrl = typeof window !== "undefined" && session?.user?.barbershopId
         ? `${window.location.origin}/agendar/${session.user.barbershopId}`
         : "";
@@ -46,91 +46,126 @@ export default function SharePage() {
     };
 
     return (
-        <main className="h-[100dvh] w-full flex flex-col bg-background max-w-md mx-auto overflow-hidden animate-in fade-in duration-500">
+        <main className="min-h-screen w-full flex flex-col bg-black max-w-md mx-auto relative overflow-hidden font-sans border-x border-zinc-900">
+            {/* Background Glows */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+                <div className="absolute bottom-20 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+            </div>
+
             <SettingsHeader onBack={() => router.back()} />
 
-            <div className="flex-1 px-6 pt-4 space-y-8 overflow-y-auto no-scrollbar pb-10">
-                <div>
-                    <p className="text-white/40 text-sm font-medium mb-1">Cresça seu negócio</p>
-                    <h2 className="text-4xl font-black text-white tracking-tight leading-none">Compartilhar</h2>
-                </div>
+            <div className="flex-1 px-6 pt-4 space-y-8 overflow-y-auto no-scrollbar pb-20 z-10">
+                <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                >
+                    <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Cresça seu negócio</p>
+                    <h2 className="text-4xl font-black text-white tracking-tighter leading-none">Compartilhar</h2>
+                </motion.div>
 
-                {/* CARD DO QR CODE REAL */}
-                <div className="bg-white/[0.03] border border-white/5 rounded-[40px] p-8 flex flex-col items-center text-center space-y-6">
-                    <div className="w-48 h-48 bg-white rounded-3xl p-4 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+                {/* CARD DO QR CODE */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="bg-zinc-900/50 border border-zinc-800 rounded-[3rem] p-8 flex flex-col items-center text-center space-y-8 shadow-2xl relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <Sparkles size={40} className="text-orange-600" />
+                    </div>
+
+                    <div className="w-56 h-56 bg-white rounded-[2.5rem] p-6 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)] relative group">
                         {mounted && shareUrl ? (
                             <QRCode
                                 value={shareUrl}
-                                size={160} // Tamanho exato para preencher o quadrado
+                                size={180}
                                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                level="H" // Alta qualidade para leitura mais fácil
+                                level="H"
                             />
                         ) : (
-                            // Esqueleto de carregamento enquanto o link não está pronto
-                            <div className="w-full h-full bg-gray-200 animate-pulse rounded-2xl" />
+                            <div className="w-full h-full bg-zinc-100 animate-pulse rounded-2xl" />
                         )}
                     </div>
-                    <div>
-                        <h3 className="text-xl font-bold text-white mb-2">Seu QR Code</h3>
-                        <p className="text-sm text-white/40 max-w-[200px] mx-auto">
-                            Mostre para seus clientes no balcão para agendamentos rápidos.
+                    
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-black text-white tracking-tight">Seu QR Code</h3>
+                        <p className="text-sm text-zinc-500 font-medium max-w-[220px] mx-auto leading-relaxed">
+                            Mantenha no balcão para seus clientes agendarem em segundos.
                         </p>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* SEÇÃO DO LINK */}
-                <div className="space-y-4">
-                    <label className="text-[10px] font-black text-accent uppercase px-1 tracking-[0.2em]">Seu Link de Agendamento</label>
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="space-y-3"
+                >
+                    <label className="text-[10px] font-black text-orange-600 uppercase px-2 tracking-[0.2em]">Link de Agendamento</label>
 
-                    <div className="bg-surface border border-white/10 p-2 rounded-2xl flex items-center gap-2 group">
+                    <div className="bg-zinc-900 border border-zinc-800 p-2.5 rounded-[2rem] flex items-center gap-2 group transition-all focus-within:border-orange-600/50">
                         <div className="flex-1 px-4 overflow-hidden">
-                            <p className="text-white/60 text-sm truncate font-medium">
+                            <p className="text-zinc-400 text-sm truncate font-bold">
                                 {shareUrl ? shareUrl.replace(/^https?:\/\//, '') : "Gerando link..."}
                             </p>
                         </div>
 
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
                             onClick={handleCopy}
-                            className={`p-4 rounded-xl transition-all active:scale-90 ${copied ? 'bg-green-500 text-black' : 'bg-white/5 text-white'
-                                }`}
+                            className={`p-4 rounded-2xl transition-all ${
+                                copied ? 'bg-green-600 text-white' : 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                            }`}
                         >
-                            {copied ? <Check size={20} /> : <Copy size={20} />}
-                        </button>
+                            {copied ? <Check size={20} strokeWidth={3} /> : <Copy size={20} strokeWidth={3} />}
+                        </motion.button>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* BOTÕES DE AÇÃO RÁPIDA */}
-                <div className="grid grid-cols-2 gap-4 mt-2">
-                    <button
+                <div className="grid grid-cols-2 gap-4">
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
                         onClick={handleShare}
-                        className="flex flex-col items-center justify-center gap-3 bg-accent/10 border border-accent/20 p-6 rounded-[32px] hover:bg-accent/20 transition-all active:scale-95 group"
+                        className="flex flex-col items-center justify-center gap-4 bg-zinc-900 border border-zinc-800 p-8 rounded-[2.5rem] hover:bg-zinc-800 transition-all group"
                     >
-                        <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white shadow-lg shadow-accent/20 group-hover:scale-110 transition-transform">
-                            <Share2 size={24} />
+                        <div className="w-14 h-14 rounded-2xl bg-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-600/20 group-hover:scale-110 transition-transform">
+                            <Share2 size={26} strokeWidth={2.5} />
                         </div>
-                        <span className="text-xs font-black text-white uppercase tracking-widest">Enviar Link</span>
-                    </button>
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Enviar Link</span>
+                    </motion.button>
 
-                    <button
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => window.open(shareUrl, '_blank')}
-                        className="flex flex-col items-center justify-center gap-3 bg-white/5 border border-white/10 p-6 rounded-[32px] hover:bg-white/10 transition-all active:scale-95 group"
+                        className="flex flex-col items-center justify-center gap-4 bg-zinc-900 border border-zinc-800 p-8 rounded-[2.5rem] hover:bg-zinc-800 transition-all group"
                     >
-                        <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                            <ExternalLink size={24} />
+                        <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                            <ExternalLink size={26} strokeWidth={2.5} />
                         </div>
-                        <span className="text-xs font-black text-white uppercase tracking-widest">Ver Página</span>
-                    </button>
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Ver Página</span>
+                    </motion.button>
                 </div>
 
-                <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-[32px] flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 mt-1">
-                        <Check size={20} />
+                {/* DICA BOX */}
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-orange-600/5 border border-orange-600/10 p-7 rounded-[2.5rem] flex items-start gap-5 relative overflow-hidden"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-orange-600/10 flex items-center justify-center text-orange-500 shrink-0">
+                        <Sparkles size={22} strokeWidth={2.5} />
                     </div>
-                    <p className="text-xs text-blue-100/60 leading-relaxed">
-                        <strong className="text-blue-400 block mb-1 uppercase tracking-tighter">Dica InBarber:</strong>
-                        Coloque este link na sua <strong>Bio do Instagram</strong> para automatizar sua agenda 24h por dia.
-                    </p>
-                </div>
+                    <div className="space-y-1">
+                        <strong className="text-orange-500 text-[11px] font-black uppercase tracking-widest block">Dica InBarber:</strong>
+                        <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+                            Coloque este link na sua <span className="text-white">Bio do Instagram</span> para automatizar sua agenda 24h por dia.
+                        </p>
+                    </div>
+                </motion.div>
             </div>
         </main>
     );

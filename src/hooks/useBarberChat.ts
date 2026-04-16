@@ -7,7 +7,10 @@ export function useBarberChat(barbershopId: string) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
     const [userData, setUserData] = useState({
-        name: "", serviceId: "", serviceName: "", date: "", time: "",
+        name: "",
+        selectedServices: [] as any[],
+        date: "",
+        time: "",
     });
 
     // Fetch inicial dos dados da barbearia
@@ -26,14 +29,23 @@ export function useBarberChat(barbershopId: string) {
         setUserData(prev => ({ ...prev, name }));
         setStep(2);
     }, []);
-
+    
     const handleConfirmAppointment = async () => {
         setIsSubmitting(true);
         try {
+            // Extraímos apenas os IDs dos serviços selecionados
+            const selectedIds = userData.selectedServices.map((s: any) => s.id);
+
             await fetch('/api/public/appointments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...userData, barbershopId })
+                body: JSON.stringify({
+                    clientName: userData.name,
+                    serviceIds: selectedIds, // Enviamos a array de IDs
+                    date: userData.date,
+                    time: userData.time,
+                    barbershopId
+                })
             });
             setStep(4);
         } catch (error) {

@@ -15,9 +15,8 @@ model Barbershop {
   address        String?
   businessHours  Json?
   
-  // Controle de Acesso
   planStatus     String        @default("TRIAL") // "TRIAL", "ACTIVE", "PAST_DUE"
-  trialExpiresAt DateTime      // Data limite do teste (createdAt + 45 dias)
+  trialExpiresAt DateTime      
   
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
@@ -48,14 +47,13 @@ model Appointment {
   date         String
   time         String
   status       String     @default("CONFIRMED")
-  serviceId    String
   barbershopId String
   createdAt    DateTime   @default(now())
+  
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  service      Service    @relation(fields: [serviceId], references: [id])
+  services     Service[]  @relation("AppointmentServices")
 
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
-  @@index([serviceId], map: "appointments_serviceId_fkey")
   @@map("appointments")
 }
 
@@ -67,8 +65,9 @@ model Service {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   barbershopId String
-  appointments Appointment[]
+  
   barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments Appointment[] @relation("AppointmentServices")
 
   @@index([barbershopId], map: "services_barbershopId_fkey")
   @@map("services")

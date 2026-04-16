@@ -12,7 +12,6 @@ import { SuccessState } from "@/components/agendar/SuccessState";
 import { DateSelector } from "@/components/DateSelector";
 import { TimeGrid } from "@/components/TimeGrid";
 
-// Bolha de chat padrão, mas com escala e fontes maiores
 const BigChatBubble = ({ text, isAi, isUser }: { text: string, isAi?: boolean, isUser?: boolean }) => {
   return (
     <motion.div
@@ -21,11 +20,10 @@ const BigChatBubble = ({ text, isAi, isUser }: { text: string, isAi?: boolean, i
       className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`px-6 py-5 max-w-[90%] md:max-w-[85%] shadow-md leading-snug ${
-          isUser
+        className={`px-6 py-5 max-w-[90%] md:max-w-[85%] shadow-md leading-snug ${isUser
             ? "bg-orange-600 text-white rounded-[2rem] rounded-tr-lg text-xl font-bold"
             : "bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-[2rem] rounded-tl-lg text-2xl font-semibold"
-        }`}
+          }`}
       >
         {text}
       </div>
@@ -51,7 +49,7 @@ export default function BarberChat() {
         behavior: "smooth",
       });
     }
-  }, [step, userData.date, userData.time]);
+  }, [step, userData.date, userData.time, userData.selectedServices]);
 
   return (
     <main className="fixed inset-0 flex flex-col bg-black max-w-md mx-auto border-x border-zinc-900">
@@ -60,7 +58,7 @@ export default function BarberChat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 no-scrollbar">
         <div className="space-y-8 pb-10">
           <AnimatePresence mode="popLayout">
-            
+
             <BigChatBubble
               key="welcome-msg"
               isAi
@@ -79,7 +77,14 @@ export default function BarberChat() {
 
             {step >= 3 && (
               <div key="step-3-container" className="space-y-8 pt-4">
-                <BigChatBubble text={userData.serviceName} isUser />
+                {/* ALTERAÇÃO AQUI: 
+                  Em vez de userData.serviceName, mapeamos os nomes dos serviços selecionados 
+                */}
+                <BigChatBubble
+                  text={userData.selectedServices.map((s: any) => s.name).join(", ")}
+                  isUser
+                />
+
                 <BigChatBubble isAi text="Qual dia fica melhor para você?" />
 
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -112,7 +117,7 @@ export default function BarberChat() {
         </div>
       </div>
 
-      <ChatFooter 
+      <ChatFooter
         step={step}
         setStep={setStep}
         userData={userData}

@@ -10,53 +10,63 @@ export async function GET() {
 
         const appointments = await prisma.appointment.findMany({
             where: { barbershopId: session.user.barbershopId },
-            include: { service: true }, // <-- TRAZ OS DADOS DO SERVIÇO JUNTO
+            include: { services: true }, // <-- TRAZ A ARRAY DE SERVIÇOS
             orderBy: { time: 'asc' }
         });
 
         const formattedAgenda: Record<string, any[]> = {};
+
         appointments.forEach(appt => {
             if (!formattedAgenda[appt.date]) formattedAgenda[appt.date] = [];
+
+            // Junta os nomes: "Corte, Barba, Sobrancelha"
+            const serviceNames = appt.services.map(s => s.name).join(", ");
+            // Soma os preços: 35.00 + 20.00 = 55.00
+            const totalPrice = appt.services.reduce((total, s) => total + s.price, 0);
+
             formattedAgenda[appt.date].push({
                 id: appt.id,
                 time: appt.time,
                 name: appt.clientName,
-                service: appt.service.name, // Nome que vem da tabela Service
-                price: appt.service.price    // Preço que vem da tabela Service
+                service: serviceNames,
+                price: totalPrice
             });
         });
 
         return NextResponse.json({ agenda: formattedAgenda });
     } catch (error) {
+        console.error("Erro no GET:", error);
         return NextResponse.json({ error: "Erro ao buscar" }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
     try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user?.barbershopId) return NextResponse.json({ error: "401" }, { status: 401 });
+        // Pegamos serviceIds (array) em vez de serviceId
+        const { clientName, serviceIds, date, time, barbershopId } = await req.json();
 
-        const { clientName, serviceId, date, time } = await req.json();
+        // Criamos o formato que o Prisma exige para o connect: [{ id: "1" }, { id: "2" }]
+        const connectServices = serviceIds.map((id: string) => ({ id }));
 
-        // 1. Criar o agendamento usando a relação (Connect)
         const newAppointment = await prisma.appointment.create({
             data: {
                 clientName,
                 date,
                 time,
-                barbershopId: session.user.barbershopId,
-                // Em vez de usar service: { connect: { id: serviceId } }
-                // Use diretamente o serviceId que definimos no Schema:
-                serviceId: serviceId
+                barbershopId,
+                // Aqui conectamos a lista de serviços ao agendamento
+                services: {
+                    connect: connectServices
+                }
             },
             include: {
-                service: true
+                services: true // Retorna os dados para confirmarmos que deu certo
             }
         });
 
         return NextResponse.json({ message: "Criado!", appointment: newAppointment }, { status: 201 });
     } catch (error) {
+        console.error("Erro no agendamento:", error);
         return NextResponse.json({ error: "Erro ao criar" }, { status: 500 });
     }
 }

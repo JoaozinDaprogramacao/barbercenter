@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-// 1. BUSCAR DETALHES
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
@@ -11,10 +10,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const appointment = await prisma.appointment.findUnique({
             where: { id: appointmentId as any },
-            include: { service: true }
+            include: { services: true } // Alterado de service para services
         });
 
         if (!appointment) return NextResponse.json({ error: "404" }, { status: 404 });
+
+        // Consolida nomes e preços de todos os serviços vinculados
+        const serviceNames = appointment.services.map(s => s.name).join(", ");
+        const totalPrice = appointment.services.reduce((acc, s) => acc + s.price, 0);
 
         return NextResponse.json({
             id: appointment.id,
@@ -22,8 +25,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             date: appointment.date,
             time: appointment.time,
             name: appointment.clientName,
-            service: appointment.service?.name || "Serviço",
-            price: appointment.service?.price || 0,
+            status: appointment.status,
+            service: serviceNames || "Nenhum serviço",
+            price: totalPrice,
+            services: appointment.services // Retorna a lista completa para o front se necessário
         });
     } catch (error) {
         return NextResponse.json({ error: "500" }, { status: 500 });
@@ -33,21 +38,34 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
-        const body = await req.json(); // Pega o que vier no body (date, time ou serviceId)
+        const body = await req.json();
         const appointmentId = isNaN(Number(id)) ? id : Number(id);
+
+        const { serviceIds, ...otherData } = body;
+
+        // Prepara os dados de atualização
+        const updateData: any = { ...otherData };
+
+        // Se vierem novos IDs de serviço, sobrescreve a lista atual
+        if (serviceIds && Array.isArray(serviceIds)) {
+            updateData.services = {
+                set: serviceIds.map((sid: string) => ({ id: sid }))
+            };
+        }
 
         const updated = await prisma.appointment.update({
             where: { id: appointmentId as any },
-            data: body // O Prisma é inteligente e só atualizará o que você enviar
+            data: updateData,
+            include: { services: true }
         });
 
         return NextResponse.json(updated);
     } catch (error: any) {
+        console.error("Erro no PATCH:", error);
         return NextResponse.json({ error: "500" }, { status: 500 });
     }
 }
 
-// 3. DELETAR
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const session = await getServerSession(authOptions);

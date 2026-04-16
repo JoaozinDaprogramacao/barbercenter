@@ -15,12 +15,11 @@ export function Navbar() {
     ];
 
     return (
-        // 1. O Wrapper externo evita a "faixa preta" pois ele já ocupa o espaço com fundo branco
         <div className="w-full bg-white h-20 relative z-[100]">
             <motion.nav
-                initial={{ y: -80 }} // Começa escondido logo acima
+                initial={{ y: -80 }}
                 animate={{ y: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} // Ease suave
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="fixed top-0 left-0 w-full bg-white border-b border-slate-100"
             >
                 <div className="max-w-screen-2xl mx-auto px-4 md:px-12 flex items-center justify-between h-20">
@@ -55,18 +54,20 @@ export function Navbar() {
                     <div className="flex items-center gap-2 sm:gap-4">
                         <Link
                             href="/login"
-                            className="hidden md:block text-sm font-bold text-slate-500 hover:text-slate-900 px-4 py-2 transition-colors"
+                            className="text-sm font-bold text-slate-500 hover:text-slate-900 px-4 py-2 transition-colors"
                         >
                             Login
                         </Link>
 
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-orange-600 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-tight shadow-lg shadow-orange-200 will-change-transform"
-                        >
-                            Teste Grátis
-                        </motion.button>
+                        <Link href="/registro">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-orange-600 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-tight shadow-lg shadow-orange-200 will-change-transform"
+                            >
+                                Teste Grátis
+                            </motion.button>
+                        </Link>
 
                         <button
                             className="md:hidden p-2 text-slate-600 transition-colors"
@@ -88,7 +89,12 @@ export function Navbar() {
                         >
                             <div className="flex flex-col p-6 gap-5">
                                 {links.map((link) => (
-                                    <a key={link.name} href={link.href} className="text-base font-bold text-slate-600">
+                                    <a
+                                        key={link.name}
+                                        href={link.href}
+                                        onClick={() => setIsOpen(false)}
+                                        className="text-base font-bold text-slate-600"
+                                    >
                                         {link.name}
                                     </a>
                                 ))}

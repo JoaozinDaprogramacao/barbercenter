@@ -2,32 +2,31 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Componentes da pasta admin/appointment
 import { AppointmentHeader } from "@/components/admin/appointment/AppointmentHeader";
 import { AppointmentInfoCard } from "@/components/admin/appointment/AppointmentInfoCard";
 import { AppointmentActionSheet } from "@/components/admin/appointment/AppointmentActionSheet";
 
-// Componentes de seleção (os mesmos usados no Chat)
+// Componentes de seleção
 import { DateSelector } from "@/components/DateSelector";
 import { TimeGrid } from "@/components/TimeGrid";
+import { Check, AlertTriangle, Calendar, Clock, Scissors } from "lucide-react";
 
 export default function AppointmentDetailPage() {
     const router = useRouter();
     const params = useParams();
 
-    // Estados de controle da UI
     const [activeSheet, setActiveSheet] = useState<"date" | "services" | "cancel" | null>(null);
     const [reminderSent, setReminderSent] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    // Estados para dados reais da API
     const [appointment, setAppointment] = useState<any>(null);
     const [businessHours, setBusinessHours] = useState<any>(null);
     const [availableServices, setAvailableServices] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Estados temporários para edição
     const [tempDate, setTempDate] = useState("");
     const [tempTime, setTempTime] = useState("");
     const [tempServiceId, setTempServiceId] = useState("");
@@ -63,30 +62,9 @@ export default function AppointmentDetailPage() {
         if (params.id) fetchData();
     }, [params.id]);
 
-    const generateSlots = (start: string, end: string) => {
-        const slots = [];
-        let [startHour, startMinute] = start.split(":").map(Number);
-        const [endHour, endMinute] = end.split(":").map(Number);
-        const currentTime = new Date();
-        currentTime.setHours(startHour, startMinute, 0, 0);
-        const endTime = new Date();
-        endTime.setHours(endHour, endMinute, 0, 0);
-
-        while (currentTime < endTime) {
-            const hour = currentTime.getHours().toString().padStart(2, "0");
-            const minute = currentTime.getMinutes().toString().padStart(2, "0");
-            slots.push(`${hour}:${minute}`);
-            currentTime.setMinutes(currentTime.getMinutes() + 30);
-        }
-        return slots;
-    };
-
     const getAvailableTimesForDate = (selectedDate: string) => {
         if (!businessHours || !selectedDate) return [];
-        const monthMap: Record<string, number> = {
-            "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5,
-            "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11
-        };
+        const monthMap: Record<string, number> = { "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5, "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11 };
         const parts = selectedDate.split("-");
         const day = parseInt(parts[0], 10);
         const monthIndex = monthMap[parts[1].toLowerCase()];
@@ -94,19 +72,17 @@ export default function AppointmentDetailPage() {
         const dayOfWeek = new Date(currentYear, monthIndex, day).getDay();
         const dayConfig = businessHours[dayOfWeek];
 
-        if (!dayConfig || !dayConfig.isOpen || !dayConfig.openTime || !dayConfig.closeTime) return [];
+        if (!dayConfig || !dayConfig.isOpen) return [];
 
-        let slots = generateSlots(dayConfig.openTime, dayConfig.closeTime);
-        const now = new Date();
-        const todayCompare = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-        const selectedCompare = new Date(currentYear, monthIndex, day).getTime();
+        const slots = [];
+        let [h, m] = dayConfig.openTime.split(":").map(Number);
+        const [eh, em] = dayConfig.closeTime.split(":").map(Number);
+        let current = h * 60 + m;
+        const end = eh * 60 + em;
 
-        if (todayCompare === selectedCompare) {
-            const nowTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-            slots = slots.filter(slot => {
-                const [h, m] = slot.split(':').map(Number);
-                return (h * 60 + m) > nowTimeInMinutes + 30;
-            });
+        while (current < end) {
+            slots.push(`${Math.floor(current / 60).toString().padStart(2, "0")}:${(current % 60).toString().padStart(2, "0")}`);
+            current += 30;
         }
         return slots;
     };
@@ -123,11 +99,7 @@ export default function AppointmentDetailPage() {
                 setAppointment((prev: any) => ({ ...prev, date: tempDate, dateLabel: tempDate, time: tempTime }));
                 setActiveSheet(null);
             }
-        } catch (error) {
-            alert("Erro ao atualizar.");
-        } finally {
-            setIsUpdating(false);
-        }
+        } catch (error) { alert("Erro ao atualizar."); } finally { setIsUpdating(false); }
     };
 
     const handleUpdateService = async () => {
@@ -140,19 +112,10 @@ export default function AppointmentDetailPage() {
             });
             if (res.ok) {
                 const newService = availableServices.find(s => s.id === tempServiceId);
-                setAppointment((prev: any) => ({
-                    ...prev,
-                    serviceId: tempServiceId,
-                    service: newService?.name,
-                    price: newService?.price
-                }));
+                setAppointment((prev: any) => ({ ...prev, serviceId: tempServiceId, service: newService?.name, price: newService?.price }));
                 setActiveSheet(null);
             }
-        } catch (error) {
-            alert("Erro ao atualizar serviço.");
-        } finally {
-            setIsUpdating(false);
-        }
+        } catch (error) { alert("Erro ao atualizar serviço."); } finally { setIsUpdating(false); }
     };
 
     const handleConfirmCancel = async () => {
@@ -162,11 +125,10 @@ export default function AppointmentDetailPage() {
         } catch (error) { console.error(error); }
     };
 
-    const closeSheet = () => !isUpdating && setActiveSheet(null);
-
     if (isLoading) return (
-        <div className="min-h-screen bg-background flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center">
+            <div className="w-10 h-10 border-2 border-orange-600/20 border-t-orange-600 rounded-full animate-spin" />
+            <p className="mt-4 text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Buscando dados</p>
         </div>
     );
 
@@ -182,7 +144,13 @@ export default function AppointmentDetailPage() {
     };
 
     return (
-        <main className="min-h-screen w-full bg-background max-w-md mx-auto flex flex-col font-sans relative">
+        <main className="min-h-screen w-full bg-black max-w-md mx-auto flex flex-col font-sans relative border-x border-zinc-900 overflow-x-hidden">
+            {/* Background Glows */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+                <div className="absolute bottom-40 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+            </div>
+
             <AppointmentHeader
                 onBack={() => router.back()}
                 onSendReminder={() => {
@@ -192,82 +160,113 @@ export default function AppointmentDetailPage() {
                 reminderSent={reminderSent}
             />
 
-            <div className="px-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-                <header>
-                    <p className="text-white/40 text-sm font-medium mb-1">Gerenciar</p>
-                    <h2 className="text-4xl font-black text-white tracking-tight leading-none">Agendamento</h2>
-                </header>
+            <div className="px-6 pb-24 z-10 space-y-8">
+                <motion.header
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                >
+                    <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Gerenciar</p>
+                    <h2 className="text-4xl font-black text-white tracking-tighter leading-none">Agendamento</h2>
+                </motion.header>
 
-                <AppointmentInfoCard
-                    data={formattedData}
-                    onEditDate={() => setActiveSheet("date")}
-                    onEditServices={() => setActiveSheet("services")}
-                    onWhatsApp={() => {
-                        const phone = formattedData.client.phone.replace(/\D/g, '');
-                        window.open(`https://wa.me/${phone}`, "_blank");
-                    }}
-                />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <AppointmentInfoCard
+                        data={formattedData}
+                        onEditDate={() => setActiveSheet("date")}
+                        onEditServices={() => setActiveSheet("services")}
+                        onWhatsApp={() => {
+                            const phone = formattedData.client.phone.replace(/\D/g, '');
+                            window.open(`https://wa.me/${phone}`, "_blank");
+                        }}
+                    />
+                </motion.div>
 
-                <button onClick={() => setActiveSheet("cancel")} className="w-full py-5 rounded-[24px] border border-red-500/20 text-red-500/40 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:border-red-500/40">
+                <motion.button 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    onClick={() => setActiveSheet("cancel")} 
+                    className="w-full py-5 rounded-[2rem] border border-red-500/20 text-red-500/60 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-red-500/5 active:scale-95"
+                >
                     Cancelar Agendamento
-                </button>
+                </motion.button>
             </div>
 
+            {/* ACTION SHEETS COM REBRANDING */}
             <AppointmentActionSheet
                 isOpen={!!activeSheet}
-                onClose={closeSheet}
+                onClose={() => !isUpdating && setActiveSheet(null)}
                 footer={
                     (activeSheet === "date" || activeSheet === "services") && (
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
                             disabled={isUpdating || (activeSheet === "date" && (!tempDate || !tempTime))}
                             onClick={activeSheet === "date" ? handleUpdateDateTime : handleUpdateService}
-                            className={`w-full py-5 rounded-[24px] font-black uppercase tracking-[0.2em] text-[10px] transition-all
-                                ${isUpdating ? 'bg-white/5 text-white/10' : 'bg-accent text-black active:scale-95 shadow-lg shadow-accent/10'}`}
+                            className={`w-full py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[11px] transition-all shadow-xl
+                                ${isUpdating ? 'bg-zinc-800 text-zinc-600' : 'bg-orange-600 text-white shadow-orange-600/20'}`}
                         >
                             {isUpdating ? "Salvando..." : "Confirmar Alteração"}
-                        </button>
+                        </motion.button>
                     )
                 }
             >
                 {activeSheet === "date" && (
-                    <div className="flex flex-col gap-y-6">
-                        <div className="space-y-1">
-                            <h3 className="text-2xl font-black text-white tracking-tight">Alterar Horário</h3>
-                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Selecione data e hora</p>
+                    <div className="flex flex-col gap-y-8 py-4">
+                        <div className="space-y-2">
+                            <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                                <Calendar size={12} /> Reagendar
+                            </p>
+                            <h3 className="text-3xl font-black text-white tracking-tighter">Novo Horário</h3>
                         </div>
+                        
                         <DateSelector value={tempDate} onChange={(date) => { setTempDate(date); setTempTime(""); }} />
+                        
                         {tempDate && (
-                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-[1px] flex-1 bg-white/5" />
-                                    <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Disponíveis</span>
-                                    <div className="h-[1px] flex-1 bg-white/5" />
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-px flex-1 bg-zinc-800" />
+                                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                                        <Clock size={12} /> Disponíveis
+                                    </span>
+                                    <div className="h-px flex-1 bg-zinc-800" />
                                 </div>
                                 <TimeGrid value={tempTime} availableTimes={getAvailableTimesForDate(tempDate)} onChange={(time) => setTempTime(time)} />
-                            </div>
+                            </motion.div>
                         )}
                     </div>
                 )}
 
                 {activeSheet === "services" && (
-                    <div className="space-y-6">
-                        <div className="space-y-1">
-                            <h3 className="text-2xl font-black text-white tracking-tight">Editar Serviço</h3>
-                            <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Escolha o novo serviço</p>
+                    <div className="space-y-8 py-4">
+                        <div className="space-y-2">
+                            <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                                <Scissors size={12} /> Procedimento
+                            </p>
+                            <h3 className="text-3xl font-black text-white tracking-tighter">Editar Serviço</h3>
                         </div>
-                        <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-2 no-scrollbar">
+
+                        <div className="space-y-3 max-h-[45vh] overflow-y-auto pr-2 no-scrollbar">
                             {availableServices.map((s: any) => {
                                 const isSelected = tempServiceId === s.id;
                                 return (
-                                    <button key={s.id} onClick={() => setTempServiceId(s.id)} className={`w-full flex justify-between items-center p-4 rounded-2xl border transition-all ${isSelected ? "bg-accent/10 border-accent shadow-[0_0_20px_rgba(178,123,92,0.1)]" : "bg-white/5 border-white/5 opacity-60"}`}>
+                                    <motion.button 
+                                        key={s.id} 
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setTempServiceId(s.id)} 
+                                        className={`w-full flex justify-between items-center p-6 rounded-[2rem] border-2 transition-all ${isSelected ? "bg-orange-600/10 border-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.1)]" : "bg-zinc-900 border-zinc-800 opacity-60"}`}
+                                    >
                                         <div className="text-left">
-                                            <span className={`block font-bold ${isSelected ? "text-accent" : "text-white"}`}>{s.name}</span>
-                                            <span className="text-[10px] text-white/40 font-medium">R$ {s.price.toFixed(2).replace('.', ',')}</span>
+                                            <span className={`block font-black uppercase text-xs tracking-tight ${isSelected ? "text-orange-500" : "text-white"}`}>{s.name}</span>
+                                            <span className="text-[10px] text-zinc-500 font-bold uppercase mt-1 block">R$ {s.price.toFixed(2).replace('.', ',')}</span>
                                         </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-accent bg-accent" : "border-white/10"}`}>
-                                            {isSelected && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="4"><polyline points="20 6 9 17 4 12" /></svg>}
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-orange-600 bg-orange-600" : "border-zinc-800"}`}>
+                                            {isSelected && <Check size={14} className="text-white" strokeWidth={4} />}
                                         </div>
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
                         </div>
@@ -275,19 +274,24 @@ export default function AppointmentDetailPage() {
                 )}
 
                 {activeSheet === "cancel" && (
-                    <div className="space-y-6 text-center py-4">
-                        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto text-2xl">⚠️</div>
-                        <div className="space-y-2">
-                            <h3 className="text-2xl font-black text-white leading-tight">Deseja realmente cancelar?</h3>
-                            <p className="text-white/40 text-sm">O cliente receberá uma notificação automática.</p>
+                    <div className="space-y-8 text-center py-6">
+                        <div className="w-20 h-20 bg-red-600/10 rounded-[2.5rem] flex items-center justify-center mx-auto border border-red-600/20 shadow-2xl">
+                            <AlertTriangle size={40} className="text-red-600" />
+                        </div>
+                        <div className="space-y-3">
+                            <h3 className="text-3xl font-black text-white tracking-tighter leading-tight">Confirmar Cancelamento?</h3>
+                            <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-[280px] mx-auto">Esta ação é irreversível e o cliente será notificado via WhatsApp.</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={closeSheet} className="py-4 bg-white/5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">MANTER</button>
-                            <button onClick={handleConfirmCancel} className="py-4 bg-red-500 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all">CONFIRMAR</button>
+                            <motion.button whileTap={{ scale: 0.95 }} onClick={() => setActiveSheet(null)} className="py-5 bg-zinc-900 border border-zinc-800 rounded-2xl text-zinc-400 font-black uppercase tracking-widest text-[10px]">Manter</motion.button>
+                            <motion.button whileTap={{ scale: 0.95 }} onClick={handleConfirmCancel} className="py-5 bg-red-600 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-600/20">Cancelar</motion.button>
                         </div>
                     </div>
                 )}
             </AppointmentActionSheet>
+
+            {/* Bottom Fade */}
+            <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent pointer-events-none z-20" />
         </main>
     );
 }

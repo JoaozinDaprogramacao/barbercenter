@@ -1,41 +1,67 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 interface AppointmentActionSheetProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  footer?: React.ReactNode; // Nova prop para o botão fixo
+  footer?: React.ReactNode;
 }
 
-export const AppointmentActionSheet = ({ isOpen, onClose, children, footer }: AppointmentActionSheetProps) => {
-  if (!isOpen) return null;
-
+export const AppointmentActionSheet = ({ 
+  isOpen, 
+  onClose, 
+  children, 
+  footer 
+}: AppointmentActionSheetProps) => {
   return (
-    <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center animate-in fade-in duration-300"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md bg-[#121212] rounded-t-[40px] border-t border-white/10 shadow-2xl animate-in slide-in-from-bottom duration-500 max-h-[90vh] flex flex-col"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* HEADER FIXO */}
-        <div className="pt-6 px-8 shrink-0 bg-[#121212] rounded-t-[40px] z-10">
-          <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-4" />
-        </div>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center overflow-hidden">
+          {/* Backdrop Otimizado */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/90 backdrop-blur-md will-change-opacity"
+          />
 
-        {/* CONTEÚDO COM SCROLL */}
-        <div className="flex-1 overflow-y-auto px-8 pb-4 no-scrollbar">
-          {children}
-        </div>
+          {/* Bottom Sheet Body */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md bg-zinc-950 border-t border-zinc-900 rounded-t-[3rem] shadow-2xl max-h-[92vh] flex flex-col z-10 will-change-transform"
+          >
+            {/* Header / Arraste */}
+            <div className="pt-6 px-8 shrink-0 relative">
+              <div className="w-14 h-1.5 bg-zinc-800 rounded-full mx-auto mb-4" />
+            </div>
 
-        {/* FOOTER FIXO (AQUI FICA O BOTÃO) */}
-        {footer && (
-          <div className="p-8 pt-4 shrink-0 bg-[#121212] border-t border-white/5 z-10">
-            {footer}
-          </div>
-        )}
-      </div>
-    </div>
+            {/* Conteúdo com Scroll Suave */}
+            <div className="flex-1 overflow-y-auto px-8 pb-6 no-scrollbar">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                {children}
+              </motion.div>
+            </div>
+
+            {/* Footer Fixo */}
+            {footer && (
+              <div className="p-8 pt-4 shrink-0 bg-zinc-950 border-t border-zinc-900 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+                {footer}
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };

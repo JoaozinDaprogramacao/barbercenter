@@ -26,20 +26,39 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     } = useServices();
 
     const [editingService, setEditingService] = useState<any>(null);
+    const [isSavingService, setIsSavingService] = useState(false);
 
     const handleSaveService = async () => {
-        if (!editingService) return;
-        await saveService(editingService);
-        setEditingService(null);
+        if (!editingService || isSavingService) return;
+
+        setIsSavingService(true);
+        try {
+            await saveService(editingService);
+            setEditingService(null);
+        } catch (error) {
+            console.error("Erro ao salvar serviço:", error);
+        } finally {
+            setIsSavingService(false);
+        }
     };
 
     const handleDeleteService = async (id: any) => {
+        if (isSavingService) return;
+
         if (typeof id === 'number' || String(id).length < 15) {
             setEditingService(null);
             return;
         }
-        await deleteService(id);
-        setEditingService(null);
+
+        setIsSavingService(true);
+        try {
+            await deleteService(id);
+            setEditingService(null);
+        } catch (error) {
+            console.error("Erro ao deletar serviço:", error);
+        } finally {
+            setIsSavingService(false);
+        }
     };
 
     return (
@@ -134,6 +153,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     <ServiceEditForm
                         service={editingService}
                         isOpen={!!editingService}
+                        isSaving={isSavingService}
                         onDone={handleSaveService}
                         onRemove={handleDeleteService}
                         onUpdate={(id: any, f: string, v: any) => {

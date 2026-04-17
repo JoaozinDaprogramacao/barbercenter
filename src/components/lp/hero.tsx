@@ -22,23 +22,7 @@ export function Hero() {
           <p className="mt-4 md:mt-6 text-base sm:text-lg md:text-xl text-slate-600 max-w-md font-medium">
             Tenha o controle total da sua barbearia na palma da mão. Agendamento online, estoque e equipe em um só lugar.
           </p>
-          
-          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4">
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto justify-center bg-black text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:opacity-80 transition shadow-xl shadow-slate-200">
-              <Smartphone size={22} />
-              <div className="text-left leading-none">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Disponível na</p>
-                <p className="text-base font-bold">App Store</p>
-              </div>
-            </motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto justify-center bg-black text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:opacity-80 transition shadow-xl shadow-slate-200">
-              <Smartphone size={22} />
-              <div className="text-left leading-none">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Disponível no</p>
-                <p className="text-base font-bold">Google Play</p>
-              </div>
-            </motion.button>
-          </div>
+
           
           <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
             <div className="flex text-yellow-400">

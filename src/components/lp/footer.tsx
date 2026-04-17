@@ -12,15 +12,6 @@ export function Footer() {
             <a href="#" className="hover:text-white transition">Privacidade</a>
             <a href="#" className="hover:text-white transition">Cookies</a>
           </div>
-
-          <div className="flex space-x-4">
-            <div className="h-10 w-32 bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center grayscale opacity-50 hover:opacity-100 transition cursor-pointer">
-              <span className="text-[10px] font-bold tracking-wider">APP STORE</span>
-            </div>
-            <div className="h-10 w-32 bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center grayscale opacity-50 hover:opacity-100 transition cursor-pointer">
-              <span className="text-[10px] font-bold tracking-wider">GOOGLE PLAY</span>
-            </div>
-          </div>
         </div>
         
         <div className="text-center mt-16 pt-8 border-t border-zinc-900/50 text-zinc-600 text-[10px] tracking-[0.2em] uppercase font-medium">

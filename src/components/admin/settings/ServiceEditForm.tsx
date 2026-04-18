@@ -7,12 +7,20 @@ import { DurationInput } from "./DurationInput";
 interface ServiceEditFormProps {
     service: any;
     isOpen: boolean;
+    isSaving: boolean;
     onUpdate: (id: any, f: string, v: any) => void;
     onRemove: (id: any) => void;
     onDone: () => void;
 }
 
-export const ServiceEditForm = ({ service, isOpen, onUpdate, onRemove, onDone }: ServiceEditFormProps) => {
+export const ServiceEditForm = ({ 
+    service, 
+    isOpen, 
+    isSaving,
+    onUpdate, 
+    onRemove, 
+    onDone 
+}: ServiceEditFormProps) => {
     return (
         <AnimatePresence>
             {isOpen && (

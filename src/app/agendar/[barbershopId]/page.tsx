@@ -36,8 +36,9 @@ export default function BarberChat() {
   const barbershopId = params.barbershopId as string;
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // 👇 IMPORTA A EQUIPE AQUI
   const {
-    shopName, availableServices, businessHours,
+    shopName, availableServices, businessHours, team,
     isSubmitting, step, setStep, userData, setUserData,
     handleConfirmAppointment
   } = useBarberChat(barbershopId);
@@ -49,7 +50,7 @@ export default function BarberChat() {
         behavior: "smooth",
       });
     }
-  }, [step, userData.date, userData.time, userData.selectedServices]);
+  }, [step, userData.date, userData.time, userData.selectedServices, userData.barberId]);
 
   return (
     <main className="fixed inset-0 flex flex-col bg-black max-w-md mx-auto border-x border-zinc-900">
@@ -75,16 +76,54 @@ export default function BarberChat() {
               </div>
             )}
 
+            {/* 👇 NOVO PASSO 3: ESCOLHA DO PROFISSIONAL */}
             {step >= 3 && (
               <div key="step-3-container" className="space-y-8 pt-4">
-                {/* ALTERAÇÃO AQUI: 
-                  Em vez de userData.serviceName, mapeamos os nomes dos serviços selecionados 
-                */}
                 <BigChatBubble
                   text={userData.selectedServices.map((s: any) => s.name).join(", ")}
                   isUser
                 />
+                <BigChatBubble isAi text="Com qual profissional você prefere agendar?" />
 
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 pl-2">
+                  <button
+                    onClick={() => {
+                      setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "Qualquer profissional" }));
+                      setStep(4);
+                    }}
+                    className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${
+                      userData.barberName === "Qualquer profissional"
+                        ? "bg-orange-600 border-orange-500 text-white"
+                        : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                    }`}
+                  >
+                    Qualquer profissional
+                  </button>
+
+                  {team?.map((member: any) => (
+                    <button
+                      key={member.id}
+                      onClick={() => {
+                        setUserData((prev: any) => ({ ...prev, barberId: member.id, barberName: member.name }));
+                        setStep(4); // Avança para a data
+                      }}
+                      className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${
+                        userData.barberId === member.id
+                          ? "bg-orange-600 border-orange-500 text-white"
+                          : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      }`}
+                    >
+                      {member.name}
+                    </button>
+                  ))}
+                </motion.div>
+              </div>
+            )}
+
+            {/* 👇 PASSO 4: DATA E HORA (Antigo Passo 3) */}
+            {step >= 4 && (
+              <div key="step-4-container" className="space-y-8 pt-4">
+                <BigChatBubble text={userData.barberName} isUser />
                 <BigChatBubble isAi text="Qual dia fica melhor para você?" />
 
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -112,7 +151,8 @@ export default function BarberChat() {
               </div>
             )}
 
-            {step === 4 && <SuccessState date={userData.date} time={userData.time} />}
+            {/* 👇 PASSO 5: SUCESSO (Antigo Passo 4) */}
+            {step === 5 && <SuccessState date={userData.date} time={userData.time} />}
           </AnimatePresence>
         </div>
       </div>

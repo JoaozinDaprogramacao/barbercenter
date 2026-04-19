@@ -3,16 +3,26 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
     try {
-        // Sem getServerSession! Rota pública.
-        // ALTERAÇÃO: Recebendo serviceIds em vez de serviceId
-        const { clientName, serviceIds, date, time, barbershopId } = await req.json();
+        // 👇 AQUI: Adicionamos a extração do barberId
+        const { clientName, serviceIds, date, time, barbershopId, barberId } = await req.json();
 
-        // Validação de segurança para garantir que veio uma lista de serviços
         if (!serviceIds || !Array.isArray(serviceIds) || serviceIds.length === 0) {
             return NextResponse.json({ error: "Nenhum serviço selecionado" }, { status: 400 });
         }
 
-        // Transforma a lista de IDs no formato que o Prisma exige para criar a relação Many-to-Many
+        // 👇 AQUI: Lógica flexível para barbeiro único ou múltiplo
+        let assignedBarberId = barberId;
+        
+        if (!assignedBarberId) {
+            // Se não veio barbeiro especificado, pega o primeiro da loja
+            const firstAvailableBarber = await prisma.user.findFirst({
+                where: { barbershopId: barbershopId }
+            });
+            if (firstAvailableBarber) {
+                assignedBarberId = firstAvailableBarber.id;
+            }
+        }
+
         const connectServices = serviceIds.map((id: string) => ({ id }));
 
         const newAppointment = await prisma.appointment.create({
@@ -20,13 +30,15 @@ export async function POST(req: Request) {
                 clientName,
                 date,
                 time,
-                barbershopId, // Usa o ID da barbearia que veio no link
+                barbershopId, 
+                barberId: assignedBarberId, // <-- Salva o barbeiro aqui
                 services: {
-                    connect: connectServices // Aqui nós atrelamos todos os serviços escolhidos
+                    connect: connectServices 
                 }
             },
             include: {
-                services: true // Retorna os serviços junto para confirmar que deu certo
+                services: true,
+                barber: { select: { name: true } } // Confirmação visual no retorno
             }
         });
 

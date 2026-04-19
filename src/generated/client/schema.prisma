@@ -28,14 +28,16 @@ model Barbershop {
 }
 
 model User {
-  id           String     @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  email        String     @unique
+  email        String   @unique
   password     String
-  role         String     @default("OWNER")
-  createdAt    DateTime   @default(now())
+  role         String   @default("OWNER") // Pode ser "OWNER" ou "BARBER"
+  createdAt    DateTime @default(now())
   barbershopId String
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments Appointment[] // <-- NOVA RELAÇÃO AQUI
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
@@ -48,12 +50,15 @@ model Appointment {
   time         String
   status       String   @default("CONFIRMED")
   barbershopId String
+  barberId     String? // <-- NOVO CAMPO (Quem vai atender)
   createdAt    DateTime @default(now())
 
   barbershop Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  barber     User?      @relation(fields: [barberId], references: [id], onDelete: SetNull) // <-- RELAÇÃO
   services   Service[]  @relation("AppointmentServices")
 
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
+  @@index([barberId], map: "appointments_barberId_fkey") // <-- ÍNDICE PARA PERFORMANCE
   @@map("appointments")
 }
 

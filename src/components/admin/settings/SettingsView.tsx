@@ -10,6 +10,7 @@ import { BusinessHoursSection } from "./BusinessHoursSection";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useServices } from "@/hooks/useServices";
 import { SubscriptionSection } from "./SubscriptionSection";
+import { TeamSection } from "./TeamSection";
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const {
@@ -146,6 +147,14 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         )}
                     </section>
                 </div>
+                <section>
+                    <div className="flex items-center justify-between mb-4 px-2">
+                        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>
+                    </div>
+
+                    {/* Aqui você chamará o seu componente TeamSection que listará os barbeiros */}
+                    <TeamSection />
+                </section>
             </div>
 
             <AnimatePresence>

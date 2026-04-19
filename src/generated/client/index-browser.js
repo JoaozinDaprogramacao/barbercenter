@@ -149,6 +149,7 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   time: 'time',
   status: 'status',
   barbershopId: 'barbershopId',
+  barberId: 'barberId',
   createdAt: 'createdAt'
 };
 
@@ -210,7 +211,8 @@ exports.Prisma.AppointmentOrderByRelevanceFieldEnum = {
   date: 'date',
   time: 'time',
   status: 'status',
-  barbershopId: 'barbershopId'
+  barbershopId: 'barbershopId',
+  barberId: 'barberId'
 };
 
 exports.Prisma.ServiceOrderByRelevanceFieldEnum = {

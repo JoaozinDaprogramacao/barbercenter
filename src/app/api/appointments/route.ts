@@ -10,7 +10,10 @@ export async function GET() {
 
         const appointments = await prisma.appointment.findMany({
             where: { barbershopId: session.user.barbershopId },
-            include: { services: true }, // <-- TRAZ A ARRAY DE SERVIÇOS
+            include: {
+                services: true,
+                barber: { select: { id: true, name: true } } // <-- BUSCA O NOME DO BARBEIRO
+            },
             orderBy: { time: 'asc' }
         });
 
@@ -19,9 +22,7 @@ export async function GET() {
         appointments.forEach(appt => {
             if (!formattedAgenda[appt.date]) formattedAgenda[appt.date] = [];
 
-            // Junta os nomes: "Corte, Barba, Sobrancelha"
             const serviceNames = appt.services.map(s => s.name).join(", ");
-            // Soma os preços: 35.00 + 20.00 = 55.00
             const totalPrice = appt.services.reduce((total, s) => total + s.price, 0);
 
             formattedAgenda[appt.date].push({
@@ -29,7 +30,10 @@ export async function GET() {
                 time: appt.time,
                 name: appt.clientName,
                 service: serviceNames,
-                price: totalPrice
+                price: totalPrice,
+                // 👇 AQUI: Mandamos o nome pro Frontend exibir no Card do Agendamento
+                barberName: appt.barber?.name || "Não atribuído",
+                barberId: appt.barber?.id
             });
         });
 

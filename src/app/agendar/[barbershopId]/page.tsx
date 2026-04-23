@@ -21,8 +21,8 @@ const BigChatBubble = ({ text, isAi, isUser }: { text: string, isAi?: boolean, i
     >
       <div
         className={`px-6 py-5 max-w-[90%] md:max-w-[85%] shadow-md leading-snug ${isUser
-            ? "bg-orange-600 text-white rounded-[2rem] rounded-tr-lg text-xl font-bold"
-            : "bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-[2rem] rounded-tl-lg text-2xl font-semibold"
+          ? "bg-orange-600 text-white rounded-[2rem] rounded-tr-lg text-xl font-bold"
+          : "bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-[2rem] rounded-tl-lg text-2xl font-semibold"
           }`}
       >
         {text}
@@ -87,15 +87,15 @@ export default function BarberChat() {
 
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 pl-2">
                   <button
+                    disabled={step > 3} // Trava o botão se já passou dessa etapa
                     onClick={() => {
                       setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "Qualquer profissional" }));
-                      setStep(4);
+                      // setStep(4) foi removido daqui!
                     }}
-                    className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${
-                      userData.barberName === "Qualquer profissional"
+                    className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberName === "Qualquer profissional"
                         ? "bg-orange-600 border-orange-500 text-white"
                         : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                    }`}
+                      } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
                   >
                     Qualquer profissional
                   </button>
@@ -103,15 +103,15 @@ export default function BarberChat() {
                   {team?.map((member: any) => (
                     <button
                       key={member.id}
+                      disabled={step > 3} // Trava o botão se já passou dessa etapa
                       onClick={() => {
                         setUserData((prev: any) => ({ ...prev, barberId: member.id, barberName: member.name }));
-                        setStep(4); // Avança para a data
+                        // setStep(4) foi removido daqui!
                       }}
-                      className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${
-                        userData.barberId === member.id
+                      className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberId === member.id
                           ? "bg-orange-600 border-orange-500 text-white"
                           : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                      }`}
+                        } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
                     >
                       {member.name}
                     </button>

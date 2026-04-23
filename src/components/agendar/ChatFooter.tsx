@@ -13,8 +13,8 @@ interface ChatFooterProps {
   onConfirm: () => void;
 }
 
-export function ChatFooter({ 
-  step, setStep, userData, setUserData, availableServices, isSubmitting, onNextName, onConfirm 
+export function ChatFooter({
+  step, setStep, userData, setUserData, availableServices, isSubmitting, onNextName, onConfirm
 }: ChatFooterProps) {
   const [inputValue, setInputValue] = useState("");
   const actionLockRef = useRef(false);
@@ -28,20 +28,28 @@ export function ChatFooter({
   };
 
   const handleGoBack = () => {
-    if (step === 3) {
+    // Agora o passo 4 é a Data/Hora
+    if (step === 4) {
       if (userData.date || userData.time) {
         setUserData((prev: any) => ({ ...prev, date: "", time: "" }));
       } else {
-        setStep(2);
+        setStep(3); // Volta para a escolha do profissional
       }
-    } else if (step === 2) {
+    }
+    // Agora o passo 3 é a escolha do profissional
+    else if (step === 3) {
+      setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "" }));
+      setStep(2); // Volta para os serviços
+    }
+    // Passo 2 volta para o nome
+    else if (step === 2) {
       setStep(1);
     }
   };
 
-  if (step === 4) return null;
+  // 👇 ATUALIZAÇÃO: Agora o footer só some no passo 5 (Sucesso)
+  if (step >= 5) return null;
 
-  // Verificação de segurança para múltiplos serviços
   const hasSelectedServices = userData.selectedServices?.length > 0;
 
   return (
@@ -65,8 +73,11 @@ export function ChatFooter({
         </div>
       )}
 
-      {(step === 2 || step === 3) && (
+      {/* 👇 ATUALIZAÇÃO: O footer precisa renderizar a base entre os passos 2 e 4 */}
+      {(step >= 2 && step <= 4) && (
         <div className="flex flex-col gap-4">
+
+          {/* O seletor de serviço só aparece no passo 2 */}
           {step === 2 && (
             <div className="flex flex-col gap-3">
               <ServiceSelector
@@ -94,7 +105,6 @@ export function ChatFooter({
               <ChevronLeft size={24} />
             </button>
 
-            {/* Layout para o passo 2 (Seleção de Serviço) */}
             {step === 2 && hasSelectedServices && (
               <button
                 onClick={() => setStep(3)}
@@ -104,8 +114,18 @@ export function ChatFooter({
               </button>
             )}
 
-            {/* Layout para o passo 3 (Data e Hora) */}
-            {step === 3 && (
+            {/* 👇 ADICIONE ESTE BLOCO AQUI: Layout para o passo 3 (Escolha do profissional) */}
+            {step === 3 && userData.barberName && (
+              <button
+                onClick={() => setStep(4)} // É este botão que agora avança para a data!
+                className="flex-1 h-14 bg-orange-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all active:scale-95 animate-in fade-in slide-in-from-bottom-2"
+              >
+                Continuar
+              </button>
+            )}
+
+            {/* Layout para o passo 4 (Data e Hora) */}
+            {step === 4 && (
               <button
                 disabled={!userData.date || !userData.time || isSubmitting}
                 onClick={onConfirm}

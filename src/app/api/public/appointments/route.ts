@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
         // 👇 AQUI: Lógica flexível para barbeiro único ou múltiplo
         let assignedBarberId = barberId;
-        
+
         if (!assignedBarberId) {
             // Se não veio barbeiro especificado, pega o primeiro da loja
             const firstAvailableBarber = await prisma.user.findFirst({
@@ -30,10 +30,10 @@ export async function POST(req: Request) {
                 clientName,
                 date,
                 time,
-                barbershopId, 
+                barbershopId,
                 barberId: assignedBarberId, // <-- Salva o barbeiro aqui
                 services: {
-                    connect: connectServices 
+                    connect: connectServices
                 }
             },
             include: {
@@ -46,5 +46,46 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error("Erro ao agendar via chat:", error);
         return NextResponse.json({ error: "Erro ao agendar" }, { status: 500 });
+    }
+}
+
+export async function GET(req: Request) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const date = searchParams.get('date');
+        const barbershopId = searchParams.get('barbershopId');
+        const barberId = searchParams.get('barberId');
+
+        if (!date || !barbershopId) {
+            return NextResponse.json({ error: "Faltam parâmetros" }, { status: 400 });
+        }
+
+        // Filtra pela loja e data
+        const whereClause: any = { barbershopId, date };
+
+        // Se escolheu um barbeiro específico, filtra só a agenda dele
+        if (barberId) whereClause.barberId = barberId;
+
+        const appointments = await prisma.appointment.findMany({
+            where: whereClause,
+            // Precisamos dos serviços para saber a duração de cada agendamento feito!
+            include: {
+                services: true
+            }
+        });
+
+        // Formata para o frontend
+        const formattedAppointments = appointments.map((app) => {
+            const totalDuration = app.services.reduce((acc, s) => acc + (s.duration || 30), 0);
+            return {
+                time: app.time,
+                duration: totalDuration,
+                barberId: app.barberId
+            };
+        });
+        return NextResponse.json({ appointments: formattedAppointments }, { status: 200 });
+    } catch (error) {
+        console.error("Erro na busca de agendamentos:", error);
+        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }

@@ -1,34 +1,63 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 export function useBarberChat(barbershopId: string) {
     const [shopName, setShopName] = useState("Carregando...");
     const [availableServices, setAvailableServices] = useState<any[]>([]);
     const [businessHours, setBusinessHours] = useState<any>(null);
-    // 👇 NOVO: Estado para guardar os barbeiros da loja
     const [team, setTeam] = useState<any[]>([]); 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    // 👇 ALTERADO: Agora vamos até o passo 5
+    const [bookedAppointments, setBookedAppointments] = useState<{ time: string, duration: number }[]>([]);
     const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1); 
     
     const [userData, setUserData] = useState({
         name: "",
         selectedServices: [] as any[],
-        barberId: "",   // <-- Guarda o ID do profissional escolhido
-        barberName: "", // <-- Guarda o nome para mostrar no balão do chat
+        barberId: "",
+        barberName: "",
         date: "",
         time: "",
     });
 
+    const totalDuration = useMemo(() => {
+        if (!userData.selectedServices.length || !availableServices.length) return 30;
+        
+        return userData.selectedServices.reduce((total, selected) => {
+            const service = availableServices.find(s => s.id === selected.id);
+            return total + (service?.duration || 0);
+        }, 0);
+    }, [userData.selectedServices, availableServices]);
+
+    useEffect(() => {
+        if (!userData.date || !barbershopId) return;
+
+        setBookedAppointments([]);
+
+        const params = new URLSearchParams({
+            date: userData.date,
+            barbershopId: barbershopId
+        });
+        
+        if (userData.barberId) params.append("barberId", userData.barberId);
+
+        fetch(`/api/public/appointments?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.appointments) {
+                    setBookedAppointments(data.appointments);
+                }
+            })
+            .catch(err => console.error("Erro ao buscar horários", err));
+    }, [userData.date, userData.barberId, barbershopId]);
+
     useEffect(() => {
         if (!barbershopId) return;
+        
         fetch(`/api/public/barbershop/${barbershopId}`)
             .then(res => res.json())
             .then(data => {
                 setShopName(data.name);
                 setAvailableServices(data.services || []);
                 setBusinessHours(data.businessHours);
-                // 👇 NOVO: Puxa os barbeiros que colocamos na rota pública
                 setTeam(data.users || []); 
             });
     }, [barbershopId]);
@@ -52,11 +81,10 @@ export function useBarberChat(barbershopId: string) {
                     date: userData.date,
                     time: userData.time,
                     barbershopId,
-                    // 👇 NOVO: Envia o ID do barbeiro (Se for vazio "", o backend trata)
                     barberId: userData.barberId || undefined 
                 })
             });
-            // 👇 ALTERADO: Sucesso agora é o passo 5
+            
             setStep(5); 
         } catch (error) {
             alert("Erro ao agendar.");
@@ -69,12 +97,14 @@ export function useBarberChat(barbershopId: string) {
         shopName,
         availableServices,
         businessHours,
-        team, // <-- Exportamos a equipe
+        team,
         isSubmitting,
         step,
         setStep,
         userData,
         setUserData,
-        handleConfirmAppointment
+        handleConfirmAppointment,
+        totalDuration,
+        bookedAppointments
     };
 }

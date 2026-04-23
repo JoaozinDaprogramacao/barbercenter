@@ -40,7 +40,9 @@ export default function BarberChat() {
   const {
     shopName, availableServices, businessHours, team,
     isSubmitting, step, setStep, userData, setUserData,
-    handleConfirmAppointment
+    handleConfirmAppointment,
+    totalDuration,
+    bookedAppointments
   } = useBarberChat(barbershopId);
 
   useEffect(() => {
@@ -93,8 +95,8 @@ export default function BarberChat() {
                       // setStep(4) foi removido daqui!
                     }}
                     className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberName === "Qualquer profissional"
-                        ? "bg-orange-600 border-orange-500 text-white"
-                        : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      ? "bg-orange-600 border-orange-500 text-white"
+                      : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                       } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
                   >
                     Qualquer profissional
@@ -109,8 +111,8 @@ export default function BarberChat() {
                         // setStep(4) foi removido daqui!
                       }}
                       className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberId === member.id
-                          ? "bg-orange-600 border-orange-500 text-white"
-                          : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                        ? "bg-orange-600 border-orange-500 text-white"
+                        : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                         } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
                     >
                       {member.name}
@@ -142,7 +144,14 @@ export default function BarberChat() {
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <TimeGrid
                         value={userData.time}
-                        availableTimes={getAvailableTimesForDate(userData.date, businessHours)}
+                        availableTimes={getAvailableTimesForDate(
+                          userData.date,
+                          businessHours,
+                          bookedAppointments,
+                          totalDuration,
+                          team,              
+                          userData.barberId    
+                        )}
                         onChange={(time) => setUserData((prev: any) => ({ ...prev, time }))}
                       />
                     </motion.div>

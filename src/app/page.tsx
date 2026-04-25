@@ -6,6 +6,8 @@ import { FAQ } from '@/components/lp/faq';
 import { Testimonials } from '@/components/lp/testimonials';
 import { IconFeatures } from '@/components/lp/icon-features';
 import { Footer } from '@/components/lp/footer';
+// Importe o novo componente aqui:
+import { InstallPWABanner } from '@/components/lp/InstallPWABanner';
 
 export default function LandingPage() {
   return (
@@ -18,6 +20,9 @@ export default function LandingPage() {
       <Pricing />
       <FAQ />
       <Footer />
+      
+      {/* Adicione o Banner do PWA aqui no final */}
+      <InstallPWABanner />
     </main>
   );
 }

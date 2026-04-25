@@ -96,19 +96,19 @@ export function FeatureCards() {
           <Card 
             title="Acompanhe seus agendamentos" 
             imgBg="bg-slate-50" 
-            imgSrc="/mockup-1.png"
+            imgSrc="/logo.png"
             index={0}
           />
           <Card 
             title="Personalize seu link de agendamento" 
             imgBg="bg-zinc-900" 
-            imgSrc="/mockup-2.png"
+            imgSrc="/logo.png"
             index={1}
           />
           <Card 
             title="Integre seu link com redes sociais" 
             imgBg="bg-orange-50" 
-            imgSrc="/mockup-3.png"
+            imgSrc="/logo.png"
             index={2}
           />
         </div>

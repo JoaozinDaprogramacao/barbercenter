@@ -9,20 +9,25 @@ datasource db {
 }
 
 model Barbershop {
-  id             String        @id @default(uuid())
-  name           String?
-  phone          String?
-  address        String?
-  businessHours  Json?
+  id                    String        @id @default(uuid())
+  name                  String?
+  phone                 String?
+  address               String?
+  businessHours         Json?
   
-  planStatus     String        @default("TRIAL") // "TRIAL", "ACTIVE", "PAST_DUE"
-  trialExpiresAt DateTime      
+  // --- CONTROLE DE ASSINATURA ---
+  planStatus            String        @default("TRIAL")
+  planExpiresAt         DateTime      @default(now()) // <-- ADICIONE O DEFAULT AQUI
   
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  appointments   Appointment[]
-  services       Service[]
-  users          User[]
+  // --- INTEGRAÇÃO ABACATEPAY ---
+  abacateCustomerId     String?       @unique 
+  abacateSubscriptionId String?       @unique 
+  
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  appointments          Appointment[]
+  services              Service[]
+  users                 User[]
 
   @@map("barbershops")
 }

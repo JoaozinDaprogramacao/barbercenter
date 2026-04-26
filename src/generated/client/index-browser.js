@@ -127,7 +127,9 @@ exports.Prisma.BarbershopScalarFieldEnum = {
   address: 'address',
   businessHours: 'businessHours',
   planStatus: 'planStatus',
-  trialExpiresAt: 'trialExpiresAt',
+  planExpiresAt: 'planExpiresAt',
+  abacateCustomerId: 'abacateCustomerId',
+  abacateSubscriptionId: 'abacateSubscriptionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -194,7 +196,9 @@ exports.Prisma.BarbershopOrderByRelevanceFieldEnum = {
   name: 'name',
   phone: 'phone',
   address: 'address',
-  planStatus: 'planStatus'
+  planStatus: 'planStatus',
+  abacateCustomerId: 'abacateCustomerId',
+  abacateSubscriptionId: 'abacateSubscriptionId'
 };
 
 exports.Prisma.UserOrderByRelevanceFieldEnum = {

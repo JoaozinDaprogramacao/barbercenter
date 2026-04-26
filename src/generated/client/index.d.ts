@@ -1264,7 +1264,9 @@ export namespace Prisma {
     phone: string | null
     address: string | null
     planStatus: string | null
-    trialExpiresAt: Date | null
+    planExpiresAt: Date | null
+    abacateCustomerId: string | null
+    abacateSubscriptionId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1275,7 +1277,9 @@ export namespace Prisma {
     phone: string | null
     address: string | null
     planStatus: string | null
-    trialExpiresAt: Date | null
+    planExpiresAt: Date | null
+    abacateCustomerId: string | null
+    abacateSubscriptionId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1287,7 +1291,9 @@ export namespace Prisma {
     address: number
     businessHours: number
     planStatus: number
-    trialExpiresAt: number
+    planExpiresAt: number
+    abacateCustomerId: number
+    abacateSubscriptionId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1300,7 +1306,9 @@ export namespace Prisma {
     phone?: true
     address?: true
     planStatus?: true
-    trialExpiresAt?: true
+    planExpiresAt?: true
+    abacateCustomerId?: true
+    abacateSubscriptionId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1311,7 +1319,9 @@ export namespace Prisma {
     phone?: true
     address?: true
     planStatus?: true
-    trialExpiresAt?: true
+    planExpiresAt?: true
+    abacateCustomerId?: true
+    abacateSubscriptionId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1323,7 +1333,9 @@ export namespace Prisma {
     address?: true
     businessHours?: true
     planStatus?: true
-    trialExpiresAt?: true
+    planExpiresAt?: true
+    abacateCustomerId?: true
+    abacateSubscriptionId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1408,7 +1420,9 @@ export namespace Prisma {
     address: string | null
     businessHours: JsonValue | null
     planStatus: string
-    trialExpiresAt: Date
+    planExpiresAt: Date
+    abacateCustomerId: string | null
+    abacateSubscriptionId: string | null
     createdAt: Date
     updatedAt: Date
     _count: BarbershopCountAggregateOutputType | null
@@ -1437,7 +1451,9 @@ export namespace Prisma {
     address?: boolean
     businessHours?: boolean
     planStatus?: boolean
-    trialExpiresAt?: boolean
+    planExpiresAt?: boolean
+    abacateCustomerId?: boolean
+    abacateSubscriptionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
@@ -1455,12 +1471,14 @@ export namespace Prisma {
     address?: boolean
     businessHours?: boolean
     planStatus?: boolean
-    trialExpiresAt?: boolean
+    planExpiresAt?: boolean
+    abacateCustomerId?: boolean
+    abacateSubscriptionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BarbershopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "address" | "businessHours" | "planStatus" | "trialExpiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["barbershop"]>
+  export type BarbershopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "address" | "businessHours" | "planStatus" | "planExpiresAt" | "abacateCustomerId" | "abacateSubscriptionId" | "createdAt" | "updatedAt", ExtArgs["result"]["barbershop"]>
   export type BarbershopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     services?: boolean | Barbershop$servicesArgs<ExtArgs>
@@ -1482,7 +1500,9 @@ export namespace Prisma {
       address: string | null
       businessHours: Prisma.JsonValue | null
       planStatus: string
-      trialExpiresAt: Date
+      planExpiresAt: Date
+      abacateCustomerId: string | null
+      abacateSubscriptionId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["barbershop"]>
@@ -1863,7 +1883,9 @@ export namespace Prisma {
     readonly address: FieldRef<"Barbershop", 'String'>
     readonly businessHours: FieldRef<"Barbershop", 'Json'>
     readonly planStatus: FieldRef<"Barbershop", 'String'>
-    readonly trialExpiresAt: FieldRef<"Barbershop", 'DateTime'>
+    readonly planExpiresAt: FieldRef<"Barbershop", 'DateTime'>
+    readonly abacateCustomerId: FieldRef<"Barbershop", 'String'>
+    readonly abacateSubscriptionId: FieldRef<"Barbershop", 'String'>
     readonly createdAt: FieldRef<"Barbershop", 'DateTime'>
     readonly updatedAt: FieldRef<"Barbershop", 'DateTime'>
   }
@@ -5389,7 +5411,9 @@ export namespace Prisma {
     address: 'address',
     businessHours: 'businessHours',
     planStatus: 'planStatus',
-    trialExpiresAt: 'trialExpiresAt',
+    planExpiresAt: 'planExpiresAt',
+    abacateCustomerId: 'abacateCustomerId',
+    abacateSubscriptionId: 'abacateSubscriptionId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -5483,7 +5507,9 @@ export namespace Prisma {
     name: 'name',
     phone: 'phone',
     address: 'address',
-    planStatus: 'planStatus'
+    planStatus: 'planStatus',
+    abacateCustomerId: 'abacateCustomerId',
+    abacateSubscriptionId: 'abacateSubscriptionId'
   };
 
   export type BarbershopOrderByRelevanceFieldEnum = (typeof BarbershopOrderByRelevanceFieldEnum)[keyof typeof BarbershopOrderByRelevanceFieldEnum]
@@ -5582,7 +5608,9 @@ export namespace Prisma {
     address?: StringNullableFilter<"Barbershop"> | string | null
     businessHours?: JsonNullableFilter<"Barbershop">
     planStatus?: StringFilter<"Barbershop"> | string
-    trialExpiresAt?: DateTimeFilter<"Barbershop"> | Date | string
+    planExpiresAt?: DateTimeFilter<"Barbershop"> | Date | string
+    abacateCustomerId?: StringNullableFilter<"Barbershop"> | string | null
+    abacateSubscriptionId?: StringNullableFilter<"Barbershop"> | string | null
     createdAt?: DateTimeFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeFilter<"Barbershop"> | Date | string
     appointments?: AppointmentListRelationFilter
@@ -5597,7 +5625,9 @@ export namespace Prisma {
     address?: SortOrderInput | SortOrder
     businessHours?: SortOrderInput | SortOrder
     planStatus?: SortOrder
-    trialExpiresAt?: SortOrder
+    planExpiresAt?: SortOrder
+    abacateCustomerId?: SortOrderInput | SortOrder
+    abacateSubscriptionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     appointments?: AppointmentOrderByRelationAggregateInput
@@ -5608,6 +5638,8 @@ export namespace Prisma {
 
   export type BarbershopWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    abacateCustomerId?: string
+    abacateSubscriptionId?: string
     AND?: BarbershopWhereInput | BarbershopWhereInput[]
     OR?: BarbershopWhereInput[]
     NOT?: BarbershopWhereInput | BarbershopWhereInput[]
@@ -5616,13 +5648,13 @@ export namespace Prisma {
     address?: StringNullableFilter<"Barbershop"> | string | null
     businessHours?: JsonNullableFilter<"Barbershop">
     planStatus?: StringFilter<"Barbershop"> | string
-    trialExpiresAt?: DateTimeFilter<"Barbershop"> | Date | string
+    planExpiresAt?: DateTimeFilter<"Barbershop"> | Date | string
     createdAt?: DateTimeFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeFilter<"Barbershop"> | Date | string
     appointments?: AppointmentListRelationFilter
     services?: ServiceListRelationFilter
     users?: UserListRelationFilter
-  }, "id">
+  }, "id" | "abacateCustomerId" | "abacateSubscriptionId">
 
   export type BarbershopOrderByWithAggregationInput = {
     id?: SortOrder
@@ -5631,7 +5663,9 @@ export namespace Prisma {
     address?: SortOrderInput | SortOrder
     businessHours?: SortOrderInput | SortOrder
     planStatus?: SortOrder
-    trialExpiresAt?: SortOrder
+    planExpiresAt?: SortOrder
+    abacateCustomerId?: SortOrderInput | SortOrder
+    abacateSubscriptionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BarbershopCountOrderByAggregateInput
@@ -5649,7 +5683,9 @@ export namespace Prisma {
     address?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
     businessHours?: JsonNullableWithAggregatesFilter<"Barbershop">
     planStatus?: StringWithAggregatesFilter<"Barbershop"> | string
-    trialExpiresAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
+    planExpiresAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
+    abacateCustomerId?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
+    abacateSubscriptionId?: StringNullableWithAggregatesFilter<"Barbershop"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Barbershop"> | Date | string
   }
@@ -5880,7 +5916,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
@@ -5895,7 +5933,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
@@ -5910,7 +5950,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
@@ -5925,7 +5967,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
@@ -5940,7 +5984,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5952,7 +5998,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5964,7 +6012,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6303,7 +6353,9 @@ export namespace Prisma {
     address?: SortOrder
     businessHours?: SortOrder
     planStatus?: SortOrder
-    trialExpiresAt?: SortOrder
+    planExpiresAt?: SortOrder
+    abacateCustomerId?: SortOrder
+    abacateSubscriptionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6314,7 +6366,9 @@ export namespace Prisma {
     phone?: SortOrder
     address?: SortOrder
     planStatus?: SortOrder
-    trialExpiresAt?: SortOrder
+    planExpiresAt?: SortOrder
+    abacateCustomerId?: SortOrder
+    abacateSubscriptionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6325,7 +6379,9 @@ export namespace Prisma {
     phone?: SortOrder
     address?: SortOrder
     planStatus?: SortOrder
-    trialExpiresAt?: SortOrder
+    planExpiresAt?: SortOrder
+    abacateCustomerId?: SortOrder
+    abacateSubscriptionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7294,7 +7350,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
@@ -7308,7 +7366,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
@@ -7369,7 +7429,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
@@ -7383,7 +7445,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
@@ -7413,7 +7477,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     services?: ServiceCreateNestedManyWithoutBarbershopInput
@@ -7427,7 +7493,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
@@ -7507,7 +7575,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
@@ -7521,7 +7591,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
@@ -7582,7 +7654,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
@@ -7596,7 +7670,9 @@ export namespace Prisma {
     address?: string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: string
-    trialExpiresAt: Date | string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
@@ -7652,7 +7728,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
@@ -7666,7 +7744,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     businessHours?: NullableJsonNullValueInput | InputJsonValue
     planStatus?: StringFieldUpdateOperationsInput | string
-    trialExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput

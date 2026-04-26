@@ -28,8 +28,8 @@ export async function POST(req: Request) {
         const newTenant = await prisma.barbershop.create({
             data: {
                 name: barbershopName,
-                planStatus: "TRIAL", // Começa em trial
-                trialExpiresAt: trialExpiresAt, // Define a data final
+                planStatus: "TRIAL",
+                planExpiresAt: trialExpiresAt,
                 users: {
                     create: {
                         name: userName,

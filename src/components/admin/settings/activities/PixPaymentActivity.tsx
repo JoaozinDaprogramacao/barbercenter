@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Copy, Check, X, Loader2 } from 'lucide-react';
 
@@ -9,22 +9,61 @@ interface AbacatePixData {
   pix_code: string;
 }
 
-export function PixPaymentActivity({ onBack, onClose }: { onBack: () => void; onClose: () => void }) {
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  barbershopId: string;
+}
+
+export function PixPaymentActivity({ 
+  onBack, 
+  onClose, 
+  userData 
+}: { 
+  onBack: () => void; 
+  onClose: () => void; 
+  userData: UserData;
+}) {
+  const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  
+  const [taxId, setTaxId] = useState('');
+  const [cellphone, setCellphone] = useState('');
 
-  useEffect(() => {
-    fetch('/api/pagamento/pix', { method: 'POST' })
-      .then((res) => res.json())
-      .then((data) => {
-        setPixData(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
+  const handleGeneratePix = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/pagamento/pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          barbershopId: userData.barbershopId,
+          name: userData.name,
+          email: userData.email,
+          taxId: taxId,
+          cellphone: cellphone
+        }),
       });
-  }, []);
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setPixData(data);
+        setStep('PAYMENT');
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Erro ao gerar PIX:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCopy = () => {
     if (pixData?.pix_code) {
@@ -35,10 +74,10 @@ export function PixPaymentActivity({ onBack, onClose }: { onBack: () => void; on
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="absolute inset-0 flex flex-col bg-zinc-950"
+      className="absolute inset-0 flex flex-col bg-zinc-950 z-50"
     >
       <header className="p-6 flex justify-between items-center border-b border-zinc-900">
         <button onClick={onBack} className="w-10 text-zinc-500 hover:text-white transition-colors">
@@ -51,25 +90,57 @@ export function PixPaymentActivity({ onBack, onClose }: { onBack: () => void; on
       </header>
 
       <div className="flex-1 overflow-y-auto p-8 text-center no-scrollbar">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-full gap-6 mt-20 text-[#10B981]">
-            <Loader2 className="animate-spin" size={48} />
-            <p className="text-sm font-bold text-zinc-400 tracking-widest uppercase">Gerando PIX (AbacatePay)...</p>
-          </div>
+        {step === 'FORM' ? (
+          <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-10">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-black text-white tracking-tight">Dados de Faturamento</h2>
+              <p className="text-zinc-500 text-sm mt-2">Informe os dados para gerar a cobrança via AbacatePay.</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">CPF ou CNPJ</label>
+                <input 
+                  required
+                  placeholder="000.000.000-00"
+                  value={taxId}
+                  onChange={e => setTaxId(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white focus:border-[#10B981] outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">WhatsApp / Celular</label>
+                <input 
+                  required
+                  placeholder="(38) 9 9999-9999"
+                  value={cellphone}
+                  onChange={e => setCellphone(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white focus:border-[#10B981] outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="animate-spin" size={20} /> : "GERAR QR CODE"}
+            </button>
+          </form>
         ) : (
           <>
             <h2 className="text-2xl font-black text-white mb-8 tracking-tight">PIX para pagamento</h2>
-            
+
             <div className="bg-white p-6 rounded-[3rem] inline-block mb-8 shadow-2xl">
               {pixData?.qr_code_base64 && (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img 
-                  // O AbacatePay já devolve a string completa com o prefixo "data:image/png;base64,"
-                  src={pixData.qr_code_base64} 
-                  width={220} 
-                  height={220} 
-                  alt="QR Code AbacatePay" 
-                  className="rounded-2xl" 
+                <img
+                  src={pixData.qr_code_base64}
+                  width={220}
+                  height={220}
+                  alt="QR Code AbacatePay"
+                  className="rounded-2xl"
                 />
               )}
             </div>
@@ -78,8 +149,8 @@ export function PixPaymentActivity({ onBack, onClose }: { onBack: () => void; on
               {pixData?.pix_code}
             </div>
 
-            <button 
-              onClick={handleCopy} 
+            <button
+              onClick={handleCopy}
               disabled={!pixData?.pix_code}
               className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-10 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
             >

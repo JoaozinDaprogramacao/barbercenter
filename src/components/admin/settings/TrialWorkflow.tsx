@@ -6,14 +6,22 @@ import { PlanSummaryActivity } from './activities/PlanSummaryActivity';
 import { PixPaymentActivity } from './activities/PixPaymentActivity';
 import { CardPaymentActivity } from './activities/CardPaymentActivity';
 
+interface UserData {
+    id: string;
+    name: string;
+    email: string;
+    barbershopId: string;
+}
+
 interface TrialWorkflowProps {
     forcedOpen?: boolean;
     onClose?: () => void;
+    userData: UserData; // <-- Adicione isso aqui
 }
 
 type ActivityStack = 'IDLE' | 'PLAN_SUMMARY' | 'PIX_PAYMENT' | 'CARD_PAYMENT';
 
-export function TrialWorkflow({ forcedOpen = false, onClose }: TrialWorkflowProps) {
+export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWorkflowProps) {
     const [currentActivity, setCurrentActivity] = useState<ActivityStack>('IDLE');
 
     // Abre o sumário do plano automaticamente quando o pai (Dashboard) disparar o forcedOpen
@@ -62,6 +70,7 @@ export function TrialWorkflow({ forcedOpen = false, onClose }: TrialWorkflowProp
                                     key="pix"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
+                                    userData={userData}
                                 />
                             )}
 

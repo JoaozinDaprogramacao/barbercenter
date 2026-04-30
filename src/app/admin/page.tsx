@@ -59,6 +59,13 @@ export default function BarberDashboard() {
     const { agendaData, isLoadingAgenda } = useAgenda();
     const { isPlanActive } = useSubscription(); // Usado para lógica de permissão se necessário
 
+    const currentUser = {
+        id: session?.user?.id as string,
+        name: session?.user?.name as string,
+        email: session?.user?.email as string,
+        barbershopId: session?.user?.barbershopId as string, // Atenção a este campo
+    };
+
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -139,9 +146,10 @@ export default function BarberDashboard() {
                 {/* O Banner agora vive aqui, logo abaixo do Header */}
                 <TrialBanner onUpgradeClick={() => setIsUpgradeOpen(true)} />
 
-                <TrialWorkflow 
-                    forcedOpen={isUpgradeOpen} 
-                    onClose={() => setIsUpgradeOpen(false)} 
+                <TrialWorkflow
+                    forcedOpen={isUpgradeOpen}
+                    onClose={() => setIsUpgradeOpen(false)}
+                    userData={currentUser} 
                 />
 
                 <WeeklyCalendar

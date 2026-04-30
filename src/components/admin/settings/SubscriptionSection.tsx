@@ -4,12 +4,21 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import { TrialWorkflow } from './TrialWorkflow';
-import { useSubscription } from '@/hooks/useSubscription'; // Importando o hook
+import { useSubscription } from '@/hooks/useSubscription';
 
 export function SubscriptionSection() {
   const [isWorkflowOpen, setIsWorkflowOpen] = useState(false);
   const { daysRemaining, isPlanActive, loading } = useSubscription();
+  const { data: session } = useSession();
+
+  const currentUser = {
+    id: session?.user?.id as string,
+    name: session?.user?.name as string,
+    email: session?.user?.email as string,
+    barbershopId: session?.user?.barbershopId as string,
+  };
 
   return (
     <>
@@ -77,7 +86,11 @@ export function SubscriptionSection() {
 
       <AnimatePresence>
         {isWorkflowOpen && (
-          <TrialWorkflow forcedOpen={true} onClose={() => setIsWorkflowOpen(false)} />
+          <TrialWorkflow 
+            forcedOpen={true} 
+            onClose={() => setIsWorkflowOpen(false)} 
+            userData={currentUser}
+          />
         )}
       </AnimatePresence>
     </>

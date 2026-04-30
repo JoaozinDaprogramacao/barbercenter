@@ -40,6 +40,9 @@ model User {
   role         String        @default("OWNER") // Pode ser "OWNER" ou "BARBER"
   createdAt    DateTime      @default(now())
   barbershopId String
+
+  resetToken       String?
+  resetTokenExpiry DateTime?
   
   barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments Appointment[] // <-- NOVA RELAÇÃO AQUI

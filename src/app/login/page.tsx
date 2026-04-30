@@ -2,6 +2,7 @@
 
 import { useLogin } from "@/hooks/useLogin"; 
 import { motion } from "framer-motion";
+import Link from "next/link"; // Adicionado Link do Next.js
 
 export default function LoginPage() {
     const {
@@ -65,7 +66,15 @@ export default function LoginPage() {
                     <div className="space-y-2">
                         <div className="flex justify-between items-center px-4">
                             <label className="text-[11px] font-black uppercase tracking-widest text-orange-500">Senha</label>
-                            <button type="button" className="text-[10px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-tighter">Esqueceu?</button>
+                            
+                            {/* ALTERADO AQUI: Virou um Link que envia para a rota /forgot-password */}
+                            <Link 
+                                href="/forgot-password" 
+                                className="text-[10px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-tighter"
+                            >
+                                Esqueceu?
+                            </Link>
+
                         </div>
                         <input
                             type="password"

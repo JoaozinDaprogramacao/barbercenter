@@ -79,6 +79,7 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     key="card"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
+                                    userData={userData} 
                                 />
                             )}
                         </AnimatePresence>

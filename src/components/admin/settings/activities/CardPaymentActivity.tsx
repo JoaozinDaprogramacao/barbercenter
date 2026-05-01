@@ -14,10 +14,11 @@ interface UserData {
 interface CardPaymentActivityProps {
   onBack: () => void;
   onClose: () => void;
+  onSuccess: () => void;
   userData: UserData;
 }
 
-export function CardPaymentActivity({ onBack, onClose, userData }: CardPaymentActivityProps) {
+export function CardPaymentActivity({ onBack, onClose, onSuccess, userData }: CardPaymentActivityProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,13 +28,13 @@ export function CardPaymentActivity({ onBack, onClose, userData }: CardPaymentAc
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: userData.id, // MUDOU AQUI: era barbershopId
+            userId: userData.id,
             name: userData.name,
             email: userData.email,
-            taxId: "10981883656", // Lembre de pegar isso de um input depois!
+            taxId: "10981883656",
             cellphone: "38999999999"
           })
-        });;
+        });
 
         const data = await response.json();
 
@@ -47,7 +48,7 @@ export function CardPaymentActivity({ onBack, onClose, userData }: CardPaymentAc
       }
     };
 
-    if (userData?.barbershopId) {
+    if (userData?.id) {
       initiateCardCheckout();
     }
   }, [userData]);

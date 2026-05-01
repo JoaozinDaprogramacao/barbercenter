@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PlanSummaryActivity } from './activities/PlanSummaryActivity';
 import { PixPaymentActivity } from './activities/PixPaymentActivity';
 import { CardPaymentActivity } from './activities/CardPaymentActivity';
+import { SuccessActivity } from './activities/SuccessActivity'; // <-- IMPORTANTE
 
 interface UserData {
     id: string;
@@ -16,15 +17,15 @@ interface UserData {
 interface TrialWorkflowProps {
     forcedOpen?: boolean;
     onClose?: () => void;
-    userData: UserData; // <-- Adicione isso aqui
+    userData: UserData;
 }
 
-type ActivityStack = 'IDLE' | 'PLAN_SUMMARY' | 'PIX_PAYMENT' | 'CARD_PAYMENT';
+// 1. Adicionado o estado SUCCESS
+type ActivityStack = 'IDLE' | 'PLAN_SUMMARY' | 'PIX_PAYMENT' | 'CARD_PAYMENT' | 'SUCCESS';
 
 export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWorkflowProps) {
     const [currentActivity, setCurrentActivity] = useState<ActivityStack>('IDLE');
 
-    // Abre o sumário do plano automaticamente quando o pai (Dashboard) disparar o forcedOpen
     useEffect(() => {
         if (forcedOpen) {
             setCurrentActivity('PLAN_SUMMARY');
@@ -33,7 +34,6 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
         }
     }, [forcedOpen]);
 
-    // Bloqueia o scroll do fundo quando o checkout está aberto
     useEffect(() => {
         document.body.style.overflow = currentActivity !== 'IDLE' ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
@@ -46,8 +46,6 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
 
     return (
         <>
-            {/* REMOVIDO: O botão que renderizava o banner laranja foi retirado daqui */}
-
             <AnimatePresence>
                 {currentActivity !== 'IDLE' && (
                     <motion.div
@@ -70,6 +68,7 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     key="pix"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
+                                    onSuccess={() => setCurrentActivity('SUCCESS')} // <-- Rota para o Sucesso
                                     userData={userData}
                                 />
                             )}
@@ -79,7 +78,16 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     key="card"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
+                                    onSuccess={() => setCurrentActivity('SUCCESS')} // <-- Rota para o Sucesso
                                     userData={userData} 
+                                />
+                            )}
+
+                            {/* 2. Nova tela de Sucesso */}
+                            {currentActivity === 'SUCCESS' && (
+                                <SuccessActivity
+                                    key="success"
+                                    onClose={handleClose} // Quando fechar aqui, volta pro Dashboard liberado
                                 />
                             )}
                         </AnimatePresence>

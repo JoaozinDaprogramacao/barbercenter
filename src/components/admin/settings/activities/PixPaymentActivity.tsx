@@ -19,10 +19,12 @@ interface UserData {
 export function PixPaymentActivity({
   onBack,
   onClose,
+  onSuccess,
   userData
 }: {
   onBack: () => void;
   onClose: () => void;
+  onSuccess: () => void;
   userData: UserData;
 }) {
   const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
@@ -42,7 +44,7 @@ export function PixPaymentActivity({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: userData.id, // MUDOU AQUI: era barbershopId
+          userId: userData.id,
           name: userData.name,
           email: userData.email,
           taxId: taxId,
@@ -152,13 +154,13 @@ export function PixPaymentActivity({
             <button
               onClick={handleCopy}
               disabled={!pixData?.pix_code}
-              className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-10 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
+              className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-6 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
             >
               {copied ? <Check size={20} /> : <Copy size={20} />}
               {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
             </button>
 
-            <div className="space-y-3">
+            <div className="space-y-3 mb-8">
               {["Copie o código Pix acima", "Pague no app do seu banco", "Sua assinatura será ativada em segundos"].map((text, i) => (
                 <div key={i} className="flex gap-4 p-5 rounded-2xl bg-zinc-900/30 border border-zinc-900 text-left items-center">
                   <span className="text-[#10B981] font-black text-xs">{i + 1} -</span>
@@ -166,6 +168,13 @@ export function PixPaymentActivity({
                 </div>
               ))}
             </div>
+
+            <button
+              onClick={onSuccess}
+              className="w-full bg-zinc-800 hover:bg-zinc-700 text-white py-4 rounded-[2rem] font-bold text-xs uppercase tracking-widest transition-colors border border-zinc-700"
+            >
+              Já realizei o pagamento
+            </button>
           </>
         )}
       </div>

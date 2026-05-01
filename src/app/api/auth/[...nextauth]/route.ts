@@ -41,16 +41,16 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Login inicial: persiste os dados do usuário no Token
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.barbershopId = user.barbershopId;
         token.planStatus = (user as any).planStatus;
         token.planExpiresAt = (user as any).planExpiresAt;
+        // 🔥 ADICIONE ESTA LINHA:
+        token.trialExpiresAt = (user as any).trialExpiresAt;
       }
 
-      // Permite atualizar a sessão em tempo real após o pagamento (update())
       if (trigger === "update" && session) {
         if (session.planStatus) token.planStatus = session.planStatus;
         if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
@@ -65,12 +65,14 @@ export const authOptions: NextAuthOptions = {
         session.user.barbershopId = token.barbershopId as string;
         session.user.planStatus = token.planStatus as string;
         session.user.planExpiresAt = token.planExpiresAt as any;
+        // 🔥 ADICIONE ESTA LINHA:
+        (session.user as any).trialExpiresAt = token.trialExpiresAt as any;
       }
       return session;
     }
   },
   pages: {
-    signIn: '/', 
+    signIn: '/',
   },
   session: {
     strategy: "jwt",

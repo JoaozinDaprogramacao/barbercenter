@@ -7,55 +7,51 @@ export async function middleware(req: NextRequest) {
   const isAuth = !!token;
   const { pathname } = req.nextUrl;
 
-  // 1. Se o usuário está logado e tenta acessar /login ou a home, manda para /admin
+  // 1. Redirecionamento de Auth (Login/Home)
   if (pathname === "/login" || pathname === "/") {
-    if (isAuth) {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    }
+    if (isAuth) return NextResponse.redirect(new URL("/admin", req.url));
   }
 
-  // 2. Proteção das rotas de Admin e Verificação de Assinatura
+  // 2. Proteção do Admin
   if (pathname.startsWith("/admin")) {
-    if (!isAuth) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+    if (!isAuth) return NextResponse.redirect(new URL("/login", req.url));
 
-    // 🔥 O CÃO DE GUARDA DO PAGAMENTO 🔥
-    if (token.planExpiresAt) {
-      const expirationDate = new Date(token.planExpiresAt as string | Date);
+    // Pegamos as duas datas possíveis do token
+    const planExpiresAt = token.planExpiresAt;
+    const trialExpiresAt = token.trialExpiresAt;
+
+    // A data de expiração real é a que estiver preenchida (prioridade para o plano pago)
+    const expirationDate = planExpiresAt ? new Date(planExpiresAt as any) :
+      trialExpiresAt ? new Date(trialExpiresAt as any) : null;
+
+    if (expirationDate) {
       const now = new Date();
-
-      // Se a data de hoje for maior que a data de expiração
       if (now > expirationDate) {
+        // 🚨 EXPIRADO! Chuta para a tela de bloqueio
         return NextResponse.redirect(new URL("/bloqueado", req.url));
       }
     }
   }
 
-  // 3. Proteção da rota /bloqueado
-  if (pathname === "/bloqueado") {
-    // Se não estiver logado, não tem por que ver essa tela
-    if (!isAuth) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+  // 3. Proteção da rota /bloqueado (Evita que quem pagou fique preso lá)
+  if (pathname === "/bloqueado" && isAuth) {
+    const planExpiresAt = token.planExpiresAt;
+    const trialExpiresAt = token.trialExpiresAt;
+    const expirationDate = planExpiresAt ? new Date(planExpiresAt as any) :
+      trialExpiresAt ? new Date(trialExpiresAt as any) : null;
 
-    // Se o usuário já pagou (não está expirado) e tentar acessar /bloqueado de "curioso", volta pro admin
-    if (token.planExpiresAt) {
-      const expirationDate = new Date(token.planExpiresAt as string | Date);
-      if (new Date() <= expirationDate) {
-        return NextResponse.redirect(new URL("/admin", req.url));
-      }
+    if (expirationDate && new Date() <= expirationDate) {
+      return NextResponse.redirect(new URL("/admin", req.url));
     }
   }
 
   return NextResponse.next();
 }
 
-// O MATCHER É A CHAVE
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/login", 
+    "/login",
     "/",
     "/bloqueado" // <-- IMPORTANTE: O middleware precisa vigiar essa rota também
   ],

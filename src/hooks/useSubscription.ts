@@ -16,13 +16,18 @@ export function useSubscription() {
         const data = await response.json();
 
         if (data.barbershop) {
-          const { planStatus, trialExpiresAt } = data.barbershop;
+          const { planStatus, trialExpiresAt, planExpiresAt } = data.barbershop;
 
-          if (planStatus === "ACTIVE") {
+          // Verificamos PRO ou ACTIVE para evitar erros de nomenclatura
+          if (planStatus === "ACTIVE" || planStatus === "PRO") {
             setIsPlanActive(true);
-          } else if (trialExpiresAt) {
-            const diff = differenceInDays(new Date(trialExpiresAt), new Date());
-            setDaysRemaining(diff > 0 ? diff : 0);
+          } else {
+            // Se não é PRO, calculamos o fim do acesso baseado no TRIAL ou EXPIRAÇÃO
+            const finalDate = planExpiresAt || trialExpiresAt;
+            if (finalDate) {
+              const diff = differenceInDays(new Date(finalDate), new Date());
+              setDaysRemaining(diff > 0 ? diff : 0);
+            }
           }
         }
       } catch (error) {
@@ -47,10 +52,10 @@ export function useSubscription() {
     return TRIAL_RULES.find(rule => daysRemaining <= rule.days) || null;
   }, [daysRemaining, isPlanActive, loading]);
 
-  return { 
-    daysRemaining, 
-    isPlanActive, 
-    loading, 
-    activeOffer 
+  return {
+    daysRemaining,
+    isPlanActive,
+    loading,
+    activeOffer
   };
 }

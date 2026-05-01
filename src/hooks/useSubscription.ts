@@ -17,16 +17,21 @@ export function useSubscription() {
 
         if (data.barbershop) {
           const { planStatus, trialExpiresAt, planExpiresAt } = data.barbershop;
+          const expirationDate = planExpiresAt ? new Date(planExpiresAt) :
+            trialExpiresAt ? new Date(trialExpiresAt) : null;
 
-          // Verificamos PRO ou ACTIVE para evitar erros de nomenclatura
           if (planStatus === "ACTIVE" || planStatus === "PRO") {
             setIsPlanActive(true);
-          } else {
-            // Se não é PRO, calculamos o fim do acesso baseado no TRIAL ou EXPIRAÇÃO
-            const finalDate = planExpiresAt || trialExpiresAt;
-            if (finalDate) {
-              const diff = differenceInDays(new Date(finalDate), new Date());
-              setDaysRemaining(diff > 0 ? diff : 0);
+          } else if (expirationDate) {
+            const now = new Date();
+            // Comparação exata de milissegundos
+            const expired = now > expirationDate;
+
+            if (expired) {
+              setDaysRemaining(0); // Força o estado de expirado
+            } else {
+              const diff = differenceInDays(expirationDate, now);
+              setDaysRemaining(diff + 1); // Ajusta para mostrar "1 dia" se expirar hoje
             }
           }
         }

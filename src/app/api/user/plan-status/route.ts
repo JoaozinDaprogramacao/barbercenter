@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+// 🔥 MÁGICA AQUI: Diz ao Next.js para NUNCA fazer cache dessa rota
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId');
@@ -12,7 +16,7 @@ export async function GET(request: Request) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { planStatus: true } // Buscamos APENAS o status para ser bem leve
+      select: { planStatus: true }
     });
 
     return NextResponse.json({ planStatus: user?.planStatus || 'FREE' });

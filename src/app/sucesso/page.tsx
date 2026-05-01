@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -9,28 +9,59 @@ import { useSession } from 'next-auth/react';
 export default function SucessoPage() {
     const router = useRouter();
     const { update, data: session, status } = useSession();
-    const [isUpdatingSession, setIsUpdatingSession] = useState(true);
+    const [isReady, setIsReady] = useState(false);
+    
+    // O CADEADO: Garante que a atualização rode apenas UMA VEZ
+    const hasSynced = useRef(false);
 
     useEffect(() => {
-        const syncSession = async () => {
-            if (status === "authenticated") {
-                // Força a atualização do token JWT para pegar o status PRO do banco
-                await update();
-                setIsUpdatingSession(false);
-            } else if (status === "unauthenticated") {
-                // Se não estiver logado, manda pro login
-                router.push('/');
-            }
-        };
+        // Se ainda está carregando, não faz nada
+        if (status === "loading") return;
 
-        syncSession();
-    }, [status, update, router]);
+        // Se não estiver logado, manda pro login
+        if (status === "unauthenticated") {
+            router.push('/');
+            return;
+        }
 
-    if (isUpdatingSession || status === "loading") {
+        // Se está logado E a trava ainda está aberta
+        if (status === "authenticated" && !hasSynced.current) {
+            hasSynced.current = true; // Fecha a trava imediatamente!
+
+            const syncSession = async () => {
+                try {
+                    // Busca o status real no banco (essencial para pagamentos via Cartão)
+                    const userId = (session?.user as any)?.id;
+                    if (userId) {
+                        const res = await fetch(`/api/user/plan-status?userId=${userId}`);
+                        const dbData = await res.json();
+
+                        // Atualiza a sessão passando o novo status explicitamente para o JWT
+                        if (dbData.planStatus === 'PRO') {
+                            await update({ planStatus: 'PRO' });
+                        } else {
+                            await update(); 
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erro ao sincronizar sessão", error);
+                } finally {
+                    setIsReady(true); // Libera a tela
+                }
+            };
+
+            syncSession();
+        }
+    }, [status, router, update, session]);
+
+    // Tela de carregamento enquanto o cadeado trabalha
+    if (!isReady) {
         return (
             <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center">
                 <Loader2 className="animate-spin text-[#10B981] mb-4" size={48} />
-                <p className="text-zinc-400 font-bold tracking-widest uppercase text-sm animate-pulse">Sincronizando seu acesso...</p>
+                <p className="text-zinc-400 font-bold tracking-widest uppercase text-sm animate-pulse">
+                    Sincronizando seu acesso...
+                </p>
             </div>
         );
     }
@@ -58,7 +89,7 @@ export default function SucessoPage() {
                 className="relative z-10 max-w-md w-full"
             >
                 <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
-                    Tudo certo, {session?.user?.name?.split(' ')[0]}!
+                    Tudo certo, {session?.user?.name?.split(' ')[0] || 'Parceiro'}!
                 </h1>
                 
                 <p className="text-zinc-400 font-medium text-lg mb-12 leading-relaxed">
@@ -66,7 +97,7 @@ export default function SucessoPage() {
                 </p>
 
                 <button
-                    onClick={() => router.push('/dashboard')} // Ou a rota principal do seu admin
+                    onClick={() => router.push('/admin')}
                     className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-6 rounded-[2rem] font-black text-base uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-emerald-900/20"
                 >
                     Acessar Meu Painel

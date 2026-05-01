@@ -6,39 +6,39 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { event, data } = body;
 
-    // Recuperamos o userId que enviamos no metadata durante a criação do checkout
-    const userId = data.metadata?.userId;
+    // Ajuste aqui: O metadata pode vir em lugares diferentes dependendo do evento
+    // No V2, ele vem dentro de 'transparent' ou 'subscription'
+    const metadata = data.metadata || data.transparent?.metadata || data.subscription?.metadata;
+    const userId = metadata?.userId;
 
     if (!userId) {
-      console.warn("⚠️ Webhook recebido sem userId no metadata.");
+      console.warn("⚠️ Webhook recebido, mas não conseguimos encontrar o userId no metadata.");
+      console.log("Estrutura recebida:", JSON.stringify(data, null, 2));
+      // Retornamos 200 para o AbacatePay não ficar tentando reenviar um payload que não tem nosso ID
       return NextResponse.json({ ok: true });
     }
 
     switch (event) {
-      // EVENTOS DE SUCESSO: Liberam ou renovam o acesso
-      case 'transparent.completed': // PIX aprovado
+      case 'transparent.completed': // Pix aprovado
       case 'subscription.completed': // Assinatura nova aprovada
       case 'subscription.renewed':   // Renovação mensal aprovada
         await prisma.user.update({
           where: { id: userId },
           data: {
             planStatus: 'PRO',
-            // Define ou estende a expiração para 30 dias a partir de agora
             planExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           },
         });
-        console.log(`✅ Acesso PRO (re)ativado para o usuário: ${userId}`);
+        console.log(`✅ Acesso PRO liberado para o usuário: ${userId}`);
         break;
 
-      // EVENTOS DE PERDA DE ACESSO: Voltam o usuário para o plano FREE
-      case 'subscription.cancelled': // Assinatura cancelada manualmente ou por falha
-      case 'subscription.refunded':  // Reembolso de assinatura
-      case 'transparent.refunded':   // Reembolso de PIX
+      case 'subscription.cancelled':
+      case 'subscription.refunded':
+      case 'transparent.refunded':
         await prisma.user.update({
           where: { id: userId },
           data: {
             planStatus: 'FREE',
-            // Opcional: Você pode manter a data de expiração antiga ou resetar
           },
         });
         console.log(`❌ Acesso PRO removido para o usuário: ${userId}`);
@@ -49,11 +49,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ok: true });
+
   } catch (err: any) {
-    console.error("❌ Erro crítico no processamento do Webhook:", err.message);
-    return NextResponse.json(
-      { error: "Erro interno ao processar webhook", detalhes: err.message }, 
-      { status: 500 }
-    );
+    console.error("❌ Erro no processamento do Webhook:", err.message);
+    // Se o JSON vier malformado, retornamos erro para debug
+    return NextResponse.json({ error: "Payload inválido", detalhes: err.message }, { status: 400 });
   }
 }

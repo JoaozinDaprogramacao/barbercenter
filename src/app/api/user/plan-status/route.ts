@@ -16,11 +16,23 @@ export async function GET(request: Request) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { planStatus: true }
+      // 🔥 MUDANÇA: Buscar o status dentro da barbearia relacionada
+      include: { 
+        barbershop: {
+          select: { planStatus: true }
+        } 
+      }
     });
 
-    return NextResponse.json({ planStatus: user?.planStatus || 'FREE' });
+    if (!user || !user.barbershop) {
+       return NextResponse.json({ error: "Usuário ou Barbearia não encontrado" }, { status: 404 });
+    }
+
+    // 🔥 MUDANÇA: Retornar o status da barbearia
+    return NextResponse.json({ planStatus: user.barbershop.planStatus || 'FREE' });
+    
   } catch (error) {
+    console.error("Erro na checagem de plano:", error);
     return NextResponse.json({ error: "Erro ao buscar status" }, { status: 500 });
   }
 }

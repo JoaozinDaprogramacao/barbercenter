@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PlanSummaryActivity } from './activities/PlanSummaryActivity';
 import { PixPaymentActivity } from './activities/PixPaymentActivity';
 import { CardPaymentActivity } from './activities/CardPaymentActivity';
-import { SuccessActivity } from './activities/SuccessActivity'; // <-- IMPORTANTE
 
 interface UserData {
     id: string;
@@ -68,7 +67,6 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     key="pix"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
-                                    onSuccess={() => setCurrentActivity('SUCCESS')} // <-- Rota para o Sucesso
                                     userData={userData}
                                 />
                             )}
@@ -83,13 +81,6 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                 />
                             )}
 
-                            {/* 2. Nova tela de Sucesso */}
-                            {currentActivity === 'SUCCESS' && (
-                                <SuccessActivity
-                                    key="success"
-                                    onClose={handleClose} // Quando fechar aqui, volta pro Dashboard liberado
-                                />
-                            )}
                         </AnimatePresence>
                     </motion.div>
                 )}

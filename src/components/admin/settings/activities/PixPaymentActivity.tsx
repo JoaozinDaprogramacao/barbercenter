@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Copy, Check, X, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation'; // <-- Importar o router
 
 interface AbacatePixData {
   qr_code_base64: string;
@@ -19,14 +20,13 @@ interface UserData {
 export function PixPaymentActivity({
   onBack,
   onClose,
-  onSuccess,
   userData
 }: {
   onBack: () => void;
   onClose: () => void;
-  onSuccess: () => void;
   userData: UserData;
 }) {
+  const router = useRouter(); // <-- Instanciar
   const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
@@ -75,6 +75,32 @@ export function PixPaymentActivity({
     }
   };
 
+  // POLLING AUTOMÁTICO
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (step === 'PAYMENT') {
+      intervalId = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/user/plan-status?userId=${userData.id}`);
+          const data = await res.json();
+          
+          if (data.planStatus === 'PRO') {
+            clearInterval(intervalId);
+            onClose(); // Fecha o modal
+            router.push('/sucesso'); // Vai para a página de sucesso inteira!
+          }
+        } catch (error) {
+          console.error("Aguardando confirmação...");
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [step, userData.id, onClose, router]);
+
   return (
     <motion.div
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
@@ -93,6 +119,7 @@ export function PixPaymentActivity({
 
       <div className="flex-1 overflow-y-auto p-8 text-center no-scrollbar">
         {step === 'FORM' ? (
+          // ... (Formulário continua igual)
           <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-10">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-black text-white tracking-tight">Dados de Faturamento</h2>
@@ -160,21 +187,11 @@ export function PixPaymentActivity({
               {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
             </button>
 
-            <div className="space-y-3 mb-8">
-              {["Copie o código Pix acima", "Pague no app do seu banco", "Sua assinatura será ativada em segundos"].map((text, i) => (
-                <div key={i} className="flex gap-4 p-5 rounded-2xl bg-zinc-900/30 border border-zinc-900 text-left items-center">
-                  <span className="text-[#10B981] font-black text-xs">{i + 1} -</span>
-                  <p className="text-zinc-400 text-xs font-bold leading-relaxed">{text}</p>
-                </div>
-              ))}
+            {/* Apenas o Loader de aguardando */}
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 text-zinc-500">
+              <Loader2 className="animate-spin text-[#10B981]" size={28} />
+              <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Aguardando pagamento...</p>
             </div>
-
-            <button
-              onClick={onSuccess}
-              className="w-full bg-zinc-800 hover:bg-zinc-700 text-white py-4 rounded-[2rem] font-bold text-xs uppercase tracking-widest transition-colors border border-zinc-700"
-            >
-              Já realizei o pagamento
-            </button>
           </>
         )}
       </div>

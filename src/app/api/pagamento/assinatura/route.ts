@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         items: [{ id: "prod_f1p0jFTuxDXpzftezmxwZjwR", quantity: 1 }],
         customerId: customerId,
         externalId: `subs-${userId}-${Date.now()}`,
-        completionUrl: `${process.env.NEXTAUTH_URL}/admin/settings`,
+        completionUrl: `${process.env.NEXTAUTH_URL}/sucesso`,
         methods: ["CARD"],
         metadata: { userId, barbershopId: user.barbershopId }
       })

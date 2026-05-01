@@ -8,10 +8,18 @@ export async function POST(request: Request) {
 
     if (!userId) return NextResponse.json({ error: "O ID do usuário é obrigatório" }, { status: 400 });
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
+    // 🔥 MUDANÇA 1: Incluir a barbearia na busca do usuário
+    const user = await prisma.user.findUnique({ 
+      where: { id: userId },
+      include: { barbershop: true }
+    });
+    
+    if (!user || !user.barbershop) {
+      return NextResponse.json({ error: "Usuário ou Barbearia não encontrado" }, { status: 404 });
+    }
 
-    let customerId = user.abacateCustomerId;
+    // 🔥 MUDANÇA 2: Pegar o customerId da barbearia
+    let customerId = user.barbershop.abacateCustomerId;
 
     if (!customerId) {
       const customerResponse = await fetch('https://api.abacatepay.com/v2/customers/create', {
@@ -29,8 +37,9 @@ export async function POST(request: Request) {
 
       customerId = customerData.data.id;
 
-      await prisma.user.update({
-        where: { id: userId },
+      // 🔥 MUDANÇA 3: Atualizar a tabela Barbershop, e não User
+      await prisma.barbershop.update({
+        where: { id: user.barbershopId },
         data: { abacateCustomerId: customerId }
       });
     }

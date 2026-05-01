@@ -2346,9 +2346,6 @@ export namespace Prisma {
     barbershopId: string | null
     resetToken: string | null
     resetTokenExpiry: Date | null
-    planStatus: string | null
-    planExpiresAt: Date | null
-    abacateCustomerId: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2361,9 +2358,6 @@ export namespace Prisma {
     barbershopId: string | null
     resetToken: string | null
     resetTokenExpiry: Date | null
-    planStatus: string | null
-    planExpiresAt: Date | null
-    abacateCustomerId: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2376,9 +2370,6 @@ export namespace Prisma {
     barbershopId: number
     resetToken: number
     resetTokenExpiry: number
-    planStatus: number
-    planExpiresAt: number
-    abacateCustomerId: number
     _all: number
   }
 
@@ -2393,9 +2384,6 @@ export namespace Prisma {
     barbershopId?: true
     resetToken?: true
     resetTokenExpiry?: true
-    planStatus?: true
-    planExpiresAt?: true
-    abacateCustomerId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2408,9 +2396,6 @@ export namespace Prisma {
     barbershopId?: true
     resetToken?: true
     resetTokenExpiry?: true
-    planStatus?: true
-    planExpiresAt?: true
-    abacateCustomerId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2423,9 +2408,6 @@ export namespace Prisma {
     barbershopId?: true
     resetToken?: true
     resetTokenExpiry?: true
-    planStatus?: true
-    planExpiresAt?: true
-    abacateCustomerId?: true
     _all?: true
   }
 
@@ -2511,9 +2493,6 @@ export namespace Prisma {
     barbershopId: string
     resetToken: string | null
     resetTokenExpiry: Date | null
-    planStatus: string
-    planExpiresAt: Date
-    abacateCustomerId: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2543,9 +2522,6 @@ export namespace Prisma {
     barbershopId?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
-    planStatus?: boolean
-    planExpiresAt?: boolean
-    abacateCustomerId?: boolean
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
     appointments?: boolean | User$appointmentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2563,12 +2539,9 @@ export namespace Prisma {
     barbershopId?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
-    planStatus?: boolean
-    planExpiresAt?: boolean
-    abacateCustomerId?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "createdAt" | "barbershopId" | "resetToken" | "resetTokenExpiry" | "planStatus" | "planExpiresAt" | "abacateCustomerId", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "createdAt" | "barbershopId" | "resetToken" | "resetTokenExpiry", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
     appointments?: boolean | User$appointmentsArgs<ExtArgs>
@@ -2591,9 +2564,6 @@ export namespace Prisma {
       barbershopId: string
       resetToken: string | null
       resetTokenExpiry: Date | null
-      planStatus: string
-      planExpiresAt: Date
-      abacateCustomerId: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2974,9 +2944,6 @@ export namespace Prisma {
     readonly barbershopId: FieldRef<"User", 'String'>
     readonly resetToken: FieldRef<"User", 'String'>
     readonly resetTokenExpiry: FieldRef<"User", 'DateTime'>
-    readonly planStatus: FieldRef<"User", 'String'>
-    readonly planExpiresAt: FieldRef<"User", 'DateTime'>
-    readonly abacateCustomerId: FieldRef<"User", 'String'>
   }
     
 
@@ -5485,10 +5452,7 @@ export namespace Prisma {
     createdAt: 'createdAt',
     barbershopId: 'barbershopId',
     resetToken: 'resetToken',
-    resetTokenExpiry: 'resetTokenExpiry',
-    planStatus: 'planStatus',
-    planExpiresAt: 'planExpiresAt',
-    abacateCustomerId: 'abacateCustomerId'
+    resetTokenExpiry: 'resetTokenExpiry'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5582,9 +5546,7 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     barbershopId: 'barbershopId',
-    resetToken: 'resetToken',
-    planStatus: 'planStatus',
-    abacateCustomerId: 'abacateCustomerId'
+    resetToken: 'resetToken'
   };
 
   export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
@@ -5766,9 +5728,6 @@ export namespace Prisma {
     barbershopId?: StringFilter<"User"> | string
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
-    planStatus?: StringFilter<"User"> | string
-    planExpiresAt?: DateTimeFilter<"User"> | Date | string
-    abacateCustomerId?: StringNullableFilter<"User"> | string | null
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
     appointments?: AppointmentListRelationFilter
   }
@@ -5783,9 +5742,6 @@ export namespace Prisma {
     barbershopId?: SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
-    planStatus?: SortOrder
-    planExpiresAt?: SortOrder
-    abacateCustomerId?: SortOrderInput | SortOrder
     barbershop?: BarbershopOrderByWithRelationInput
     appointments?: AppointmentOrderByRelationAggregateInput
     _relevance?: UserOrderByRelevanceInput
@@ -5794,7 +5750,6 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
-    abacateCustomerId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -5805,11 +5760,9 @@ export namespace Prisma {
     barbershopId?: StringFilter<"User"> | string
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
-    planStatus?: StringFilter<"User"> | string
-    planExpiresAt?: DateTimeFilter<"User"> | Date | string
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
     appointments?: AppointmentListRelationFilter
-  }, "id" | "email" | "abacateCustomerId">
+  }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -5821,9 +5774,6 @@ export namespace Prisma {
     barbershopId?: SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
-    planStatus?: SortOrder
-    planExpiresAt?: SortOrder
-    abacateCustomerId?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -5842,9 +5792,6 @@ export namespace Prisma {
     barbershopId?: StringWithAggregatesFilter<"User"> | string
     resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
-    planStatus?: StringWithAggregatesFilter<"User"> | string
-    planExpiresAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    abacateCustomerId?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type AppointmentWhereInput = {
@@ -6116,9 +6063,6 @@ export namespace Prisma {
     createdAt?: Date | string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
     barbershop: BarbershopCreateNestedOneWithoutUsersInput
     appointments?: AppointmentCreateNestedManyWithoutBarberInput
   }
@@ -6133,9 +6077,6 @@ export namespace Prisma {
     barbershopId: string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarberInput
   }
 
@@ -6148,9 +6089,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
     barbershop?: BarbershopUpdateOneRequiredWithoutUsersNestedInput
     appointments?: AppointmentUpdateManyWithoutBarberNestedInput
   }
@@ -6165,9 +6103,6 @@ export namespace Prisma {
     barbershopId?: StringFieldUpdateOperationsInput | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
     appointments?: AppointmentUncheckedUpdateManyWithoutBarberNestedInput
   }
 
@@ -6181,9 +6116,6 @@ export namespace Prisma {
     barbershopId: string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -6195,9 +6127,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -6210,9 +6139,6 @@ export namespace Prisma {
     barbershopId?: StringFieldUpdateOperationsInput | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppointmentCreateInput = {
@@ -6617,9 +6543,6 @@ export namespace Prisma {
     barbershopId?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
-    planStatus?: SortOrder
-    planExpiresAt?: SortOrder
-    abacateCustomerId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -6632,9 +6555,6 @@ export namespace Prisma {
     barbershopId?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
-    planStatus?: SortOrder
-    planExpiresAt?: SortOrder
-    abacateCustomerId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -6647,9 +6567,6 @@ export namespace Prisma {
     barbershopId?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
-    planStatus?: SortOrder
-    planExpiresAt?: SortOrder
-    abacateCustomerId?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -7426,9 +7343,6 @@ export namespace Prisma {
     createdAt?: Date | string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
     appointments?: AppointmentCreateNestedManyWithoutBarberInput
   }
 
@@ -7441,9 +7355,6 @@ export namespace Prisma {
     createdAt?: Date | string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarberInput
   }
 
@@ -7545,9 +7456,6 @@ export namespace Prisma {
     barbershopId?: StringFilter<"User"> | string
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
-    planStatus?: StringFilter<"User"> | string
-    planExpiresAt?: DateTimeFilter<"User"> | Date | string
-    abacateCustomerId?: StringNullableFilter<"User"> | string | null
   }
 
   export type BarbershopCreateWithoutUsersInput = {
@@ -7723,9 +7631,6 @@ export namespace Prisma {
     createdAt?: Date | string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
     barbershop: BarbershopCreateNestedOneWithoutUsersInput
   }
 
@@ -7739,9 +7644,6 @@ export namespace Prisma {
     barbershopId: string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
   }
 
   export type UserCreateOrConnectWithoutAppointmentsInput = {
@@ -7837,9 +7739,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
     barbershop?: BarbershopUpdateOneRequiredWithoutUsersNestedInput
   }
 
@@ -7853,9 +7752,6 @@ export namespace Prisma {
     barbershopId?: StringFieldUpdateOperationsInput | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ServiceUpsertWithWhereUniqueWithoutAppointmentsInput = {
@@ -8024,9 +7920,6 @@ export namespace Prisma {
     createdAt?: Date | string
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
-    planStatus?: string
-    planExpiresAt?: Date | string
-    abacateCustomerId?: string | null
   }
 
   export type AppointmentUpdateWithoutBarbershopInput = {
@@ -8098,9 +7991,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
     appointments?: AppointmentUpdateManyWithoutBarberNestedInput
   }
 
@@ -8113,9 +8003,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
     appointments?: AppointmentUncheckedUpdateManyWithoutBarberNestedInput
   }
 
@@ -8128,9 +8015,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    planStatus?: StringFieldUpdateOperationsInput | string
-    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppointmentCreateManyBarberInput = {

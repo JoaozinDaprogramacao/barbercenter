@@ -1,3 +1,5 @@
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
@@ -16,8 +18,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("E-mail e senha são obrigatórios");
         }
 
+        // 🔥 MUDANÇA AQUI: include: { barbershop: true }
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
+          include: { barbershop: true } 
         });
 
         if (!user) throw new Error("Usuário não encontrado");
@@ -25,14 +29,15 @@ export const authOptions: NextAuthOptions = {
         const isValidPassword = await compare(credentials.password, user.password);
         if (!isValidPassword) throw new Error("Senha incorreta");
 
+        // 🔥 MUDANÇA AQUI: Pegamos o plano de user.barbershop
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
           barbershopId: user.barbershopId,
-          planStatus: user.planStatus,
-          planExpiresAt: user.planExpiresAt,
+          planStatus: user.barbershop.planStatus, 
+          planExpiresAt: user.barbershop.planExpiresAt, 
         };
       }
     })
@@ -46,11 +51,13 @@ export const authOptions: NextAuthOptions = {
         token.planStatus = (user as any).planStatus;
         token.planExpiresAt = (user as any).planExpiresAt;
       }
-
+      
+      // Update para Webhooks ou renovação
       if (trigger === "update" && session) {
         if (session.planStatus) token.planStatus = session.planStatus;
         if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
       }
+
       return token;
     },
     async session({ session, token }) {

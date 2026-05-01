@@ -17,34 +17,36 @@ export function useSubscription() {
 
         if (data.barbershop) {
           const { planStatus, trialExpiresAt, planExpiresAt } = data.barbershop;
+
+          // Sincroniza o status PRO/ACTIVE
+          if (planStatus === "ACTIVE" || planStatus === "PRO") {
+            setIsPlanActive(true);
+            setLoading(false);
+            return;
+          }
+
+          // Pega a data de expiração (seja trial ou plano)
           const expirationDate = planExpiresAt ? new Date(planExpiresAt) :
             trialExpiresAt ? new Date(trialExpiresAt) : null;
 
-          if (planStatus === "ACTIVE" || planStatus === "PRO") {
-            setIsPlanActive(true);
-          } else if (expirationDate) {
+          if (expirationDate) {
             const now = new Date();
-            // Comparação exata de milissegundos
-            const expired = now > expirationDate;
+            // Diferença absoluta em dias
+            const diff = differenceInDays(expirationDate, now);
 
-            if (expired) {
-              setDaysRemaining(0); // Força o estado de expirado
-            } else {
-              const diff = differenceInDays(expirationDate, now);
-              setDaysRemaining(diff + 1); // Ajusta para mostrar "1 dia" se expirar hoje
-            }
+            // Se faltar menos de 24h mas ainda não expirou, garantimos que retorne 1 dia
+            // Se já passou da hora, retorna 0
+            setDaysRemaining(now < expirationDate ? Math.max(diff, 1) : 0);
           }
         }
       } catch (error) {
-        console.error("Erro ao carregar assinatura:", error);
+        console.error("Erro:", error);
       } finally {
         setLoading(false);
       }
     }
-
     fetchSubscription();
   }, []);
-
   /**
    * Seleção da Oferta Ativa
    * Filtra o array TRIAL_RULES importado do config

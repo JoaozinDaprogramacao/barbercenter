@@ -20,6 +20,7 @@ export async function middleware(req: NextRequest) {
       const expirationDate = new Date(planExpiresAt as string);
       const now = new Date();
 
+      // 🔥 CORTE IMEDIATO: Se a data de agora for maior, bloqueia na hora.
       if (now > expirationDate) {
         return NextResponse.redirect(new URL("/bloqueado", req.url));
       }

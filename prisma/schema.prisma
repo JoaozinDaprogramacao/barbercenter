@@ -37,7 +37,7 @@ model User {
   name         String
   email        String        @unique
   password     String
-  role         String        @default("OWNER") // Pode ser "OWNER" ou "BARBER"
+  role         String        @default("OWNER") 
   createdAt    DateTime      @default(now())
   barbershopId String
 
@@ -45,11 +45,8 @@ model User {
   resetTokenExpiry DateTime?
   
   barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  appointments Appointment[] // <-- NOVA RELAÇÃO AQUI
+  appointments Appointment[] 
 
-  planStatus       String      @default("TRIAL")
-  planExpiresAt    DateTime    @default(now())
-  abacateCustomerId String?    @unique
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")

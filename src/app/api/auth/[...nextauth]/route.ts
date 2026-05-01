@@ -23,10 +23,8 @@ export const authOptions: NextAuthOptions = {
         if (!user) throw new Error("Usuário não encontrado");
 
         const isValidPassword = await compare(credentials.password, user.password);
-
         if (!isValidPassword) throw new Error("Senha incorreta");
 
-        // Retornamos os dados incluindo o status do plano para o JWT
         return {
           id: user.id,
           name: user.name,
@@ -47,15 +45,12 @@ export const authOptions: NextAuthOptions = {
         token.barbershopId = user.barbershopId;
         token.planStatus = (user as any).planStatus;
         token.planExpiresAt = (user as any).planExpiresAt;
-        // 🔥 ADICIONE ESTA LINHA:
-        token.trialExpiresAt = (user as any).trialExpiresAt;
       }
 
       if (trigger === "update" && session) {
         if (session.planStatus) token.planStatus = session.planStatus;
         if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
       }
-
       return token;
     },
     async session({ session, token }) {
@@ -65,21 +60,14 @@ export const authOptions: NextAuthOptions = {
         session.user.barbershopId = token.barbershopId as string;
         session.user.planStatus = token.planStatus as string;
         session.user.planExpiresAt = token.planExpiresAt as any;
-        // 🔥 ADICIONE ESTA LINHA:
-        (session.user as any).trialExpiresAt = token.trialExpiresAt as any;
       }
       return session;
     }
   },
-  pages: {
-    signIn: '/',
-  },
-  session: {
-    strategy: "jwt",
-  },
+  pages: { signIn: '/' },
+  session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

@@ -16,20 +16,20 @@ interface UserData {
   barbershopId: string;
 }
 
-export function PixPaymentActivity({ 
-  onBack, 
-  onClose, 
-  userData 
-}: { 
-  onBack: () => void; 
-  onClose: () => void; 
+export function PixPaymentActivity({
+  onBack,
+  onClose,
+  userData
+}: {
+  onBack: () => void;
+  onClose: () => void;
   userData: UserData;
 }) {
   const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
   const [loading, setLoading] = useState(false);
-  
+
   const [taxId, setTaxId] = useState('');
   const [cellphone, setCellphone] = useState('');
 
@@ -42,7 +42,7 @@ export function PixPaymentActivity({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          barbershopId: userData.barbershopId,
+          userId: userData.id, // MUDOU AQUI: era barbershopId
           name: userData.name,
           email: userData.email,
           taxId: taxId,
@@ -51,7 +51,7 @@ export function PixPaymentActivity({
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
         setPixData(data);
         setStep('PAYMENT');
@@ -100,7 +100,7 @@ export function PixPaymentActivity({
             <div className="space-y-4">
               <div>
                 <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">CPF ou CNPJ</label>
-                <input 
+                <input
                   required
                   placeholder="000.000.000-00"
                   value={taxId}
@@ -110,7 +110,7 @@ export function PixPaymentActivity({
               </div>
               <div>
                 <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">WhatsApp / Celular</label>
-                <input 
+                <input
                   required
                   placeholder="(38) 9 9999-9999"
                   value={cellphone}
@@ -120,7 +120,7 @@ export function PixPaymentActivity({
               </div>
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"

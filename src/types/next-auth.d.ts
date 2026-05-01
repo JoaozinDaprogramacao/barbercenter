@@ -1,29 +1,30 @@
-// src/types/next-auth.d.ts
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
-import { DefaultJWT } from "next-auth/jwt";
+import NextAuth, { DefaultSession } from "next-auth"
 
-// 1. Estende a tipagem da Sessão e do Usuário
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;
-      role: string;
-      barbershopId: string;
-    } & DefaultSession["user"];
+      id: string
+      role: string
+      barbershopId: string
+      planStatus: string
+      planExpiresAt: string | Date
+    } & DefaultSession["user"]
   }
 
-  interface User extends DefaultUser {
-    id: string;
-    role: string;
-    barbershopId: string;
+  interface User {
+    role: string
+    barbershopId: string
+    planStatus: string
+    planExpiresAt: string | Date
   }
 }
 
-// 2. Estende a tipagem do Token (JWT)
 declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    id: string;
-    role: string;
-    barbershopId: string;
+  interface JWT {
+    id: string
+    role: string
+    barbershopId: string
+    planStatus: string
+    planExpiresAt: string | Date
   }
 }

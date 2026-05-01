@@ -47,6 +47,10 @@ model User {
   barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments Appointment[] // <-- NOVA RELAÇÃO AQUI
 
+  planStatus        String   @default("TRIAL")
+  planExpiresAt     DateTime @default(now())
+  abacateCustomerId String?  @unique
+
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
 }

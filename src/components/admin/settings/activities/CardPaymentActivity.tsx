@@ -27,13 +27,13 @@ export function CardPaymentActivity({ onBack, onClose, userData }: CardPaymentAc
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            barbershopId: userData.barbershopId,
+            userId: userData.id, // MUDOU AQUI: era barbershopId
             name: userData.name,
             email: userData.email,
-            taxId: "10981883656",
+            taxId: "10981883656", // Lembre de pegar isso de um input depois!
             cellphone: "38999999999"
           })
-        });
+        });;
 
         const data = await response.json();
 

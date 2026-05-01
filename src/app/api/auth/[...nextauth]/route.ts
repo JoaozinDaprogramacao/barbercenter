@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 
-// 1. Isolamos as opções e EXPORTAMOS elas
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -27,23 +26,36 @@ export const authOptions: NextAuthOptions = {
 
         if (!isValidPassword) throw new Error("Senha incorreta");
 
+        // Retornamos os dados incluindo o status do plano para o JWT
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
           barbershopId: user.barbershopId,
+          planStatus: user.planStatus,
+          planExpiresAt: user.planExpiresAt,
         };
       }
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Login inicial: persiste os dados do usuário no Token
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.barbershopId = user.barbershopId;
+        token.planStatus = (user as any).planStatus;
+        token.planExpiresAt = (user as any).planExpiresAt;
       }
+
+      // Permite atualizar a sessão em tempo real após o pagamento (update())
+      if (trigger === "update" && session) {
+        if (session.planStatus) token.planStatus = session.planStatus;
+        if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -51,6 +63,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.barbershopId = token.barbershopId as string;
+        session.user.planStatus = token.planStatus as string;
+        session.user.planExpiresAt = token.planExpiresAt as any;
       }
       return session;
     }
@@ -64,7 +78,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// 2. Passamos as opções para o NextAuth
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

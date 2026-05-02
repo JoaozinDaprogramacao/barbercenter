@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { SettingsHeader } from "./SettingsHeader";
 import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
@@ -13,6 +14,9 @@ import { SubscriptionSection } from "./SubscriptionSection";
 import { TeamSection } from "./TeamSection";
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
+    const { data: session } = useSession();
+    const isOwner = (session?.user as any)?.role === "OWNER";
+
     const {
         companyData, setCompanyData,
         isEditingCompany, setIsEditingCompany,
@@ -101,9 +105,11 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         )}
                     </section>
 
-                    <section className="px-1">
-                        <SubscriptionSection />
-                    </section>
+                    {isOwner && (
+                        <section className="px-1">
+                            <SubscriptionSection />
+                        </section>
+                    )}
 
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
@@ -152,7 +158,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>
                     </div>
 
-                    {/* Aqui você chamará o seu componente TeamSection que listará os barbeiros */}
                     <TeamSection />
                 </section>
             </div>

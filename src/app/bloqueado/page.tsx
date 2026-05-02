@@ -7,12 +7,10 @@ import { Lock, ArrowRight, LogOut, Loader2 } from "lucide-react";
 
 import { TrialWorkflow } from '@/components/admin/settings/TrialWorkflow';
 
-
 export default function BloqueadoPage() {
   const { data: session, status } = useSession();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  // Monta o userData baseado na sessão ativa para repassar ao componente de pagamento
   const userData = {
     id: (session?.user as any)?.id || "",
     name: session?.user?.name || "",
@@ -20,7 +18,8 @@ export default function BloqueadoPage() {
     barbershopId: (session?.user as any)?.barbershopId || "",
   };
 
-  // Se a sessão ainda está carregando, mostra um loader para evitar piscar a tela
+  const isOwner = (session?.user as any)?.role === "OWNER";
+
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center">
@@ -35,7 +34,6 @@ export default function BloqueadoPage() {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
       
-      {/* Luz vermelha de fundo para dar o tom de "alerta" */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-red-600/10 blur-[120px] rounded-full pointer-events-none" />
 
       <motion.div 
@@ -49,21 +47,31 @@ export default function BloqueadoPage() {
         </div>
 
         <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter">
-          Acesso Bloqueado
+          Acesso Suspenso
         </h1>
         
-        <p className="text-zinc-400 font-medium text-base md:text-lg mb-10 leading-relaxed">
-          O período da sua assinatura expirou ou há uma pendência no seu pagamento. Regularize seu plano para voltar a gerenciar sua barbearia com o InBarber PRO.
-        </p>
+        {isOwner ? (
+          <p className="text-zinc-400 font-medium text-base md:text-lg mb-10 leading-relaxed">
+            O período da sua assinatura expirou ou há uma pendência no seu pagamento. Regularize seu plano para voltar a gerenciar sua barbearia com o InBarber PRO.
+          </p>
+        ) : (
+          <p className="text-zinc-400 font-medium text-base md:text-lg mb-10 leading-relaxed">
+            O sistema da barbearia encontra-se temporariamente suspenso devido a pendências de assinatura.
+            <br /><br />
+            <strong className="text-white">Por favor, entre em contato com o dono ou administrador da barbearia para que o acesso seja normalizado.</strong>
+          </p>
+        )}
 
         <div className="flex flex-col gap-4">
-          <button
-            onClick={() => setIsPaymentOpen(true)}
-            className="w-full bg-orange-600 hover:bg-orange-500 text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
-          >
-            Regularizar Acesso
-            <ArrowRight size={20} />
-          </button>
+          {isOwner && (
+            <button
+              onClick={() => setIsPaymentOpen(true)}
+              className="w-full bg-orange-600 hover:bg-orange-500 text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
+            >
+              Regularizar Acesso
+              <ArrowRight size={20} />
+            </button>
+          )}
 
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
@@ -75,7 +83,6 @@ export default function BloqueadoPage() {
         </div>
       </motion.div>
 
-      {/* Renderiza o seu fluxo de pagamento pronto por cima de tudo */}
       <TrialWorkflow 
         forcedOpen={isPaymentOpen} 
         onClose={() => setIsPaymentOpen(false)} 

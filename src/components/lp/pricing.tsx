@@ -3,21 +3,20 @@
 import { Smartphone } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import Link from 'next/link'; // Importando o Link do Next.js
 
 export function Pricing() {
   const containerRef = useRef(null);
 
-  // Hook para capturar o progresso do scroll nesta seção específica
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  // Movimentos de Parallax coordenados
-  const lightOrangeY = useTransform(scrollYProgress, [0, 1], [-50, 150]); // Luz laranja desce
-  const lightWhiteY = useTransform(scrollYProgress, [0, 1], [50, -150]);  // Luz branca sobe
-  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);      // Conteúdo flutua levemente
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]); // Pulsa sutilmente no scroll
+  const lightOrangeY = useTransform(scrollYProgress, [0, 1], [-50, 150]);
+  const lightWhiteY = useTransform(scrollYProgress, [0, 1], [50, -150]); 
+  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);      
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]); 
 
   return (
     <section 
@@ -42,13 +41,13 @@ export function Pricing() {
             className="absolute -top-20 -left-20 w-60 h-60 bg-white/10 blur-[80px] md:blur-[120px] pointer-events-none" 
           />
 
-          {/* Coluna da Esquerda: Textos (Com leve parallax) */}
+          {/* Coluna da Esquerda: Textos */}
           <motion.div 
             style={{ y: contentY }}
             className="z-10 text-center md:text-left flex flex-col items-center md:items-start"
           >
             <h2 className="text-2xl md:text-4xl font-extrabold mb-2 md:mb-3 tracking-tight">
-              Quais são os planos?
+              Tudo liberado para você.
             </h2>
             <p className="text-orange-500 font-bold text-lg md:text-2xl mb-6 md:mb-8 tracking-tight italic">
               Experimente por 45 dias grátis
@@ -77,7 +76,7 @@ export function Pricing() {
               transition={{ duration: 3, repeat: Infinity }}
               className="bg-orange-500/10 text-orange-500 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-4 border border-orange-500/20"
             >
-              Oferta de Lançamento
+              Cancele quando quiser
             </motion.div>
             
             <p className="text-zinc-500 line-through text-base md:text-lg font-medium mb-1">R$ 49,90</p>
@@ -95,20 +94,24 @@ export function Pricing() {
             </div>
             
             <p className="text-[10px] md:text-sm text-zinc-400 mt-4 font-bold uppercase tracking-[0.15em]">
-              No plano semestral
+              Após os 45 dias gratuitos
             </p>
             
-            <motion.button 
-              whileHover={{ 
-                scale: 1.05, 
-                backgroundColor: "#f97316",
-                boxShadow: "0 20px 40px -10px rgba(249, 115, 22, 0.4)" 
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="mt-8 w-full md:w-auto bg-white text-black px-12 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300"
-            >
-              Assinar Agora
-            </motion.button>
+            {/* Novo CTA com Link do Next.js e Animação do Framer Motion */}
+            <Link href="/registro" className="mt-8 w-full md:w-auto block outline-none">
+              <motion.div 
+                whileHover={{ 
+                  scale: 1.05, 
+                  backgroundColor: "#f97316",
+                  color: "#ffffff",
+                  boxShadow: "0 20px 40px -10px rgba(249, 115, 22, 0.4)" 
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full bg-white text-black px-12 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center cursor-pointer"
+              >
+                Começar Gratuitamente
+              </motion.div>
+            </Link>
           </motion.div>
 
         </motion.div>

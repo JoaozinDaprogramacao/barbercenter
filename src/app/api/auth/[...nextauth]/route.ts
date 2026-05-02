@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         // 🔥 MUDANÇA AQUI: include: { barbershop: true }
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-          include: { barbershop: true } 
+          include: { barbershop: true }
         });
 
         if (!user) throw new Error("Usuário não encontrado");
@@ -36,14 +36,15 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           role: user.role,
           barbershopId: user.barbershopId,
-          planStatus: user.barbershop.planStatus, 
-          planExpiresAt: user.barbershop.planExpiresAt, 
+          planStatus: user.barbershop.planStatus,
+          planExpiresAt: user.barbershop.planExpiresAt,
         };
       }
     })
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      // 1. Quando o usuário faz o login pela primeira vez
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -51,11 +52,19 @@ export const authOptions: NextAuthOptions = {
         token.planStatus = (user as any).planStatus;
         token.planExpiresAt = (user as any).planExpiresAt;
       }
-      
-      // Update para Webhooks ou renovação
-      if (trigger === "update" && session) {
-        if (session.planStatus) token.planStatus = session.planStatus;
-        if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
+
+      // 🔥 A MÁGICA AQUI: Quando o frontend pedir para atualizar
+      if (trigger === "update") {
+        // Vai no banco buscar os dados fresquinhos que o Webhook acabou de salvar
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          include: { barbershop: true }
+        });
+
+        if (freshUser?.barbershop) {
+          token.planStatus = freshUser.barbershop.planStatus;
+          token.planExpiresAt = freshUser.barbershop.planExpiresAt;
+        }
       }
 
       return token;

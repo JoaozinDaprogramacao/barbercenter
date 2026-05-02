@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Copy, Check, X, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // <-- Importar o router
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react'; // 🔥 IMPORTAÇÃO OBRIGATÓRIA
 
 interface AbacatePixData {
   qr_code_base64: string;
@@ -26,7 +27,8 @@ export function PixPaymentActivity({
   onClose: () => void;
   userData: UserData;
 }) {
-  const router = useRouter(); // <-- Instanciar
+  const router = useRouter();
+  const { update } = useSession(); // 🔥 PUXA O UPDATE DO NEXTAUTH
   const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
@@ -84,22 +86,23 @@ export function PixPaymentActivity({
         try {
           const res = await fetch(`/api/user/plan-status?userId=${userData.id}`);
           const data = await res.json();
-          
+
           if (data.planStatus === 'PRO') {
-            clearInterval(intervalId);
-            onClose(); // Fecha o modal
-            router.push('/sucesso'); // Vai para a página de sucesso inteira!
+            clearInterval(intervalId); // 1. Para de rodar o polling
+            await update();            // 🔥 2. ATUALIZA O COOKIE NO NAVEGADOR
+            onClose();                 // 3. Fecha o modal
+            router.push('/sucesso');   // 4. Manda pra tela de sucesso
           }
         } catch (error) {
           console.error("Aguardando confirmação...");
         }
-      }, 3000);
+      }, 3000); // Batendo a cada 3s para o acesso ser quase imediato
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [step, userData.id, onClose, router]);
+  }, [step, userData.id, onClose, router, update]); // Adicionou update nas dependências
 
   return (
     <motion.div
@@ -119,7 +122,6 @@ export function PixPaymentActivity({
 
       <div className="flex-1 overflow-y-auto p-8 text-center no-scrollbar">
         {step === 'FORM' ? (
-          // ... (Formulário continua igual)
           <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-10">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-black text-white tracking-tight">Dados de Faturamento</h2>
@@ -187,7 +189,6 @@ export function PixPaymentActivity({
               {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
             </button>
 
-            {/* Apenas o Loader de aguardando */}
             <div className="mt-8 flex flex-col items-center justify-center gap-4 text-zinc-500">
               <Loader2 className="animate-spin text-[#10B981]" size={28} />
               <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Aguardando pagamento...</p>

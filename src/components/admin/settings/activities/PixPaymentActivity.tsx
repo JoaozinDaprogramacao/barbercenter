@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Copy, Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react'; // 🔥 IMPORTAÇÃO OBRIGATÓRIA
+import { useSession } from 'next-auth/react';
 
 interface AbacatePixData {
   qr_code_base64: string;
@@ -28,7 +28,7 @@ export function PixPaymentActivity({
   userData: UserData;
 }) {
   const router = useRouter();
-  const { update } = useSession(); // 🔥 PUXA O UPDATE DO NEXTAUTH
+  const { update } = useSession();
   const [step, setStep] = useState<'FORM' | 'PAYMENT'>('FORM');
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
@@ -77,7 +77,6 @@ export function PixPaymentActivity({
     }
   };
 
-  // POLLING AUTOMÁTICO
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -88,65 +87,75 @@ export function PixPaymentActivity({
           const data = await res.json();
 
           if (data.planStatus === 'PRO') {
-            clearInterval(intervalId); // 1. Para de rodar o polling
-            await update();            // 🔥 2. ATUALIZA O COOKIE NO NAVEGADOR
-            onClose();                 // 3. Fecha o modal
-            router.push('/sucesso');   // 4. Manda pra tela de sucesso
+            clearInterval(intervalId);
+            await update();
+            onClose();
+            router.push('/sucesso');
           }
         } catch (error) {
           console.error("Aguardando confirmação...");
         }
-      }, 3000); // Batendo a cada 3s para o acesso ser quase imediato
+      }, 3000);
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [step, userData.id, onClose, router, update]); // Adicionou update nas dependências
+  }, [step, userData.id, onClose, router, update]);
 
   return (
     <motion.div
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="absolute inset-0 flex flex-col bg-zinc-950 z-50"
+      className="absolute inset-0 flex flex-col bg-[#05150e] z-50 overflow-hidden"
     >
-      <header className="p-6 flex justify-between items-center border-b border-zinc-900">
-        <button onClick={onBack} className="w-10 text-zinc-500 hover:text-white transition-colors">
+      {/* Efeitos Artísticos */}
+      <div className="absolute top-10 right-0 w-80 h-80 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-500/5 blur-[100px] rounded-full pointer-events-none" />
+      <div 
+        className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
+        style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/black-paper.png")` }}
+      />
+
+      <header className="relative z-10 p-6 flex justify-between items-center border-b border-emerald-900/30 bg-black/20 backdrop-blur-md">
+        <button onClick={onBack} className="w-10 text-emerald-100/50 hover:text-white transition-colors">
           <ChevronLeft size={28} />
         </button>
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#10B981]">Pagamento Pix</span>
-        <button onClick={onClose} className="w-10 flex justify-end text-zinc-500 hover:text-white transition-colors">
+        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Pagamento Pix</span>
+        <button onClick={onClose} className="w-10 flex justify-end text-emerald-100/50 hover:text-white transition-colors">
           <X size={24} />
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-8 text-center no-scrollbar">
+      <div className="relative z-10 flex-1 overflow-y-auto p-8 text-center no-scrollbar">
         {step === 'FORM' ? (
-          <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-10">
+          <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-6">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-black text-white tracking-tight">Dados de Faturamento</h2>
-              <p className="text-zinc-500 text-sm mt-2">Informe os dados para gerar a cobrança via AbacatePay.</p>
+              <h2 className="text-3xl font-black text-white tracking-tighter italic">
+                Dados de <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-200">Faturamento</span>
+              </h2>
+              <p className="text-emerald-100/60 text-sm mt-3">Informe os dados para gerar a cobrança via AbacatePay.</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 bg-white/5 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 shadow-xl">
               <div>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">CPF ou CNPJ</label>
+                <label className="text-[10px] font-bold text-emerald-100/50 uppercase ml-4 tracking-widest">CPF ou CNPJ</label>
                 <input
                   required
                   placeholder="000.000.000-00"
                   value={taxId}
                   onChange={e => setTaxId(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white focus:border-[#10B981] outline-none transition-all"
+                  className="w-full bg-[#0d2b1d]/50 border border-emerald-900/50 rounded-2xl p-4 text-white placeholder:text-emerald-100/20 focus:border-emerald-400 focus:bg-[#0d2b1d] outline-none transition-all mt-2 shadow-inner"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase ml-4">WhatsApp / Celular</label>
+                <label className="text-[10px] font-bold text-emerald-100/50 uppercase ml-4 tracking-widest">WhatsApp / Celular</label>
                 <input
                   required
                   placeholder="(38) 9 9999-9999"
                   value={cellphone}
                   onChange={e => setCellphone(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white focus:border-[#10B981] outline-none transition-all"
+                  className="w-full bg-[#0d2b1d]/50 border border-emerald-900/50 rounded-2xl p-4 text-white placeholder:text-emerald-100/20 focus:border-emerald-400 focus:bg-[#0d2b1d] outline-none transition-all mt-2 shadow-inner"
                 />
               </div>
             </div>
@@ -154,46 +163,52 @@ export function PixPaymentActivity({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#05150e] py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] disabled:opacity-50"
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : "GERAR QR CODE"}
+              {loading ? <Loader2 className="animate-spin text-[#05150e]" size={20} /> : "GERAR QR CODE"}
             </button>
           </form>
         ) : (
-          <>
-            <h2 className="text-2xl font-black text-white mb-8 tracking-tight">PIX para pagamento</h2>
+          <div className="max-w-sm mx-auto mt-4">
+            <h2 className="text-2xl font-black text-white mb-8 tracking-tighter italic">
+              PIX para <span className="text-emerald-400">pagamento</span>
+            </h2>
 
-            <div className="bg-white p-6 rounded-[3rem] inline-block mb-8 shadow-2xl">
-              {pixData?.qr_code_base64 && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={pixData.qr_code_base64}
-                  width={220}
-                  height={220}
-                  alt="QR Code AbacatePay"
-                  className="rounded-2xl"
-                />
-              )}
+            <div className="relative inline-block mb-8">
+              <div className="absolute inset-0 bg-emerald-400/20 blur-2xl rounded-full" />
+              <div className="relative bg-white p-6 rounded-[2.5rem] shadow-[0_0_40px_rgba(52,211,153,0.15)] border-4 border-emerald-50/10">
+                {pixData?.qr_code_base64 && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={pixData.qr_code_base64}
+                    width={220}
+                    height={220}
+                    alt="QR Code AbacatePay"
+                    className="rounded-xl"
+                  />
+                )}
+              </div>
             </div>
 
-            <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800 mb-6 font-mono text-[10px] text-zinc-400 break-all">
+            <div className="bg-black/40 p-5 rounded-[1.5rem] border border-emerald-500/20 mb-6 font-mono text-[11px] text-emerald-200/80 break-all shadow-inner relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
               {pixData?.pix_code}
             </div>
 
             <button
               onClick={handleCopy}
               disabled={!pixData?.pix_code}
-              className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-6 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#05150e] py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-8 flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] disabled:opacity-50"
             >
-              {copied ? <Check size={20} /> : <Copy size={20} />}
+              {copied ? <Check size={20} className="text-[#05150e]" /> : <Copy size={20} className="text-[#05150e]" />}
               {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
             </button>
 
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 text-zinc-500">
-              <Loader2 className="animate-spin text-[#10B981]" size={28} />
-              <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Aguardando pagamento...</p>
+            <div className="flex flex-col items-center justify-center gap-4 text-emerald-100/50">
+              <Loader2 className="animate-spin text-yellow-400" size={28} />
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">Aguardando pagamento...</p>
             </div>
-          </>
+          </div>
         )}
       </div>
     </motion.div>

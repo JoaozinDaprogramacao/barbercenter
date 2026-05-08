@@ -57,16 +57,12 @@ export default function FaturamentoPage() {
         <main className="min-h-screen w-full bg-black max-w-md mx-auto flex flex-col font-sans relative overflow-x-hidden border-x border-zinc-900">
             {/* Background Glow */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
-                <div className="absolute bottom-20 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+                <div className="absolute top-0 left-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
+                <div className="absolute bottom-20 right-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
             </div>
 
-            {/* Movi o Header para dentro do container de scroll.
-               Removi o 'flex-1' da div de baixo e deixei o container pai controlar o scroll 
-            */}
             <div className="h-screen overflow-y-auto no-scrollbar z-10">
 
-                {/* Agora o Header rola junto com o conteúdo */}
                 <AnalyticsHeader
                     onBack={() => router.back()}
                     activeTimeframe={activeTimeframe}
@@ -86,7 +82,7 @@ export default function FaturamentoPage() {
                                 exit={{ opacity: 0 }}
                                 className="flex flex-col items-center justify-center py-20"
                             >
-                                <div className="w-10 h-10 border-2 border-orange-600/20 border-t-orange-600 rounded-full animate-spin" />
+                                <div className="w-10 h-10 border-2 border-[#B87333]/20 border-t-[#B87333] rounded-full animate-spin" />
                                 <p className="mt-4 text-zinc-500 text-xs font-black uppercase tracking-[0.2em]">Sincronizando Dados</p>
                             </motion.div>
                         ) : (
@@ -108,7 +104,7 @@ export default function FaturamentoPage() {
 
                                         <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-[2.5rem] shadow-2xl">
                                             <div className="px-4 pt-2 mb-6">
-                                                <h3 className="text-white font-black uppercase text-[11px] tracking-[0.2em] opacity-50">Desempenho Financeiro</h3>
+                                                <h3 className="text-[#F7EFE2] font-black uppercase text-[11px] tracking-[0.2em] opacity-50">Desempenho Financeiro</h3>
                                             </div>
                                             <InteractiveChart data={data.chartData} />
                                         </div>
@@ -122,7 +118,6 @@ export default function FaturamentoPage() {
                 </div>
             </div>
 
-            {/* Bottom Blur Effect */}
             <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent pointer-events-none z-20" />
         </main>
     );

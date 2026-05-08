@@ -42,7 +42,6 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
       >
         <div className={`flex items-end justify-between gap-3 border-b border-zinc-800 pb-2 relative z-10 ${innerWidthClass} h-44 pointer-events-auto`}>
           
-          {/* Linhas de Grade de Fundo (Dashed) */}
           <div className="absolute inset-0 flex justify-between px-2 -z-10 h-full pointer-events-none">
             {[...Array(isScrollable ? 12 : 7)].map((_, i) => (
               <div key={i} className="w-px h-full border-l border-dashed border-zinc-800/50" />
@@ -64,7 +63,6 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
               >
                 <div className="relative w-full max-w-[32px] flex justify-center h-full">
                   
-                  {/* TOOLTIP PREMIUM */}
                   <AnimatePresence>
                     {isActive && (
                       <motion.div 
@@ -73,28 +71,26 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         className={`absolute bottom-[105%] mb-4 z-30 bg-zinc-950 border border-zinc-800 rounded-[1.5rem] p-4 shadow-2xl w-max min-w-[160px] ${tooltipPosition} will-change-transform`}
                       >
-                        <p className="text-orange-500 font-black text-xs uppercase tracking-widest mb-2">{item.label}</p>
+                        <p className="text-[#C88A52] font-black text-xs uppercase tracking-widest mb-2">{item.label}</p>
                         <div className="space-y-1.5 text-[11px] font-bold">
                           <div className="flex justify-between gap-4">
                             <span className="text-zinc-500">Atendimentos</span>
-                            <span className="text-white">{item.atendimentos}</span>
+                            <span className="text-[#F7EFE2]">{item.atendimentos}</span>
                           </div>
                           <div className="flex justify-between gap-4">
                             <span className="text-zinc-500">Bruto</span>
-                            <span className="text-white">R$ {item.bruto}</span>
+                            <span className="text-[#F7EFE2]">R$ {item.bruto}</span>
                           </div>
                           <div className="flex justify-between gap-4 pt-1 border-t border-zinc-800">
-                            <span className="text-orange-600/70">Líquido</span>
-                            <span className="text-orange-500">R$ {item.liquido}</span>
+                            <span className="text-[#B87333]/70">Líquido</span>
+                            <span className="text-[#C88A52]">R$ {item.liquido}</span>
                           </div>
                         </div>
-                        {/* Seta do Tooltip */}
                         <div className={`absolute -bottom-1.5 w-3 h-3 bg-zinc-950 border-b border-r border-zinc-800 rotate-45 ${arrowPosition}`} />
                       </motion.div>
                     )}
                   </AnimatePresence>
 
-                  {/* BARRA ANIMADA */}
                   <div className="relative w-full h-full flex items-end">
                     <motion.div 
                       initial={{ height: 0 }}
@@ -102,11 +98,10 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
                       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                       className={`w-full rounded-t-xl transition-all duration-300 relative will-change-[height] ${
                         isActive 
-                          ? 'bg-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.4)]' 
+                          ? 'bg-[#B87333] shadow-[0_0_20px_rgba(184,115,51,0.4)]' 
                           : 'bg-zinc-800 group-hover:bg-zinc-700'
                       }`}
                     >
-                        {/* Gradiente de brilho interno na barra */}
                         <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-t-xl pointer-events-none" />
                     </motion.div>
                   </div>
@@ -116,14 +111,13 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
           })}
         </div>
 
-        {/* Rótulos do Eixo X */}
         <div className={`flex justify-between mt-4 px-1 ${innerWidthClass} pointer-events-auto`}>
           {data.map((item) => (
             <span 
               key={`label-${item.label}`} 
               onClick={() => handleBarClick(item.label)} 
               className={`text-[9px] font-black uppercase flex-1 text-center cursor-pointer transition-colors tracking-tighter ${
-                selectedLabel === item.label ? 'text-orange-500' : 'text-zinc-600'
+                selectedLabel === item.label ? 'text-[#C88A52]' : 'text-zinc-600'
               }`}
             >
               {item.label}
@@ -132,7 +126,6 @@ export const InteractiveChart = ({ data }: { data: ChartData[] }) => {
         </div>
       </div>
 
-      {/* Indicador de Scroll (Apenas se for scrollable) */}
       {isScrollable && (
         <motion.div 
           initial={{ opacity: 0 }}

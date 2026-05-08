@@ -30,7 +30,7 @@ export default function LoginPage() {
             >
                 <div className="text-center mb-10">
                     <img 
-                        src="/logo-white.png" 
+                        src="/logo.png" 
                         alt="Logo BarberCenter" 
                         className="h-32 w-auto object-contain mx-auto mb-6"
                     />

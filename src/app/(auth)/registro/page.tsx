@@ -29,7 +29,7 @@ export default function RegisterPage() {
         
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 mb-16">
-            <img src="/logo-white.png" alt="Logo" className="h-12 w-auto object-contain" />
+            <img src="/logo.png" alt="Logo" className="h-12 w-auto object-contain" />
             <span className="text-xl font-black text-white tracking-tighter uppercase">
               Barber<span className="text-orange-600">Center</span>
             </span>

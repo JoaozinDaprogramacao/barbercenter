@@ -21,53 +21,44 @@ export const AppointmentCard = ({
 }: AppointmentCardProps) => {
   return (
     <motion.div
-      whileHover={{ backgroundColor: "rgba(39, 39, 42, 0.8)" }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="bg-zinc-900 rounded-[2.5rem] p-7 flex flex-col gap-10 relative border border-zinc-800 transition-all cursor-pointer group shadow-2xl will-change-transform"
+      className="group relative cursor-pointer overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all hover:border-[#B87333]/35"
     >
-      {/* LINHA SUPERIOR: HORÁRIO E AÇÕES */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
-            <span className="text-[12px] font-black text-zinc-500 uppercase tracking-widest leading-none">
-              Horário
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_38%)] opacity-70 transition-opacity group-hover:opacity-100" />
+
+      <div className="relative z-10 flex items-start justify-between gap-4">
+        <div className="flex gap-4">
+          <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl border border-[#B87333]/30 bg-[#B87333]/10 text-[#D49A62]">
+            <span className="text-[9px] font-black uppercase tracking-widest opacity-70">
+              Hora
             </span>
-            <span className="text-lg font-bold text-white mt-1 tracking-tight">
+            <span className="text-sm font-black tracking-tight text-[#F7EFE2]">
               {time}
             </span>
           </div>
 
-          {badge && (
-            <span className="bg-green-500/10 text-green-500 text-[10px] font-black px-3 py-1 rounded-full border border-green-500/20 uppercase tracking-tighter">
-              {badge}
-            </span>
-          )}
-        </div>
-      </div>
+          <div>
+            <h4 className="text-xl font-black leading-tight tracking-tight text-[#F7EFE2]">
+              {name}
+            </h4>
 
-      {/* LINHA INFERIOR: CLIENTE E VALOR */}
-      <div className="flex justify-between items-end">
-        <div className="space-y-1.5">
-          <h4 className="text-2xl font-black text-white tracking-tighter leading-none">
-            {name}
-          </h4>
-          <p className="text-[11px] font-bold text-orange-600/80 uppercase tracking-[0.2em]">
-            {service}
-          </p>
+            <p className="mt-1 text-[11px] font-black uppercase tracking-[0.22em] text-[#D49A62]">
+              {service}
+            </p>
+
+            {badge && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-tight text-emerald-400">
+                {badge}
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 text-white font-black text-sm bg-orange-600/10 px-4 py-2.5 rounded-2xl border border-orange-500/20 shadow-lg shadow-orange-500/5">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500">
-            <rect x="2" y="5" width="20" height="14" rx="2" />
-            <path d="M2 10h22" />
-          </svg>
+        <div className="rounded-2xl border border-[#B87333]/25 bg-[#B87333]/10 px-4 py-2 text-sm font-black text-[#F7EFE2]">
           {price}
         </div>
       </div>
-
-      {/* DETALHE DE DESIGN: BRILHO SUTIL NO HOVER */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-orange-600/0 to-orange-600/0 group-hover:from-orange-600/5 group-hover:to-transparent rounded-[2.5rem] transition-all duration-500 pointer-events-none" />
     </motion.div>
   );
 };

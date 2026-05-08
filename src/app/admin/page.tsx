@@ -131,36 +131,56 @@ export default function BarberDashboard() {
     };
 
     return (
-        <main className="min-h-screen w-full flex flex-col bg-background max-w-md mx-auto relative font-sans">
+        <main className="min-h-screen w-full flex flex-col bg-[#050505] max-w-md mx-auto relative font-sans text-white">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <div className="relative min-h-[560px] overflow-visible">
+                {/* BG HERO BARBEARIA */}
+                <div
+                    className="absolute inset-x-0 top-0 h-[500px] bg-cover bg-center bg-no-repeat"
+                    style={{
+                        backgroundImage: "url('/imgs/barber-header.jpg')",
+                    }}
+                />
 
-            <DashboardHeader
-                userName={firstName}
-                showValues={showValues}
-                onToggleValues={() => setShowValues(!showValues)}
-                onOpenMenu={() => setIsSidebarOpen(true)}
-                onOpenSchedule={() => { }}
-            />
+                {/* OVERLAY ESCURO */}
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.70)_45%,rgba(5,5,5,1)_100%)]" />
+
+                {/* EFEITOS PREMIUM */}
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.20),transparent_38%)]" />
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(212,154,98,0.12),transparent_32%)]" />
+
+                {/* CONTEÚDO POR CIMA DO BG */}
+                <div className="relative z-20">
+                    <DashboardHeader
+                        userName={firstName}
+                        showValues={showValues}
+                        onToggleValues={() => setShowValues(!showValues)}
+                        onOpenMenu={() => setIsSidebarOpen(true)}
+                        onOpenSchedule={() => { }}
+                    />
+
+                    <div className="relative z-30 -mt-2">
+                        <WeeklyCalendar
+                            days={weekDays}
+                            selectedDate={selectedDate}
+                            onSelectDate={(fullDate) => setSelectedDate(fullDate)}
+                            onNextWeek={nextWeek}
+                            onPrevWeek={prevWeek}
+                            rangeText={weekRangeText}
+                            agendaData={agendaData}
+                            onOpenPicker={() => setIsCalendarOpen(true)}
+                        />
+                    </div>
+                </div>
+            </div>
 
             <div className="flex-1 pb-24">
-                {/* O Banner agora vive aqui, logo abaixo do Header */}
                 <TrialBanner onUpgradeClick={() => setIsUpgradeOpen(true)} />
 
                 <TrialWorkflow
                     forcedOpen={isUpgradeOpen}
                     onClose={() => setIsUpgradeOpen(false)}
-                    userData={currentUser} 
-                />
-
-                <WeeklyCalendar
-                    days={weekDays}
-                    selectedDate={selectedDate}
-                    onSelectDate={(fullDate) => setSelectedDate(fullDate)}
-                    onNextWeek={nextWeek}
-                    onPrevWeek={prevWeek}
-                    rangeText={weekRangeText}
-                    agendaData={agendaData}
-                    onOpenPicker={() => setIsCalendarOpen(true)}
+                    userData={currentUser}
                 />
 
                 <CalendarPickerModal

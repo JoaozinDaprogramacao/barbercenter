@@ -33,7 +33,7 @@ export const CompanySection = ({ isEditing, isSaving, data, onEdit, onSave, onCh
           className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-2xl transition-all disabled:opacity-50 ${
             isEditing 
               ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' 
-              : 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+              : 'bg-[#B87333] text-[#F7EFE2] shadow-lg shadow-[#B87333]/20'
           }`}
         >
           {isSaving ? (
@@ -54,9 +54,9 @@ export const CompanySection = ({ isEditing, isSaving, data, onEdit, onSave, onCh
         >
           {campos.map((item) => (
             <div key={item.chave} className="space-y-2">
-              <label className="text-[10px] font-black text-orange-600 uppercase px-1 tracking-widest">{item.label}</label>
+              <label className="text-[10px] font-black text-[#B87333] uppercase px-1 tracking-widest">{item.label}</label>
               <input
-                className="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-white outline-none focus:border-orange-500/50 transition-all text-sm font-bold placeholder:text-zinc-700"
+                className="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-white outline-none focus:border-[#B87333]/50 transition-all text-sm font-bold placeholder:text-zinc-700"
                 value={item.chave === 'telefone' ? maskPhone((data as any)[item.chave]) : (data as any)[item.chave]}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -83,7 +83,7 @@ export const CompanySection = ({ isEditing, isSaving, data, onEdit, onSave, onCh
               {data.endereco || "Endereço não configurado"}
             </p>
             <div className="mt-6 flex">
-              <span className="text-orange-500 font-black bg-orange-600/10 px-4 py-2 rounded-xl text-xs border border-orange-600/20 tracking-tight">
+              <span className="text-[#C88A52] font-black bg-[#B87333]/10 px-4 py-2 rounded-xl text-xs border border-[#B87333]/20 tracking-tight">
                 {data.telefone ? maskPhone(data.telefone) : "Sem contato"}
               </span>
             </div>

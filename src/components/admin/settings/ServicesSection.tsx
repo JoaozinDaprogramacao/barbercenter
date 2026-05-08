@@ -22,7 +22,7 @@ export const ServicesSection = ({ services, editingId, onAdd, onSelect }: Servic
       <motion.button 
         whileTap={{ scale: 0.95 }}
         onClick={onAdd} 
-        className="snap-center flex-none w-[80px] h-[180px] rounded-[2.5rem] bg-zinc-900/40 border-2 border-dashed border-zinc-800 flex items-center justify-center text-zinc-600 hover:text-orange-600 hover:border-orange-600/50 transition-all"
+        className="snap-center flex-none w-[80px] h-[180px] rounded-[2.5rem] bg-zinc-900/40 border-2 border-dashed border-zinc-800 flex items-center justify-center text-zinc-600 hover:text-[#B87333] hover:border-[#B87333]/50 transition-all"
       >
         <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -44,17 +44,17 @@ export const ServicesSection = ({ services, editingId, onAdd, onSelect }: Servic
             onClick={() => onSelect(s)}
             className={`snap-center flex-none w-[170px] rounded-[2.5rem] p-7 border-2 relative transition-all cursor-pointer will-change-transform
               ${isActive 
-                ? 'bg-orange-600 border-orange-500 shadow-lg shadow-orange-600/20' 
+                ? 'bg-[#B87333] border-[#C88A52] shadow-lg shadow-[#B87333]/20' 
                 : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
               }`}
           >
-            <div className={`w-10 h-1.5 rounded-full mb-10 ${isActive ? 'bg-white/30' : 'bg-orange-600/20'}`}></div>
+            <div className={`w-10 h-1.5 rounded-full mb-10 ${isActive ? 'bg-white/30' : 'bg-[#B87333]/30'}`}></div>
             
             <h5 className="text-white font-black text-xl leading-tight tracking-tighter mb-1 uppercase">
               {s.name}
             </h5>
             
-            <p className={`text-sm font-black tracking-tight ${isActive ? 'text-white' : 'text-zinc-500'}`}>
+            <p className={`text-sm font-black tracking-tight ${isActive ? 'text-[#F7EFE2]' : 'text-zinc-500'}`}>
               R$ {s.price}
             </p>
 

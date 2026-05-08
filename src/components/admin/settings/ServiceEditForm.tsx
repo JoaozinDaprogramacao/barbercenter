@@ -61,10 +61,10 @@ export const ServiceEditForm = ({
                         <div className="space-y-6">
                             {/* Nome */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-orange-600 uppercase px-1 tracking-[0.2em]">Nome do Serviço</label>
+                                <label className="text-[10px] font-black text-[#B87333] uppercase px-1 tracking-[0.2em]">Nome do Serviço</label>
                                 <input
                                     autoFocus
-                                    className="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-white outline-none focus:border-orange-500/50 transition-all text-lg font-bold"
+                                    className="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-white outline-none focus:border-[#B87333]/50 transition-all text-lg font-bold"
                                     value={service?.name || ""}
                                     onChange={(e) => onUpdate(service.id, 'name', e.target.value)}
                                     placeholder="Ex: Corte e Barba"
@@ -74,10 +74,10 @@ export const ServiceEditForm = ({
                             <div className="grid grid-cols-1 gap-6">
                                 {/* Preço */}
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-orange-600 uppercase px-1 tracking-[0.2em]">Preço</label>
+                                    <label className="text-[10px] font-black text-[#B87333] uppercase px-1 tracking-[0.2em]">Preço</label>
                                     <input
                                         type="tel"
-                                        className="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-white outline-none focus:border-orange-500/50 transition-all text-lg font-bold"
+                                        className="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-white outline-none focus:border-[#B87333]/50 transition-all text-lg font-bold"
                                         value={maskMoeda(String(service?.price || ""))}
                                         onChange={(e) => {
                                             const valorBruto = e.target.value.replace(/\D/g, "");
@@ -99,7 +99,7 @@ export const ServiceEditForm = ({
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={onDone}
-                                className="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-[0.2em] mt-6 transition-all shadow-xl shadow-orange-600/5"
+                                className="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-[0.2em] mt-6 transition-all shadow-xl shadow-[#B87333]/10"
                             >
                                 Concluir e Salvar
                             </motion.button>

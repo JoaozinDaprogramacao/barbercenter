@@ -21,7 +21,7 @@ export const DurationInput = ({ value, onChange }: DurationInputProps) => {
 
   return (
     <div className="space-y-4">
-      <label className="text-[10px] font-black text-orange-600 uppercase px-1 tracking-[0.2em] flex items-center gap-2">
+      <label className="text-[10px] font-black text-[#B87333] uppercase px-1 tracking-[0.2em] flex items-center gap-2">
         <Clock size={12} strokeWidth={3} /> Duração Estimada
       </label>
       
@@ -48,7 +48,7 @@ export const DurationInput = ({ value, onChange }: DurationInputProps) => {
           whileTap={{ scale: 0.9 }}
           type="button"
           onClick={increment}
-          className="w-16 h-16 rounded-3xl bg-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-600/20 hover:bg-orange-500 transition-colors"
+          className="w-16 h-16 rounded-3xl bg-[#B87333] flex items-center justify-center text-[#F7EFE2] shadow-lg shadow-[#B87333]/20 hover:bg-[#C88A52] transition-colors"
         >
           <Plus size={24} strokeWidth={3} />
         </motion.button>

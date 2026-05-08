@@ -19,7 +19,6 @@ interface TrialWorkflowProps {
     userData: UserData;
 }
 
-// 1. Adicionado o estado SUCCESS
 type ActivityStack = 'IDLE' | 'PLAN_SUMMARY' | 'PIX_PAYMENT' | 'CARD_PAYMENT' | 'SUCCESS';
 
 export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWorkflowProps) {
@@ -76,7 +75,7 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     key="card"
                                     onBack={() => setCurrentActivity('PLAN_SUMMARY')}
                                     onClose={handleClose}
-                                    onSuccess={() => setCurrentActivity('SUCCESS')} // <-- Rota para o Sucesso
+                                    onSuccess={() => setCurrentActivity('SUCCESS')}
                                     userData={userData} 
                                 />
                             )}

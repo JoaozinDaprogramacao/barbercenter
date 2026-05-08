@@ -12,7 +12,7 @@ interface TeamMember {
 
 export const TeamSection = () => {
     const [team, setTeam] = useState<TeamMember[]>([]);
-    const [myRole, setMyRole] = useState<string>("BARBER"); // <-- Estado para guardar a permissão
+    const [myRole, setMyRole] = useState<string>("BARBER"); 
     const [isLoading, setIsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -33,8 +33,8 @@ export const TeamSection = () => {
             const res = await fetch("/api/settings/team");
             if (res.ok) {
                 const data = await res.json();
-                setTeam(data.members); // Recebe a lista
-                setMyRole(data.currentUserRole); // Recebe se é OWNER ou BARBER
+                setTeam(data.members); 
+                setMyRole(data.currentUserRole); 
             }
         } catch (error) {
             console.error("Erro ao buscar equipe:", error);
@@ -83,11 +83,10 @@ export const TeamSection = () => {
                         {myRole === "OWNER" ? "Gerencie quem tem acesso ao sistema" : "Seus colegas de trabalho"}
                     </p>
                 </div>
-                {/* 👇 SÓ MOSTRA O BOTÃO SE FOR O DONO E NÃO ESTIVER ADICIONANDO */}
                 {myRole === "OWNER" && !isAdding && (
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="bg-orange-600/10 text-orange-500 hover:bg-orange-600 hover:text-white transition-colors px-4 py-2 rounded-full text-xs font-bold"
+                        className="bg-[#B87333]/10 text-[#C88A52] hover:bg-[#B87333] hover:text-[#F7EFE2] transition-colors px-4 py-2 rounded-full text-xs font-bold"
                     >
                         + Novo Barbeiro
                     </button>
@@ -113,7 +112,7 @@ export const TeamSection = () => {
                                 required
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-orange-500 transition-colors mt-1"
+                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-[#B87333] transition-colors mt-1"
                                 placeholder="Ex: João Silva"
                             />
                         </div>
@@ -125,7 +124,7 @@ export const TeamSection = () => {
                                 required
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-orange-500 transition-colors mt-1"
+                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-[#B87333] transition-colors mt-1"
                                 placeholder="joao@barbearia.com"
                             />
                         </div>
@@ -137,7 +136,7 @@ export const TeamSection = () => {
                                 required
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-orange-500 transition-colors mt-1"
+                                className="w-full bg-black/50 border border-zinc-800 rounded-2xl px-4 py-3 text-white text-sm outline-none focus:border-[#B87333] transition-colors mt-1"
                                 placeholder="Mínimo 6 caracteres"
                                 minLength={6}
                             />
@@ -157,7 +156,7 @@ export const TeamSection = () => {
                             <button
                                 type="submit"
                                 disabled={isSaving}
-                                className="flex-1 py-3 rounded-2xl text-white font-bold text-sm bg-orange-600 hover:bg-orange-500 transition-colors disabled:opacity-50"
+                                className="flex-1 py-3 rounded-2xl text-[#F7EFE2] font-bold text-sm bg-[#B87333] hover:bg-[#C88A52] transition-colors disabled:opacity-50"
                             >
                                 {isSaving ? "Salvando..." : "Salvar Barbeiro"}
                             </button>
@@ -183,7 +182,7 @@ export const TeamSection = () => {
                                     <div className="flex items-center gap-2">
                                         <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-md ${
                                             member.role === 'OWNER' 
-                                            ? 'bg-orange-600/20 text-orange-500' 
+                                            ? 'bg-[#B87333]/20 text-[#C88A52]' 
                                             : 'bg-zinc-800 text-zinc-400'
                                         }`}>
                                             {member.role === 'OWNER' ? 'Dono' : 'Barbeiro'}

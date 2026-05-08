@@ -25,7 +25,7 @@ export const BusinessHoursSection = ({ isEditing, isSaving, data, onEdit, onSave
           onClick={isEditing ? onSave : onEdit}
           disabled={isSaving}
           className={`text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-2xl transition-all ${
-            isEditing ? 'bg-orange-600 text-white' : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+            isEditing ? 'bg-[#B87333] text-[#F7EFE2]' : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
           }`}
         >
           {isSaving ? "..." : isEditing ? "Salvar" : "Editar"}

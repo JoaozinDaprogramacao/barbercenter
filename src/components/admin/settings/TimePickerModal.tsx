@@ -146,18 +146,18 @@ export const TimePickerModal = ({
                         {/* Display Digital Gigante */}
                         <div className="relative mb-10 w-full">
                             <div className="flex flex-col items-center justify-center">
-                                <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
+                                <p className="text-[#B87333]/70 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
                                     {label}
                                 </p>
 
                                 <div className="relative flex items-center justify-center tabular-nums">
-                                    <div className="absolute inset-0 bg-orange-600/5 blur-[50px] rounded-full" />
+                                    <div className="absolute inset-0 bg-[#B87333]/10 blur-[50px] rounded-full" />
                                     <div className="relative flex items-center font-black tracking-tighter">
                                         <span className="text-8xl text-white">{h}</span>
                                         <motion.span 
                                             animate={{ opacity: [1, 0.3, 1] }}
                                             transition={{ duration: 1.5, repeat: Infinity }}
-                                            className="text-6xl text-orange-600 mx-2 mb-2"
+                                            className="text-6xl text-[#B87333] mx-2 mb-2"
                                         >
                                             :
                                         </motion.span>
@@ -172,7 +172,7 @@ export const TimePickerModal = ({
                             <div className="relative rounded-[2.5rem] border border-zinc-900 bg-zinc-900/30 overflow-hidden">
                                 {/* Lente de Foco */}
                                 <div
-                                    className="absolute left-4 right-4 top-1/2 -translate-y-1/2 rounded-2xl bg-orange-600/10 border border-orange-600/20 pointer-events-none z-20"
+                                    className="absolute left-4 right-4 top-1/2 -translate-y-1/2 rounded-2xl bg-[#B87333]/10 border border-[#B87333]/20 pointer-events-none z-20"
                                     style={{ height: ITEM_HEIGHT }}
                                 />
 
@@ -193,7 +193,7 @@ export const TimePickerModal = ({
                             <motion.button
                                 whileTap={{ scale: 0.95 }}
                                 onClick={onClose}
-                                className="py-5 rounded-2xl bg-zinc-900 text-zinc-500 font-black uppercase tracking-widest text-[11px] hover:text-white transition-colors"
+                                className="py-5 rounded-2xl bg-zinc-900 text-zinc-500 font-black uppercase tracking-widest text-[11px] hover:text-[#F7EFE2] transition-colors"
                             >
                                 Cancelar
                             </motion.button>
@@ -204,7 +204,7 @@ export const TimePickerModal = ({
                                     onSelect(`${h}:${m}`);
                                     onClose();
                                 }}
-                                className="py-5 rounded-2xl bg-orange-600 text-white font-black uppercase tracking-widest text-[11px] shadow-lg shadow-orange-600/20 active:bg-orange-700 transition-all"
+                                className="py-5 rounded-2xl bg-[#B87333] text-[#F7EFE2] font-black uppercase tracking-widest text-[11px] shadow-lg shadow-[#B87333]/20 active:bg-[#C88A52] transition-all"
                             >
                                 Confirmar
                             </motion.button>

@@ -69,8 +69,8 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-black max-w-md mx-auto relative overflow-hidden font-sans border-x border-zinc-900">
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
-                <div className="absolute bottom-40 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
+                <div className="absolute bottom-40 left-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
             </div>
 
             <SettingsHeader onBack={onBack} />
@@ -82,8 +82,8 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     transition={{ duration: 0.4 }}
                     className="mb-10"
                 >
-                    <p className="text-orange-600/60 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Painel de</p>
-                    <h2 className="text-4xl font-black text-white tracking-tighter leading-none">Configurações</h2>
+                    <p className="text-[#B87333]/70 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Painel de</p>
+                    <h2 className="text-4xl font-black text-[#F7EFE2] tracking-tighter leading-none">Configurações</h2>
                 </motion.div>
 
                 <div className="space-y-12">

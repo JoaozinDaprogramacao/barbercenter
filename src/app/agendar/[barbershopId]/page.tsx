@@ -20,9 +20,9 @@ const BigChatBubble = ({ text, isAi, isUser }: { text: string, isAi?: boolean, i
       className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`px-6 py-5 max-w-[90%] md:max-w-[85%] shadow-md leading-snug ${isUser
-          ? "bg-orange-600 text-white rounded-[2rem] rounded-tr-lg text-xl font-bold"
-          : "bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-[2rem] rounded-tl-lg text-2xl font-semibold"
+        className={`px-6 py-5 max-w-[90%] md:max-w-[85%] leading-snug backdrop-blur-md ${isUser
+          ? "bg-gradient-to-br from-[#D49A62] to-[#B87333] text-[#050505] rounded-[2rem] rounded-tr-lg text-xl font-bold shadow-[0_5px_15px_rgba(184,115,51,0.25)]"
+          : "bg-white/[0.04] border border-white/10 text-[#F7EFE2] rounded-[2rem] rounded-tl-lg text-2xl font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
           }`}
       >
         {text}
@@ -36,7 +36,6 @@ export default function BarberChat() {
   const barbershopId = params.barbershopId as string;
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // 👇 IMPORTA A EQUIPE AQUI
   const {
     shopName, availableServices, businessHours, team,
     isSubmitting, step, setStep, userData, setUserData,
@@ -55,10 +54,15 @@ export default function BarberChat() {
   }, [step, userData.date, userData.time, userData.selectedServices, userData.barberId]);
 
   return (
-    <main className="fixed inset-0 flex flex-col bg-black max-w-md mx-auto border-x border-zinc-900">
+    <main className="fixed inset-0 flex flex-col bg-[#050505] max-w-md mx-auto border-x border-white/5 overflow-hidden">
+      
+      {/* Efeitos de Fundo Premium */}
+      <div className="absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom_left,rgba(212,154,98,0.08),transparent_50%)] pointer-events-none" />
+
       <ChatHeader shopName={shopName} />
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 no-scrollbar">
+      <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto p-6 no-scrollbar">
         <div className="space-y-8 pb-10">
           <AnimatePresence mode="popLayout">
 
@@ -78,7 +82,7 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* 👇 NOVO PASSO 3: ESCOLHA DO PROFISSIONAL */}
+            {/* ESCOLHA DO PROFISSIONAL */}
             {step >= 3 && (
               <div key="step-3-container" className="space-y-8 pt-4">
                 <BigChatBubble
@@ -89,15 +93,15 @@ export default function BarberChat() {
 
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 pl-2">
                   <button
-                    disabled={step > 3} // Trava o botão se já passou dessa etapa
+                    disabled={step > 3}
                     onClick={() => {
                       setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "Qualquer profissional" }));
-                      // setStep(4) foi removido daqui!
                     }}
-                    className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberName === "Qualquer profissional"
-                      ? "bg-orange-600 border-orange-500 text-white"
-                      : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                      } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
+                    className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${
+                      userData.barberName === "Qualquer profissional"
+                        ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
+                        : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
+                      } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
                   >
                     Qualquer profissional
                   </button>
@@ -105,15 +109,15 @@ export default function BarberChat() {
                   {team?.map((member: any) => (
                     <button
                       key={member.id}
-                      disabled={step > 3} // Trava o botão se já passou dessa etapa
+                      disabled={step > 3}
                       onClick={() => {
                         setUserData((prev: any) => ({ ...prev, barberId: member.id, barberName: member.name }));
-                        // setStep(4) foi removido daqui!
                       }}
-                      className={`p-4 rounded-[1.5rem] border text-left text-lg font-bold transition-all ${userData.barberId === member.id
-                        ? "bg-orange-600 border-orange-500 text-white"
-                        : "bg-zinc-800/50 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                        } ${step > 3 ? "opacity-60 cursor-default" : ""}`}
+                      className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${
+                        userData.barberId === member.id
+                          ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
+                          : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
+                        } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
                     >
                       {member.name}
                     </button>
@@ -122,7 +126,7 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* 👇 PASSO 4: DATA E HORA (Antigo Passo 3) */}
+            {/* DATA E HORA */}
             {step >= 4 && (
               <div key="step-4-container" className="space-y-8 pt-4">
                 <BigChatBubble text={userData.barberName} isUser />
@@ -160,7 +164,7 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* 👇 PASSO 5: SUCESSO (Antigo Passo 4) */}
+            {/* SUCESSO */}
             {step === 5 && <SuccessState date={userData.date} time={userData.time} />}
           </AnimatePresence>
         </div>

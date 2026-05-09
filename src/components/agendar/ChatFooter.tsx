@@ -28,56 +28,48 @@ export function ChatFooter({
   };
 
   const handleGoBack = () => {
-    // Agora o passo 4 é a Data/Hora
     if (step === 4) {
       if (userData.date || userData.time) {
         setUserData((prev: any) => ({ ...prev, date: "", time: "" }));
       } else {
-        setStep(3); // Volta para a escolha do profissional
+        setStep(3);
       }
-    }
-    // Agora o passo 3 é a escolha do profissional
-    else if (step === 3) {
+    } else if (step === 3) {
       setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "" }));
-      setStep(2); // Volta para os serviços
-    }
-    // Passo 2 volta para o nome
-    else if (step === 2) {
+      setStep(2);
+    } else if (step === 2) {
       setStep(1);
     }
   };
 
-  // 👇 ATUALIZAÇÃO: Agora o footer só some no passo 5 (Sucesso)
   if (step >= 5) return null;
 
   const hasSelectedServices = userData.selectedServices?.length > 0;
 
   return (
-    <footer className="p-6 bg-zinc-950 border-t border-zinc-900 shrink-0 z-30 pb-safe">
+    <footer className="p-6 bg-[#050505]/90 backdrop-blur-md border-t border-white/5 shrink-0 z-30 pb-safe">
       {step === 1 && (
-        <div className="flex gap-2 bg-zinc-900 border border-zinc-800 p-2 rounded-[2rem]">
+        <div className="flex gap-2 bg-white/[0.03] border border-white/10 p-2 rounded-[2rem] focus-within:border-[#B87333]/50 transition-all shadow-inner">
           <input
             type="text"
             placeholder="Escreva seu nome..."
-            className="flex-1 bg-transparent px-4 py-2 text-white outline-none text-sm font-medium"
+            className="flex-1 bg-transparent px-4 py-2 text-[#F7EFE2] outline-none text-sm font-medium placeholder:text-zinc-600"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleNameSubmit()}
           />
           <button
             onClick={handleNameSubmit}
-            className="w-11 h-11 bg-orange-600 text-white rounded-full flex items-center justify-center active:scale-90 transition-all"
+            className="w-12 h-12 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] flex items-center justify-center active:scale-90 transition-all shadow-[0_5px_15px_rgba(184,115,51,0.25)]"
           >
-            <Send size={18} strokeWidth={2.5} />
+            <Send size={18} strokeWidth={2.5} className="-ml-0.5" />
           </button>
         </div>
       )}
 
-      {/* 👇 ATUALIZAÇÃO: O footer precisa renderizar a base entre os passos 2 e 4 */}
       {(step >= 2 && step <= 4) && (
         <div className="flex flex-col gap-4">
 
-          {/* O seletor de serviço só aparece no passo 2 */}
           {step === 2 && (
             <div className="flex flex-col gap-3">
               <ServiceSelector
@@ -98,41 +90,40 @@ export function ChatFooter({
           )}
 
           <div className="flex gap-3">
+            {/* Botão Voltar Premium */}
             <button
               onClick={handleGoBack}
-              className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center text-zinc-500 active:scale-95 transition-all"
+              className="w-14 h-14 bg-white/[0.03] border border-white/10 rounded-[1.5rem] flex items-center justify-center text-zinc-400 active:scale-95 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2]"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={24} strokeWidth={2.5} />
             </button>
 
             {step === 2 && hasSelectedServices && (
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 h-14 bg-orange-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all active:scale-95 animate-in fade-in slide-in-from-bottom-2"
+                className="flex-1 h-14 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-[0_5px_15px_rgba(184,115,51,0.25)] animate-in fade-in slide-in-from-bottom-2"
               >
                 Continuar com {userData.selectedServices.length} {userData.selectedServices.length > 1 ? 'itens' : 'item'}
               </button>
             )}
 
-            {/* 👇 ADICIONE ESTE BLOCO AQUI: Layout para o passo 3 (Escolha do profissional) */}
             {step === 3 && userData.barberName && (
               <button
-                onClick={() => setStep(4)} // É este botão que agora avança para a data!
-                className="flex-1 h-14 bg-orange-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all active:scale-95 animate-in fade-in slide-in-from-bottom-2"
+                onClick={() => setStep(4)}
+                className="flex-1 h-14 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-[0_5px_15px_rgba(184,115,51,0.25)] animate-in fade-in slide-in-from-bottom-2"
               >
                 Continuar
               </button>
             )}
 
-            {/* Layout para o passo 4 (Data e Hora) */}
             {step === 4 && (
               <button
                 disabled={!userData.date || !userData.time || isSubmitting}
                 onClick={onConfirm}
-                className={`flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all
+                className={`flex-1 h-14 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] transition-all
                   ${(!userData.date || !userData.time || isSubmitting)
-                    ? 'bg-zinc-800 text-zinc-700'
-                    : 'bg-orange-600 text-white active:scale-95'}`}
+                    ? 'bg-white/[0.03] border border-white/5 text-zinc-600'
+                    : 'bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] shadow-[0_5px_15px_rgba(184,115,51,0.25)] active:scale-95'}`}
               >
                 {isSubmitting ? "Agendando..." : "Confirmar Agendamento"}
               </button>

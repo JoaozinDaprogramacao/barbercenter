@@ -10,14 +10,11 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "ID da barbearia não fornecido" }, { status: 400 });
         }
 
-        // Busca as regras e faz um "join" (include) para pegar os nomes dos serviços
         const rules = await prisma.upsellRule.findMany({
             where: { barbershopId, isActive: true },
             orderBy: { createdAt: 'desc' }
         });
 
-        // Como salvamos só os IDs na regra, vamos buscar os nomes reais dos serviços 
-        // para exibir bonitinho na lista do Frontend
         const services = await prisma.service.findMany({
             where: { barbershopId }
         });
@@ -56,7 +53,7 @@ export async function POST(req: Request) {
                 offerServiceId,
                 discountAmount: parseFloat(discountAmount),
                 customCopy,
-                discountType: "PERCENTAGE" // Mantendo porcentagem como padrão inicial
+                discountType: "PERCENTAGE"
             }
         });
 
@@ -64,5 +61,47 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error("Erro ao criar regra de upsell:", error);
         return NextResponse.json({ error: "Erro interno ao salvar oferta" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: Request) {
+    try {
+        const body = await req.json();
+        const { id, triggerServiceId, offerServiceId, discountAmount, customCopy } = body;
+
+        if (!id) return NextResponse.json({ error: "ID da oferta é obrigatório" }, { status: 400 });
+
+        const updatedRule = await prisma.upsellRule.update({
+            where: { id },
+            data: {
+                triggerServiceId,
+                offerServiceId,
+                discountAmount: parseFloat(discountAmount),
+                customCopy
+            }
+        });
+
+        return NextResponse.json({ success: true, rule: updatedRule }, { status: 200 });
+    } catch (error) {
+        console.error("Erro ao atualizar regra de upsell:", error);
+        return NextResponse.json({ error: "Erro interno ao atualizar oferta" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: Request) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) return NextResponse.json({ error: "ID da oferta é obrigatório" }, { status: 400 });
+
+        await prisma.upsellRule.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ success: true }, { status: 200 });
+    } catch (error) {
+        console.error("Erro ao deletar regra de upsell:", error);
+        return NextResponse.json({ error: "Erro interno ao deletar oferta" }, { status: 500 });
     }
 }

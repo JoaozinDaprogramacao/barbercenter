@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Sparkles, ArrowRight, Percent, X, Loader2 } from "lucide-react";
+import { Plus, Sparkles, ArrowRight, Percent, X, Loader2, Pencil, Trash2, AlertTriangle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 export function UpsellSection({ services }: { services: any[] }) {
@@ -11,9 +11,15 @@ export function UpsellSection({ services }: { services: any[] }) {
 
     const [rules, setRules] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    
+    // Controles dos Modais
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingRule, setEditingRule] = useState<any>(null);
+    
+    // Controle do Modal de Exclusão
+    const [ruleToDelete, setRuleToDelete] = useState<any>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    // Fetch real da API
     const fetchRules = useCallback(async () => {
         if (!barbershopId) return;
         setIsLoading(true);
@@ -22,11 +28,9 @@ export function UpsellSection({ services }: { services: any[] }) {
             if (res.ok) {
                 const data = await res.json();
                 setRules(data.rules || []);
-            } else {
-                console.error("Erro ao buscar regras da API");
             }
         } catch (error) {
-            console.error("Erro de conexão ao buscar regras", error);
+            console.error("Erro ao buscar regras", error);
         } finally {
             setIsLoading(false);
         }
@@ -36,10 +40,44 @@ export function UpsellSection({ services }: { services: any[] }) {
         fetchRules();
     }, [fetchRules]);
 
+    const handleOpenCreate = () => {
+        setEditingRule(null);
+        setIsModalOpen(true);
+    };
+
+    const handleOpenEdit = (rule: any) => {
+        setEditingRule(rule);
+        setIsModalOpen(true);
+    };
+
+    // Abre o modal de exclusão estilizado
+    const handleDeleteClick = (rule: any) => {
+        setRuleToDelete(rule);
+    };
+
+    // Confirma a exclusão na API
+    const confirmDelete = async () => {
+        if (!ruleToDelete) return;
+        
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/upsell-rules?id=${ruleToDelete.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                fetchRules();
+                setRuleToDelete(null);
+            } else {
+                alert("Erro ao excluir oferta.");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     return (
         <>
             <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-6 backdrop-blur-md relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                {/* Efeito de brilho de fundo Premium */}
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#B87333]/15 blur-3xl rounded-full pointer-events-none" />
 
                 <div className="flex items-center justify-between mb-6 relative z-10">
@@ -54,7 +92,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                     </div>
 
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleOpenCreate}
                         className="w-10 h-10 rounded-[1.2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-[#F7EFE2] hover:bg-white/[0.06] hover:border-[#B87333]/40 transition-all active:scale-90"
                     >
                         <Plus size={20} strokeWidth={2.5} />
@@ -75,7 +113,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                                 Ofereça descontos automáticos combinando serviços e aumente o seu faturamento!
                             </p>
                             <button
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={handleOpenCreate}
                                 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D49A62] hover:text-[#B87333] transition-colors"
                             >
                                 + Criar Primeira Oferta
@@ -84,7 +122,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                     ) : (
                         <div className="space-y-3">
                             {rules.map((rule) => (
-                                <div key={rule.id} className="bg-[#0A0A0A] p-4 rounded-[1.5rem] border border-white/5 flex items-center justify-between group cursor-pointer hover:border-[#B87333]/40 transition-all shadow-inner">
+                                <div key={rule.id} className="bg-[#0A0A0A] p-4 rounded-[1.5rem] border border-white/5 flex items-center justify-between group hover:border-[#B87333]/40 transition-all shadow-inner">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-[1rem] bg-white/5 flex items-center justify-center text-zinc-500 group-hover:text-[#D49A62] group-hover:bg-[#B87333]/10 transition-colors border border-transparent group-hover:border-[#B87333]/30">
                                             <Percent size={16} strokeWidth={2.5} />
@@ -98,6 +136,22 @@ export function UpsellSection({ services }: { services: any[] }) {
                                             </p>
                                         </div>
                                     </div>
+
+                                    {/* Ações: Editar e Excluir */}
+                                    <div className="flex items-center gap-2">
+                                        <button 
+                                            onClick={() => handleOpenEdit(rule)}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-500 hover:bg-white/5 hover:text-[#D49A62] transition-colors"
+                                        >
+                                            <Pencil size={14} strokeWidth={2.5} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDeleteClick(rule)}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+                                        >
+                                            <Trash2 size={14} strokeWidth={2.5} />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -105,7 +159,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                 </div>
             </div>
 
-            {/* MODAL DE CRIAÇÃO (Framer Motion) */}
+            {/* MODAL DE CRIAÇÃO E EDIÇÃO */}
             <AnimatePresence>
                 {isModalOpen && barbershopId && (
                     <UpsellRuleModal 
@@ -113,29 +167,82 @@ export function UpsellSection({ services }: { services: any[] }) {
                         services={services} 
                         barbershopId={barbershopId}
                         onSuccess={fetchRules}
+                        initialData={editingRule}
                     />
+                )}
+            </AnimatePresence>
+
+            {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO ESTILIZADO */}
+            <AnimatePresence>
+                {ruleToDelete && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[300] bg-[#050505]/95 backdrop-blur-md flex justify-center items-center p-4"
+                    >
+                        <motion.div
+                            initial={{ y: 20, scale: 0.95 }}
+                            animate={{ y: 0, scale: 1 }}
+                            exit={{ y: 20, scale: 0.95 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                            className="w-full max-w-[320px] bg-[#0A0A0A] border border-red-500/20 rounded-[2rem] p-6 sm:p-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-2xl rounded-full pointer-events-none" />
+
+                            <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-inner text-red-500">
+                                <AlertTriangle size={28} strokeWidth={2} />
+                            </div>
+
+                            <h3 className="text-xl font-black text-[#F7EFE2] tracking-tight leading-tight mb-2">
+                                Excluir Oferta?
+                            </h3>
+                            <p className="text-zinc-400 text-xs font-medium leading-relaxed mb-8">
+                                Você está prestes a excluir a oferta de <strong className="text-zinc-200">{ruleToDelete.triggerName} + {ruleToDelete.offerName}</strong>. Essa ação não poderá ser desfeita.
+                            </p>
+
+                            <div className="flex flex-col gap-3">
+                                <button 
+                                    onClick={confirmDelete}
+                                    disabled={isDeleting}
+                                    className="w-full py-3.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-[1.2rem] font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                                >
+                                    {isDeleting ? <Loader2 size={16} className="animate-spin" /> : "Sim, Excluir Oferta"}
+                                </button>
+                                <button 
+                                    onClick={() => setRuleToDelete(null)}
+                                    disabled={isDeleting}
+                                    className="w-full py-3.5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5 rounded-[1.2rem] font-black uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 disabled:opacity-50"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </>
     );
 }
 
-// Sub-componente do Modal para manter a organização
+// Sub-componente do Modal de Criação/Edição (Mantido igualzinho)
 function UpsellRuleModal({ 
     onClose, 
     services, 
     barbershopId, 
-    onSuccess 
+    onSuccess,
+    initialData
 }: { 
     onClose: () => void; 
     services: any[]; 
     barbershopId: string; 
-    onSuccess: () => void; 
+    onSuccess: () => void;
+    initialData?: any; 
 }) {
-    const [triggerId, setTriggerId] = useState("");
-    const [offerId, setOfferId] = useState("");
-    const [discount, setDiscount] = useState("");
-    const [copy, setCopy] = useState("Aproveite o desconto especial e faça também este serviço!");
+    const [triggerId, setTriggerId] = useState(initialData?.triggerServiceId || "");
+    const [offerId, setOfferId] = useState(initialData?.offerServiceId || "");
+    const [discount, setDiscount] = useState(initialData?.discountAmount || "");
+    const [copy, setCopy] = useState(initialData?.customCopy || "Aproveite o desconto especial e faça também este serviço!");
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSave = async () => {
@@ -146,16 +253,21 @@ function UpsellRuleModal({
 
         setIsSaving(true);
         try {
+            const method = initialData ? 'PUT' : 'POST';
+            const bodyPayload: any = {
+                barbershopId,
+                triggerServiceId: triggerId,
+                offerServiceId: offerId,
+                discountAmount: discount,
+                customCopy: copy
+            };
+
+            if (initialData) bodyPayload.id = initialData.id;
+
             const res = await fetch('/api/upsell-rules', {
-                method: 'POST',
+                method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    barbershopId,
-                    triggerServiceId: triggerId,
-                    offerServiceId: offerId,
-                    discountAmount: discount,
-                    customCopy: copy
-                })
+                body: JSON.stringify(bodyPayload)
             });
 
             if (res.ok) {
@@ -191,7 +303,9 @@ function UpsellRuleModal({
                 
                 <div className="flex justify-between items-center mb-8 relative z-10">
                     <div>
-                        <h3 className="text-[2rem] font-black text-[#F7EFE2] tracking-tighter leading-none">Nova Oferta</h3>
+                        <h3 className="text-[2rem] font-black text-[#F7EFE2] tracking-tighter leading-none">
+                            {initialData ? "Editar Oferta" : "Nova Oferta"}
+                        </h3>
                         <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#D49A62] mt-2">Motor de Upsell</p>
                     </div>
                     <button 
@@ -265,7 +379,7 @@ function UpsellRuleModal({
                         disabled={isSaving}
                         className="w-full mt-6 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(184,115,51,0.3)] hover:brightness-110 active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
                     >
-                        {isSaving ? <Loader2 size={18} className="animate-spin" /> : "Criar Oferta"}
+                        {isSaving ? <Loader2 size={18} className="animate-spin" /> : (initialData ? "Salvar Alterações" : "Criar Oferta")}
                     </button>
                 </div>
             </motion.div>

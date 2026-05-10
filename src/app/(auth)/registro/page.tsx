@@ -23,15 +23,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col md:flex-row">
-      <div className="hidden md:flex md:w-1/2 bg-slate-900 p-12 lg:p-24 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-orange-600/20 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#050505] flex flex-col md:flex-row font-sans overflow-hidden">
+      
+      {/* LADO ESQUERDO: MARKETING (Oculto no mobile) */}
+      <div className="hidden md:flex md:w-1/2 bg-[#050505] p-12 lg:p-24 flex-col justify-between relative border-r border-white/5">
+        {/* Efeitos Radiais Premium */}
+        <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(184,115,51,0.15),transparent_60%)] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(212,154,98,0.1),transparent_60%)] pointer-events-none" />
         
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-3 mb-16">
-            <img src="/logo.png" alt="Logo" className="h-12 w-auto object-contain" />
-            <span className="text-xl font-black text-white tracking-tighter uppercase">
-              Barber<span className="text-orange-600">Center</span>
+          <Link href="/" className="flex items-center gap-3 mb-16 group">
+            <img src="/logo.png" alt="Logo" className="h-12 w-auto object-contain drop-shadow-[0_5px_15px_rgba(184,115,51,0.2)] transition-transform group-hover:scale-105" />
+            <span className="text-[1.35rem] font-black text-[#F7EFE2] tracking-tighter uppercase leading-none">
+              Barber<span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Center</span>
             </span>
           </Link>
 
@@ -40,99 +44,105 @@ export default function RegisterPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight mb-8">
-              Comece a transformar sua barbearia <span className="text-orange-600">hoje mesmo.</span>
+            <h1 className="text-4xl lg:text-5xl font-black text-[#F7EFE2] leading-tight tracking-tighter mb-8">
+              Comece a transformar sua barbearia <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent italic">hoje mesmo.</span>
             </h1>
 
             <div className="space-y-6">
               {benefits.map((benefit, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <div className="bg-orange-600/20 p-1 rounded-full text-orange-500">
-                    <CheckCircle2 size={24} />
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-b from-[#B87333]/20 to-transparent border border-[#B87333]/30 text-[#D49A62] shadow-[0_0_15px_rgba(184,115,51,0.15)]">
+                    <CheckCircle2 size={18} strokeWidth={2.5} />
                   </div>
-                  <p className="text-slate-300 text-lg font-medium">{benefit}</p>
+                  <p className="text-zinc-300 text-base font-medium tracking-wide">{benefit}</p>
                 </div>
               ))}
             </div>
           </motion.div>
         </div>
 
-        <div className="relative z-10 mt-12 p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-sm">
-          <p className="text-white/80 italic text-lg mb-4">
-            "O BarberCenter mudou o nível do meu atendimento. Meus clientes adoram a facilidade de agendar pelo link."
+        <div className="relative z-10 mt-12 p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+          <p className="text-zinc-400 italic text-[15px] mb-6 leading-relaxed font-medium">
+            "O BarberCenter mudou o nível do meu atendimento. Meus clientes adoram a facilidade de agendar pelo link, e meu faturamento ficou muito mais organizado."
           </p>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center font-bold text-white text-sm">M</div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#D49A62] to-[#B87333] rounded-full flex items-center justify-center font-black text-[#050505] text-lg shadow-[0_5px_15px_rgba(184,115,51,0.25)]">
+              M
+            </div>
             <div>
-              <p className="text-white font-bold text-sm leading-none">Matheus Lopes</p>
-              <p className="text-slate-500 text-[10px] uppercase font-bold mt-1 tracking-widest">Barbearia Elite</p>
+              <p className="text-[#F7EFE2] font-black text-sm leading-none tracking-tight">Matheus Lopes</p>
+              <p className="text-[#B87333] text-[10px] uppercase font-black mt-1.5 tracking-[0.2em]">Barbearia Elite</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-slate-50">
+      {/* LADO DIREITO: FORMULÁRIO */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-[#050505] relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(184,115,51,0.05),transparent_80%)] pointer-events-none" />
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md relative z-10"
         >
-          <div className="md:hidden flex justify-center mb-8">
-             <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase">
-              Barber<span className="text-orange-600">Center</span>
+          {/* Logo Mobile */}
+          <div className="md:hidden flex justify-center mb-10">
+             <span className="text-[2rem] font-black text-[#F7EFE2] tracking-tighter uppercase leading-none">
+              Barber<span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Center</span>
             </span>
           </div>
 
-          <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100">
+          <div className="bg-white/[0.02] p-8 md:p-10 rounded-[2.5rem] shadow-[0_0_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] border border-white/5 backdrop-blur-xl">
             <div className="mb-8">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Crie sua conta grátis</h2>
-              <p className="text-slate-500 text-sm mt-1 font-medium">Leva menos de 2 minutos.</p>
+              <h2 className="text-[1.75rem] font-black text-[#F7EFE2] tracking-tighter leading-tight">Crie sua conta grátis</h2>
+              <p className="text-[#B87333]/80 text-[11px] font-black uppercase tracking-widest mt-2">Leva menos de 2 minutos.</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {registerError && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm font-bold">
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-[1.5rem] text-xs font-bold text-center">
                   {registerError}
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Seu Nome</label>
+                <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Seu Nome</label>
                 <input 
                   {...register('userName', { required: true })}
                   type="text" 
                   placeholder="Ex: João Emanuel"
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium text-slate-900"
+                  className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">E-mail</label>
+                <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">E-mail</label>
                 <input 
                   {...register('userEmail', { required: true })}
                   type="email" 
                   placeholder="seu@email.com"
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium text-slate-900"
+                  className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Nome da Barbearia</label>
+                <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Nome da Barbearia</label>
                 <input 
                   {...register('barbershopName', { required: true })}
                   type="text" 
                   placeholder="Ex: Barber Center Matriz"
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium text-slate-900"
+                  className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Senha</label>
+                <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Senha</label>
                 <input 
                   {...register('password', { required: true })}
                   type="password" 
                   placeholder="••••••••"
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium text-slate-900"
+                  className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
                 />
               </div>
 
@@ -141,25 +151,25 @@ export default function RegisterPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-orange-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-orange-200 flex items-center justify-center gap-3 mt-4 disabled:opacity-70"
+                className="w-full h-14 mt-8 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.2em] shadow-[0_10px_25px_rgba(184,115,51,0.25)] flex items-center justify-center gap-3 disabled:opacity-70 transition-all hover:brightness-110"
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin" />
                 ) : (
                   <>
                     Começar meu teste
-                    <ArrowRight size={18} />
+                    <ArrowRight size={18} strokeWidth={2.5} />
                   </>
                 )}
               </motion.button>
             </form>
 
-            <p className="text-center text-slate-400 text-xs mt-8 font-medium">
-              Já tem uma conta? <Link href="/login" className="text-orange-600 font-bold hover:underline">Fazer Login</Link>
+            <p className="text-center text-zinc-500 text-xs mt-8 font-medium">
+              Já tem uma conta? <Link href="/login" className="text-[#D49A62] font-black tracking-wide hover:text-[#B87333] transition-colors">Fazer Login</Link>
             </p>
           </div>
 
-          <p className="text-center text-[10px] text-slate-400 mt-8 uppercase font-bold tracking-[0.2em] px-8">
+          <p className="text-center text-[9px] text-zinc-600 mt-8 uppercase font-black tracking-[0.2em] px-8 leading-relaxed">
             Ao clicar em começar, você concorda com nossos termos de uso e política de privacidade.
           </p>
         </motion.div>

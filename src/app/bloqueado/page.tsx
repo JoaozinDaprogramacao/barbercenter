@@ -22,9 +22,12 @@ export default function BloqueadoPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center">
-        <Loader2 className="animate-spin text-red-500 mb-4" size={48} />
-        <p className="text-zinc-400 font-bold tracking-widest uppercase text-sm animate-pulse">
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center border-x border-white/5 max-w-md mx-auto">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 bg-[#B87333]/20 blur-xl rounded-full" />
+          <Loader2 className="animate-spin text-[#D49A62] relative z-10 mb-6 drop-shadow-[0_0_15px_rgba(184,115,51,0.5)]" size={56} strokeWidth={2.5} />
+        </div>
+        <p className="text-[#B87333] font-black tracking-[0.25em] uppercase text-[10px] animate-pulse">
           Verificando credenciais...
         </p>
       </div>
@@ -32,33 +35,42 @@ export default function BloqueadoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+    <div className="min-h-screen bg-[#050505] max-w-md mx-auto flex flex-col items-center justify-center p-6 text-center relative overflow-hidden border-x border-white/5">
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-red-600/10 blur-[120px] rounded-full pointer-events-none" />
+      {/* Efeitos de Fundo Premium (Glows em tons de Cobre) */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle,rgba(184,115,51,0.12),transparent_60%)]" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(212,154,98,0.1),transparent_70%)]" />
+      </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
         className="relative z-10 w-full max-w-md mx-auto"
       >
-        <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-          <Lock size={40} className="text-red-500" />
+        <div className="relative mx-auto mb-10 flex h-28 w-28 items-center justify-center rounded-full border border-[#B87333]/30 bg-gradient-to-b from-[#B87333]/20 to-[#050505] shadow-[0_0_40px_rgba(184,115,51,0.25)] backdrop-blur-md">
+          <div className="absolute inset-0 rounded-full border border-white/5" />
+          <Lock size={46} className="text-[#D49A62] drop-shadow-[0_0_15px_rgba(212,154,98,0.6)]" strokeWidth={2} />
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter">
-          Acesso Suspenso
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#B87333] mb-3">
+          Atenção Necessária
+        </p>
+
+        <h1 className="text-[2.5rem] font-black text-[#F7EFE2] mb-6 tracking-tighter leading-tight">
+          Acesso <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Suspenso</span>
         </h1>
         
         {isOwner ? (
-          <p className="text-zinc-400 font-medium text-base md:text-lg mb-10 leading-relaxed">
-            O período da sua assinatura expirou ou há uma pendência no seu pagamento. Regularize seu plano para voltar a gerenciar sua barbearia com o InBarber PRO.
+          <p className="text-zinc-400 font-medium text-[15px] mb-12 leading-relaxed">
+            O período da sua assinatura expirou ou há uma pendência no seu pagamento. Regularize seu plano para voltar a gerenciar sua barbearia com o <strong className="text-[#F7EFE2]">BarberCenter PRO</strong>.
           </p>
         ) : (
-          <p className="text-zinc-400 font-medium text-base md:text-lg mb-10 leading-relaxed">
+          <p className="text-zinc-400 font-medium text-[15px] mb-12 leading-relaxed">
             O sistema da barbearia encontra-se temporariamente suspenso devido a pendências de assinatura.
             <br /><br />
-            <strong className="text-white">Por favor, entre em contato com o dono ou administrador da barbearia para que o acesso seja normalizado.</strong>
+            <strong className="text-[#F7EFE2]">Por favor, entre em contato com o dono ou administrador da barbearia para que o acesso seja normalizado.</strong>
           </p>
         )}
 
@@ -66,18 +78,18 @@ export default function BloqueadoPage() {
           {isOwner && (
             <button
               onClick={() => setIsPaymentOpen(true)}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
+              className="w-full bg-gradient-to-r from-[#D49A62] to-[#B87333] hover:brightness-110 text-[#050505] py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-[0_10px_30px_rgba(184,115,51,0.25)]"
             >
               Regularizar Acesso
-              <ArrowRight size={20} />
+              <ArrowRight size={22} strokeWidth={2.5} />
             </button>
           )}
 
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-white py-4 rounded-[2rem] font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
+            className="w-full bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-[#B87333]/30 hover:text-[#D49A62] text-zinc-500 py-4 rounded-[2rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
           >
-            <LogOut size={16} />
+            <LogOut size={16} strokeWidth={2.5} />
             Sair da conta
           </button>
         </div>

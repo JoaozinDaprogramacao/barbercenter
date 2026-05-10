@@ -14,16 +14,16 @@ interface FaqItemProps {
 function FaqItem({ question, answer, isOpen, onClick }: FaqItemProps) {
   return (
     <div 
-      className="border-b border-zinc-800 py-4 group cursor-pointer"
+      className="border-b border-white/5 py-4 group cursor-pointer"
       onClick={onClick}
     >
-      <div className="flex justify-between items-center w-full text-left py-4 font-semibold text-zinc-300 group-hover:text-white transition-colors">
+      <div className="flex justify-between items-center w-full text-left py-4 font-semibold text-zinc-400 group-hover:text-[#F7EFE2] transition-colors">
         <span className="text-lg md:text-xl tracking-tight">{question}</span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
-          <ChevronDown size={22} className={isOpen ? "text-orange-500" : "text-zinc-500"} />
+          <ChevronDown size={22} className={isOpen ? "text-[#D49A62]" : "text-zinc-600"} />
         </motion.div>
       </div>
 
@@ -47,7 +47,6 @@ function FaqItem({ question, answer, isOpen, onClick }: FaqItemProps) {
 }
 
 export function FAQ() {
-  // Estado para controlar qual item está aberto (null = todos fechados)
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const questions = [
@@ -70,9 +69,11 @@ export function FAQ() {
   ];
 
   return (
-    <section id="duvidas" className="py-24 px-6 bg-black overflow-hidden">
-      <div className="max-w-3xl mx-auto">
-        {/* Título com animação de entrada e parallax */}
+    <section id="duvidas" className="py-24 px-6 bg-[#050505] overflow-hidden relative">
+      {/* Background Glow Premium */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.08),transparent_50%)] pointer-events-none" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,10 +81,10 @@ export function FAQ() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">
+          <h2 className="text-3xl md:text-5xl font-black text-[#F7EFE2] tracking-tighter">
             Perguntas frequentes
           </h2>
-          <div className="h-1 w-12 bg-orange-600 mx-auto mt-4 rounded-full" />
+          <div className="h-1 w-12 bg-gradient-to-r from-[#D49A62] to-[#B87333] mx-auto mt-6 rounded-full" />
         </motion.div>
 
         <motion.div 
@@ -91,7 +92,7 @@ export function FAQ() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
-          className="space-y-2"
+          className="space-y-2 bg-white/[0.02] p-8 rounded-[2rem] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] backdrop-blur-md"
         >
           {questions.map((item, index) => (
             <motion.div

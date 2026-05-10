@@ -34,7 +34,6 @@ const stats = [
   { value: 16.8, suffix: "mi", label: "Lembretes" },
 ];
 
-// Componente para o contador animado
 function StatNumber({ value, suffix }: { value: number; suffix: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -44,7 +43,7 @@ function StatNumber({ value, suffix }: { value: number; suffix: string }) {
     if (isInView) {
       let start = 0;
       const end = value;
-      const duration = 2000; // 2 segundos
+      const duration = 2000;
       const increment = end / (duration / 16);
 
       const timer = setInterval(() => {
@@ -69,8 +68,11 @@ function StatNumber({ value, suffix }: { value: number; suffix: string }) {
 
 export function Testimonials() {
   return (
-    <section className="w-full bg-slate-50 py-16 md:py-24 overflow-hidden border-y border-slate-100">
-      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 lg:px-16">
+    <section className="w-full bg-[#0A0A0A] py-16 md:py-24 overflow-hidden border-t border-white/5 relative">
+      {/* Background Radial Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.05),transparent_70%)] pointer-events-none" />
+
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 lg:px-16 relative z-10">
         
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -78,20 +80,20 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mb-12 md:mb-20"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-tight">
-            Veja o que nossos parceiros <br className="hidden md:block" /> falam sobre nós 😎
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] font-black text-[#F7EFE2] tracking-tighter leading-[1.1]">
+            Veja o que nossos parceiros <br className="hidden md:block" /> falam sobre nós <span className="text-[#D49A62]">😎</span>
           </h2>
         </motion.div>
 
         {/* Slider Marquee Infinito */}
         <div className="relative -mx-6 md:-mx-12 lg:-mx-16">
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none hidden md:block" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none hidden md:block" />
+          <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none hidden md:block" />
+          <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none hidden md:block" />
           
           <div className="flex overflow-hidden">
             <motion.div 
-              className="flex space-x-6 md:space-x-8 py-4 px-6 md:px-12 lg:px-16"
-              animate={{ x: [0, -1920] }} // Ajuste conforme o tamanho real dos cards
+              className="flex space-x-6 md:space-x-8 py-8 px-6 md:px-12 lg:px-16"
+              animate={{ x: [0, -1920] }} 
               transition={{
                 x: {
                   repeat: Infinity,
@@ -100,38 +102,37 @@ export function Testimonials() {
                   ease: "linear",
                 },
               }}
-              whileHover={{ animationPlayState: 'paused' }} // Pausa ao passar o mouse
+              whileHover={{ animationPlayState: 'paused' }}
             >
               {[...testimonials, ...testimonials, ...testimonials].map((item, index) => (
                 <div 
                   key={index} 
-                  className="w-[280px] sm:w-[350px] md:w-[420px] flex-shrink-0 bg-white p-7 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative group transition-all duration-500 hover:-translate-y-2"
+                  className="w-[280px] sm:w-[350px] md:w-[420px] flex-shrink-0 bg-[#050505] p-7 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_15px_40px_rgba(0,0,0,0.5)] border border-white/5 relative group transition-all duration-500 hover:-translate-y-2 hover:border-[#B87333]/30"
                 >
                   <div className="flex items-center space-x-2 mb-6">
-                    <div className="flex text-yellow-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                    <div className="flex text-[#D49A62]">
+                      {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
                     </div>
-                    <span className="text-sm font-black text-slate-900">5.0</span>
+                    <span className="text-sm font-black text-[#F7EFE2]">5.0</span>
                   </div>
 
-                  <p className="text-slate-600 text-sm md:text-lg leading-relaxed mb-8 md:mb-10 font-medium italic relative z-10">
+                  <p className="text-zinc-400 text-sm md:text-lg leading-relaxed mb-8 md:mb-10 font-medium italic relative z-10">
                     "{item.text}"
                   </p>
 
                   <div className="flex items-center space-x-4 relative z-10">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-xs md:text-sm shadow-lg shadow-orange-200 uppercase">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#D49A62] to-[#B87333] rounded-[1.2rem] flex items-center justify-center text-[#050505] font-black text-lg shadow-[0_5px_15px_rgba(184,115,51,0.25)] uppercase border border-[#B87333]/50">
                       {item.name[0]}
                     </div>
                     <div>
-                      <h4 className="text-sm md:text-base font-black text-slate-900">{item.name}</h4>
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">{item.business}</p>
+                      <h4 className="text-sm md:text-base font-black text-[#F7EFE2] tracking-tight">{item.name}</h4>
+                      <p className="text-[10px] text-[#B87333] uppercase font-black tracking-widest mt-0.5">{item.business}</p>
                     </div>
                   </div>
 
                   <Quote 
-                    className="absolute top-8 right-8 text-slate-50 group-hover:text-orange-50/50 transition-colors duration-500 z-0" 
-                    size={48} 
-                    strokeWidth={3} 
+                    className="absolute top-8 right-8 text-white/5 group-hover:text-[#B87333]/10 transition-colors duration-500 z-0" 
+                    size={64} 
                   />
                 </div>
               ))}
@@ -139,19 +140,19 @@ export function Testimonials() {
           </div>
         </div>
 
-        {/* Stats Grid com Contagem Animada */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-4 md:gap-x-8 mt-16 md:mt-24 pt-12 md:pt-20 border-t border-slate-200">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-4 md:gap-x-8 mt-16 md:mt-24 pt-12 md:pt-20 border-t border-white/5">
           {stats.map((stat, index) => (
             <div key={index} className="flex flex-col items-center lg:items-start group">
-              <p className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-1 md:mb-2 tracking-tighter group-hover:text-orange-600 transition-colors duration-300">
+              <p className="text-[2.5rem] sm:text-5xl md:text-6xl font-black text-[#F7EFE2] mb-2 tracking-tighter group-hover:text-[#D49A62] transition-colors duration-300">
                 <StatNumber value={stat.value} suffix={stat.suffix} />
               </p>
               <motion.div 
                 initial={{ width: 0 }}
-                whileInView={{ width: "2rem" }}
-                className="h-1 bg-orange-500 mb-3 rounded-full group-hover:w-12 transition-all duration-300"
-              ></motion.div>
-              <p className="text-[9px] md:text-xs text-slate-500 uppercase font-black tracking-widest md:tracking-[0.25em] text-center lg:text-left">
+                whileInView={{ width: "2.5rem" }}
+                className="h-1.5 bg-gradient-to-r from-[#D49A62] to-[#B87333] mb-4 rounded-full group-hover:w-16 transition-all duration-300"
+              />
+              <p className="text-[10px] md:text-xs text-zinc-500 uppercase font-black tracking-[0.25em] text-center lg:text-left">
                 {stat.label}
               </p>
             </div>

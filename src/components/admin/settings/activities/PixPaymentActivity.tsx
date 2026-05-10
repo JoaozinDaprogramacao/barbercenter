@@ -33,6 +33,9 @@ export function PixPaymentActivity({
   const [copied, setCopied] = useState(false);
   const [pixData, setPixData] = useState<AbacatePixData | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  // 🔥 NOVO: Estado para armazenar e exibir o erro na tela
+  const [error, setError] = useState<string | null>(null);
 
   const [taxId, setTaxId] = useState('');
   const [cellphone, setCellphone] = useState('');
@@ -40,6 +43,7 @@ export function PixPaymentActivity({
   const handleGeneratePix = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null); // Limpa o erro anterior ao tentar de novo
 
     try {
       const response = await fetch('/api/pagamento/pix', {
@@ -60,10 +64,11 @@ export function PixPaymentActivity({
         setPixData(data);
         setStep('PAYMENT');
       } else {
-        console.error(data.error);
+        // 🔥 NOVO: Salva o erro retornado pela API no estado para exibir na tela
+        setError(data.error || "Ocorreu um erro ao processar. Tente novamente.");
       }
     } catch (err) {
-      console.error("Erro ao gerar PIX:", err);
+      setError("Erro de conexão. Verifique sua internet e tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -139,6 +144,17 @@ export function PixPaymentActivity({
               </h2>
               <p className="mt-3 text-[13px] font-medium text-zinc-400">Informe os dados para gerar a cobrança via Pix.</p>
             </div>
+
+            {/* 🔥 NOVO: Exibição amigável do erro */}
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-4 rounded-[1.5rem] text-xs font-bold text-center leading-relaxed"
+              >
+                {error}
+              </motion.div>
+            )}
 
             <div className="space-y-4 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 shadow-xl backdrop-blur-sm">
               <div className="text-left">

@@ -17,7 +17,7 @@ model Barbershop {
   
   // --- CONTROLE DE ASSINATURA ---
   planStatus            String        @default("TRIAL")
-  planExpiresAt         DateTime      @default(now()) // <-- ADICIONE O DEFAULT AQUI
+  planExpiresAt         DateTime      @default(now())
   
   // --- INTEGRAÇÃO ABACATEPAY ---
   abacateCustomerId     String?       @unique 
@@ -25,49 +25,57 @@ model Barbershop {
   
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
+  
   appointments          Appointment[]
   services              Service[]
   users                 User[]
+  products              Product[]     // <-- NOVA RELAÇÃO
+  upsellRules           UpsellRule[]  // <-- NOVA RELAÇÃO
 
   @@map("barbershops")
 }
 
 model User {
-  id           String        @id @default(uuid())
-  name         String
-  email        String        @unique
-  password     String
-  role         String        @default("OWNER") 
-  createdAt    DateTime      @default(now())
-  barbershopId String
+  id               String        @id @default(uuid())
+  name             String
+  email            String        @unique
+  password         String
+  role             String        @default("OWNER") 
+  createdAt        DateTime      @default(now())
+  barbershopId     String
 
   resetToken       String?
   resetTokenExpiry DateTime?
   
-  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  appointments Appointment[] 
-
+  barbershop       Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments     Appointment[] 
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
 }
 
 model Appointment {
-  id           Int         @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   clientName   String
   date         String
   time         String
-  status       String      @default("CONFIRMED")
-  barbershopId String
-  barberId     String?     // <-- NOVO CAMPO (Quem vai atender)
-  createdAt    DateTime    @default(now())
+  status       String     @default("CONFIRMED")
   
-  barbershop   Barbershop  @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  barber       User?       @relation(fields: [barberId], references: [id], onDelete: SetNull) // <-- RELAÇÃO
-  services     Service[]   @relation("AppointmentServices")
+  // --- FINANCEIRO E UPSELL ---
+  totalPrice   Float?     // <-- NOVO: Valor total final da sessão
+  discount     Float?     @default(0) // <-- NOVO: Desconto aplicado no upsell
+  
+  barbershopId String
+  barberId     String?
+  createdAt    DateTime   @default(now())
+  
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  barber       User?      @relation(fields: [barberId], references: [id], onDelete: SetNull)
+  services     Service[]  @relation("AppointmentServices")
+  products     Product[]  @relation("AppointmentProducts") // <-- NOVA RELAÇÃO M:N PARA PRODUTOS
 
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
-  @@index([barberId], map: "appointments_barberId_fkey") // <-- ÍNDICE PARA PERFORMANCE
+  @@index([barberId], map: "appointments_barberId_fkey")
   @@map("appointments")
 }
 
@@ -85,4 +93,46 @@ model Service {
 
   @@index([barbershopId], map: "services_barbershopId_fkey")
   @@map("services")
+}
+
+// ==========================================
+// NOVAS TABELAS PARA A EPIC DE UPSELL
+// ==========================================
+
+model Product {
+  id           String        @id @default(uuid())
+  name         String
+  price        Float
+  stock        Int           @default(0)
+  barbershopId String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments Appointment[] @relation("AppointmentProducts")
+
+  @@index([barbershopId], map: "products_barbershopId_fkey")
+  @@map("products")
+}
+
+model UpsellRule {
+  id               String     @id @default(uuid())
+  barbershopId     String
+  
+  triggerServiceId String     // ID do serviço que dispara a oferta
+  offerServiceId   String?    // ID do serviço oferecido (opcional)
+  offerProductId   String?    // ID do produto oferecido (opcional)
+  
+  discountAmount   Float
+  discountType     String     @default("PERCENTAGE") // "PERCENTAGE" ou "FIXED"
+  customCopy       String?    // Ex: "Aproveite para dar um trato na barba!"
+  
+  isActive         Boolean    @default(true)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  barbershop       Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  @@index([barbershopId], map: "upsellrules_barbershopId_fkey")
+  @@map("upsell_rules")
 }

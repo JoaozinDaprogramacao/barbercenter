@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useBarberChat } from "@/hooks/useBarberChat";
 import { getAvailableTimesForDate } from "@/lib/date-utils";
+import { Percent, Loader2 } from "lucide-react"; // <-- Adicionei os ícones
 
 import { ChatHeader } from "@/components/agendar/ChatHeader";
 import { ChatFooter } from "@/components/agendar/ChatFooter";
@@ -41,8 +42,24 @@ export default function BarberChat() {
     isSubmitting, step, setStep, userData, setUserData,
     handleConfirmAppointment,
     totalDuration,
-    bookedAppointments
+    bookedAppointments,
+    
+    // 🔥 NOVAS PROPS DO UPSELL
+    checkUpsellAndProceed,
+    isCheckingUpsell,
+    activeUpsell,
+    acceptUpsellAndProceed
   } = useBarberChat(barbershopId);
+
+  // 🔥 INTERCEPTADOR MÁGICO: Engana o ChatFooter para rodar o Upsell antes do Passo 3
+  const handleSetStep = (val: any) => {
+      const nextStep = typeof val === 'function' ? val(step) : val;
+      if (step === 2 && nextStep === 3) {
+          checkUpsellAndProceed();
+      } else {
+          setStep(nextStep);
+      }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -82,13 +99,79 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* ESCOLHA DO PROFISSIONAL */}
-            {step >= 3 && (
-              <div key="step-3-container" className="space-y-8 pt-4">
+            {/* 🔥 INDICADOR DE LOADING DO UPSELL */}
+            {isCheckingUpsell && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 pl-4 text-[#D49A62]">
+                    <Loader2 size={18} className="animate-spin" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Verificando Agenda...</span>
+                </motion.div>
+            )}
+
+            {/* MOSTRA OS SERVIÇOS QUE O CLIENTE ESCOLHEU (Vai aparecer no Passo 2.5 E no Passo 3) */}
+            {step > 2 && (
+              <div key="step-services-chosen" className="space-y-8 pt-4">
                 <BigChatBubble
                   text={userData.selectedServices.map((s: any) => s.name).join(", ")}
                   isUser
                 />
+              </div>
+            )}
+
+            {/* 🔥 PASSO 2.5: A ISCA DO UPSELL */}
+            {step >= 2.5 && activeUpsell && (
+                <div key="step-upsell-container" className="space-y-8 pt-4">
+                    <BigChatBubble
+                        isAi
+                        text={activeUpsell.customCopy || "Aproveite esta oferta especial que separei pra você!"}
+                    />
+                    
+                    {/* SÓ MOSTRA O CARD SE ELE AINDA ESTIVER NO PASSO 2.5 */}
+                    {step === 2.5 && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }} 
+                            animate={{ opacity: 1, y: 0, scale: 1 }} 
+                            className="pl-2 pr-4"
+                        >
+                            <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-[#B87333]/30 backdrop-blur-xl shadow-[0_15px_40px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(184,115,51,0.05)] relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#B87333]/20 blur-2xl rounded-full pointer-events-none" />
+                                
+                                <div className="flex items-center gap-4 mb-6 relative z-10">
+                                    <div className="w-12 h-12 rounded-[1.2rem] bg-gradient-to-br from-[#D49A62] to-[#B87333] flex items-center justify-center shadow-[0_5px_15px_rgba(184,115,51,0.3)] shrink-0">
+                                        <Percent className="text-[#050505]" size={24} strokeWidth={2.5} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[#F7EFE2] font-black text-lg leading-tight">
+                                            {availableServices.find(s => s.id === activeUpsell.offerServiceId)?.name}
+                                        </p>
+                                        <p className="text-[#D49A62] text-[10px] font-black uppercase tracking-[0.25em] mt-1">
+                                            {activeUpsell.discountType === 'PERCENTAGE' ? `${activeUpsell.discountAmount}% OFF` : `R$ ${activeUpsell.discountAmount} OFF`}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-3 relative z-10">
+                                    <button 
+                                        onClick={acceptUpsellAndProceed} 
+                                        className="w-full py-4 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-lg hover:brightness-110 active:scale-95 transition-all"
+                                    >
+                                        Adicionar à reserva
+                                    </button>
+                                    <button 
+                                        onClick={() => setStep(3)} 
+                                        className="w-full py-4 bg-white/5 border border-white/5 text-zinc-400 hover:text-white rounded-[1.5rem] font-bold uppercase tracking-[0.2em] text-[11px] active:scale-95 transition-all"
+                                    >
+                                        Não, obrigado
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </div>
+            )}
+
+            {/* ESCOLHA DO PROFISSIONAL */}
+            {step >= 3 && (
+              <div key="step-3-container" className="space-y-8 pt-4">
                 <BigChatBubble isAi text="Com qual profissional você prefere agendar?" />
 
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 pl-2">
@@ -172,7 +255,7 @@ export default function BarberChat() {
 
       <ChatFooter
         step={step}
-        setStep={setStep}
+        setStep={handleSetStep} // 🔥 PASSAMOS O INTERCEPTADOR AO INVÉS DO setStep ORIGINAL
         userData={userData}
         setUserData={setUserData}
         availableServices={availableServices}

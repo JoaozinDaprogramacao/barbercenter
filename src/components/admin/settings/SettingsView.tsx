@@ -13,6 +13,9 @@ import { useServices } from "@/hooks/useServices";
 import { SubscriptionSection } from "./SubscriptionSection";
 import { TeamSection } from "./TeamSection";
 
+// 🔥 NOVO IMPORT PARA O UPSELL
+import { UpsellSection } from "./UpsellSection";
+
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const { data: session } = useSession();
     const isOwner = (session?.user as any)?.role === "OWNER";
@@ -67,10 +70,10 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     };
 
     return (
-        <main className="h-[100dvh] w-full flex flex-col bg-black max-w-md mx-auto relative overflow-hidden font-sans border-x border-zinc-900">
+        <main className="h-[100dvh] w-full flex flex-col bg-[#050505] max-w-md mx-auto relative overflow-hidden font-sans border-x border-white/5">
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
-                <div className="absolute bottom-40 left-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#B87333]/10 blur-[100px] rounded-full" />
+                <div className="absolute bottom-40 left-0 w-64 h-64 bg-[#D49A62]/5 blur-[100px] rounded-full" />
             </div>
 
             <SettingsHeader onBack={onBack} />
@@ -82,8 +85,8 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                     transition={{ duration: 0.4 }}
                     className="mb-10"
                 >
-                    <p className="text-[#B87333]/70 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Painel de</p>
-                    <h2 className="text-4xl font-black text-[#F7EFE2] tracking-tighter leading-none">Configurações</h2>
+                    <p className="text-[#B87333] text-[10px] font-black uppercase tracking-[0.3em] mb-1">Painel de</p>
+                    <h2 className="text-[2.5rem] font-black text-[#F7EFE2] tracking-tighter leading-none">Configurações</h2>
                 </motion.div>
 
                 <div className="space-y-12">
@@ -92,7 +95,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Perfil da Barbearia</p>
                         </div>
                         {isLoadingCompany ? (
-                            <div className="animate-pulse bg-zinc-900/50 border border-zinc-800 h-48 rounded-[2.5rem] w-full"></div>
+                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-48 rounded-[2.5rem] w-full"></div>
                         ) : (
                             <CompanySection
                                 isEditing={isEditingCompany}
@@ -116,7 +119,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Horário de Funcionamento</p>
                         </div>
                         {isLoadingCompany ? (
-                            <div className="animate-pulse bg-zinc-900/50 border border-zinc-800 h-64 rounded-[2.5rem] w-full"></div>
+                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-64 rounded-[2.5rem] w-full"></div>
                         ) : (
                             <BusinessHoursSection
                                 isEditing={isEditingCompany}
@@ -134,7 +137,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Serviços</p>
                         </div>
                         {isLoadingServices ? (
-                            <div className="animate-pulse bg-zinc-900/50 border border-zinc-800 h-40 rounded-[2.5rem] w-full"></div>
+                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-40 rounded-[2.5rem] w-full"></div>
                         ) : (
                             <ServicesSection
                                 services={services}
@@ -152,14 +155,22 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             />
                         )}
                     </section>
-                </div>
-                <section>
-                    <div className="flex items-center justify-between mb-4 px-2">
-                        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>
-                    </div>
+                    
+                    {/* 🔥 NOVA SEÇÃO DE UPSELL ADICIONADA AQUI 🔥 */}
+                    <section>
+                        <div className="flex items-center justify-between mb-4 px-2">
+                            <p className="text-[10px] font-black text-[#D49A62] uppercase tracking-[0.2em]">Vendas & Upsell</p>
+                        </div>
+                        <UpsellSection services={services} />
+                    </section>
 
-                    <TeamSection />
-                </section>
+                    <section>
+                        <div className="flex items-center justify-between mb-4 px-2">
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>
+                        </div>
+                        <TeamSection />
+                    </section>
+                </div>
             </div>
 
             <AnimatePresence>

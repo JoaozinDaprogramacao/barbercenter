@@ -33,6 +33,16 @@ export type Appointment = $Result.DefaultSelection<Prisma.$AppointmentPayload>
  * 
  */
 export type Service = $Result.DefaultSelection<Prisma.$ServicePayload>
+/**
+ * Model Product
+ * 
+ */
+export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
+/**
+ * Model UpsellRule
+ * 
+ */
+export type UpsellRule = $Result.DefaultSelection<Prisma.$UpsellRulePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -194,6 +204,26 @@ export class PrismaClient<
     * ```
     */
   get service(): Prisma.ServiceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.product`: Exposes CRUD operations for the **Product** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Products
+    * const products = await prisma.product.findMany()
+    * ```
+    */
+  get product(): Prisma.ProductDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.upsellRule`: Exposes CRUD operations for the **UpsellRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UpsellRules
+    * const upsellRules = await prisma.upsellRule.findMany()
+    * ```
+    */
+  get upsellRule(): Prisma.UpsellRuleDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -631,7 +661,9 @@ export namespace Prisma {
     Barbershop: 'Barbershop',
     User: 'User',
     Appointment: 'Appointment',
-    Service: 'Service'
+    Service: 'Service',
+    Product: 'Product',
+    UpsellRule: 'UpsellRule'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -647,7 +679,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "barbershop" | "user" | "appointment" | "service"
+      modelProps: "barbershop" | "user" | "appointment" | "service" | "product" | "upsellRule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -915,6 +947,138 @@ export namespace Prisma {
           }
         }
       }
+      Product: {
+        payload: Prisma.$ProductPayload<ExtArgs>
+        fields: Prisma.ProductFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          findMany: {
+            args: Prisma.ProductFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>[]
+          }
+          create: {
+            args: Prisma.ProductCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          createMany: {
+            args: Prisma.ProductCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ProductDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          update: {
+            args: Prisma.ProductUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ProductUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProduct>
+          }
+          groupBy: {
+            args: Prisma.ProductGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductCountAggregateOutputType> | number
+          }
+        }
+      }
+      UpsellRule: {
+        payload: Prisma.$UpsellRulePayload<ExtArgs>
+        fields: Prisma.UpsellRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UpsellRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UpsellRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          findFirst: {
+            args: Prisma.UpsellRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UpsellRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          findMany: {
+            args: Prisma.UpsellRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>[]
+          }
+          create: {
+            args: Prisma.UpsellRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          createMany: {
+            args: Prisma.UpsellRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.UpsellRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          update: {
+            args: Prisma.UpsellRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.UpsellRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UpsellRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.UpsellRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UpsellRulePayload>
+          }
+          aggregate: {
+            args: Prisma.UpsellRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUpsellRule>
+          }
+          groupBy: {
+            args: Prisma.UpsellRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UpsellRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UpsellRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<UpsellRuleCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1027,6 +1191,8 @@ export namespace Prisma {
     user?: UserOmit
     appointment?: AppointmentOmit
     service?: ServiceOmit
+    product?: ProductOmit
+    upsellRule?: UpsellRuleOmit
   }
 
   /* Types for Logging */
@@ -1110,12 +1276,16 @@ export namespace Prisma {
     appointments: number
     services: number
     users: number
+    products: number
+    upsellRules: number
   }
 
   export type BarbershopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     appointments?: boolean | BarbershopCountOutputTypeCountAppointmentsArgs
     services?: boolean | BarbershopCountOutputTypeCountServicesArgs
     users?: boolean | BarbershopCountOutputTypeCountUsersArgs
+    products?: boolean | BarbershopCountOutputTypeCountProductsArgs
+    upsellRules?: boolean | BarbershopCountOutputTypeCountUpsellRulesArgs
   }
 
   // Custom InputTypes
@@ -1148,6 +1318,20 @@ export namespace Prisma {
    */
   export type BarbershopCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
+  }
+
+  /**
+   * BarbershopCountOutputType without action
+   */
+  export type BarbershopCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * BarbershopCountOutputType without action
+   */
+  export type BarbershopCountOutputTypeCountUpsellRulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UpsellRuleWhereInput
   }
 
 
@@ -1188,10 +1372,12 @@ export namespace Prisma {
 
   export type AppointmentCountOutputType = {
     services: number
+    products: number
   }
 
   export type AppointmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     services?: boolean | AppointmentCountOutputTypeCountServicesArgs
+    products?: boolean | AppointmentCountOutputTypeCountProductsArgs
   }
 
   // Custom InputTypes
@@ -1210,6 +1396,13 @@ export namespace Prisma {
    */
   export type AppointmentCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceWhereInput
+  }
+
+  /**
+   * AppointmentCountOutputType without action
+   */
+  export type AppointmentCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
   }
 
 
@@ -1240,6 +1433,37 @@ export namespace Prisma {
    * ServiceCountOutputType without action
    */
   export type ServiceCountOutputTypeCountAppointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppointmentWhereInput
+  }
+
+
+  /**
+   * Count Type ProductCountOutputType
+   */
+
+  export type ProductCountOutputType = {
+    appointments: number
+  }
+
+  export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    appointments?: boolean | ProductCountOutputTypeCountAppointmentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductCountOutputType
+     */
+    select?: ProductCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountAppointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AppointmentWhereInput
   }
 
@@ -1459,6 +1683,8 @@ export namespace Prisma {
     appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     services?: boolean | Barbershop$servicesArgs<ExtArgs>
     users?: boolean | Barbershop$usersArgs<ExtArgs>
+    products?: boolean | Barbershop$productsArgs<ExtArgs>
+    upsellRules?: boolean | Barbershop$upsellRulesArgs<ExtArgs>
     _count?: boolean | BarbershopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["barbershop"]>
 
@@ -1483,6 +1709,8 @@ export namespace Prisma {
     appointments?: boolean | Barbershop$appointmentsArgs<ExtArgs>
     services?: boolean | Barbershop$servicesArgs<ExtArgs>
     users?: boolean | Barbershop$usersArgs<ExtArgs>
+    products?: boolean | Barbershop$productsArgs<ExtArgs>
+    upsellRules?: boolean | Barbershop$upsellRulesArgs<ExtArgs>
     _count?: boolean | BarbershopCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -1492,6 +1720,8 @@ export namespace Prisma {
       appointments: Prisma.$AppointmentPayload<ExtArgs>[]
       services: Prisma.$ServicePayload<ExtArgs>[]
       users: Prisma.$UserPayload<ExtArgs>[]
+      products: Prisma.$ProductPayload<ExtArgs>[]
+      upsellRules: Prisma.$UpsellRulePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1848,6 +2078,8 @@ export namespace Prisma {
     appointments<T extends Barbershop$appointmentsArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     services<T extends Barbershop$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     users<T extends Barbershop$usersArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    products<T extends Barbershop$productsArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    upsellRules<T extends Barbershop$upsellRulesArgs<ExtArgs> = {}>(args?: Subset<T, Barbershop$upsellRulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2305,6 +2537,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Barbershop.products
+   */
+  export type Barbershop$productsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Barbershop.upsellRules
+   */
+  export type Barbershop$upsellRulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    where?: UpsellRuleWhereInput
+    orderBy?: UpsellRuleOrderByWithRelationInput | UpsellRuleOrderByWithRelationInput[]
+    cursor?: UpsellRuleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UpsellRuleScalarFieldEnum | UpsellRuleScalarFieldEnum[]
   }
 
   /**
@@ -3348,10 +3628,14 @@ export namespace Prisma {
 
   export type AppointmentAvgAggregateOutputType = {
     id: number | null
+    totalPrice: number | null
+    discount: number | null
   }
 
   export type AppointmentSumAggregateOutputType = {
     id: number | null
+    totalPrice: number | null
+    discount: number | null
   }
 
   export type AppointmentMinAggregateOutputType = {
@@ -3360,6 +3644,8 @@ export namespace Prisma {
     date: string | null
     time: string | null
     status: string | null
+    totalPrice: number | null
+    discount: number | null
     barbershopId: string | null
     barberId: string | null
     createdAt: Date | null
@@ -3371,6 +3657,8 @@ export namespace Prisma {
     date: string | null
     time: string | null
     status: string | null
+    totalPrice: number | null
+    discount: number | null
     barbershopId: string | null
     barberId: string | null
     createdAt: Date | null
@@ -3382,6 +3670,8 @@ export namespace Prisma {
     date: number
     time: number
     status: number
+    totalPrice: number
+    discount: number
     barbershopId: number
     barberId: number
     createdAt: number
@@ -3391,10 +3681,14 @@ export namespace Prisma {
 
   export type AppointmentAvgAggregateInputType = {
     id?: true
+    totalPrice?: true
+    discount?: true
   }
 
   export type AppointmentSumAggregateInputType = {
     id?: true
+    totalPrice?: true
+    discount?: true
   }
 
   export type AppointmentMinAggregateInputType = {
@@ -3403,6 +3697,8 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
+    totalPrice?: true
+    discount?: true
     barbershopId?: true
     barberId?: true
     createdAt?: true
@@ -3414,6 +3710,8 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
+    totalPrice?: true
+    discount?: true
     barbershopId?: true
     barberId?: true
     createdAt?: true
@@ -3425,6 +3723,8 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
+    totalPrice?: true
+    discount?: true
     barbershopId?: true
     barberId?: true
     createdAt?: true
@@ -3523,6 +3823,8 @@ export namespace Prisma {
     date: string
     time: string
     status: string
+    totalPrice: number | null
+    discount: number | null
     barbershopId: string
     barberId: string | null
     createdAt: Date
@@ -3553,12 +3855,15 @@ export namespace Prisma {
     date?: boolean
     time?: boolean
     status?: boolean
+    totalPrice?: boolean
+    discount?: boolean
     barbershopId?: boolean
     barberId?: boolean
     createdAt?: boolean
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
     barber?: boolean | Appointment$barberArgs<ExtArgs>
     services?: boolean | Appointment$servicesArgs<ExtArgs>
+    products?: boolean | Appointment$productsArgs<ExtArgs>
     _count?: boolean | AppointmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["appointment"]>
 
@@ -3570,16 +3875,19 @@ export namespace Prisma {
     date?: boolean
     time?: boolean
     status?: boolean
+    totalPrice?: boolean
+    discount?: boolean
     barbershopId?: boolean
     barberId?: boolean
     createdAt?: boolean
   }
 
-  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientName" | "date" | "time" | "status" | "barbershopId" | "barberId" | "createdAt", ExtArgs["result"]["appointment"]>
+  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientName" | "date" | "time" | "status" | "totalPrice" | "discount" | "barbershopId" | "barberId" | "createdAt", ExtArgs["result"]["appointment"]>
   export type AppointmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
     barber?: boolean | Appointment$barberArgs<ExtArgs>
     services?: boolean | Appointment$servicesArgs<ExtArgs>
+    products?: boolean | Appointment$productsArgs<ExtArgs>
     _count?: boolean | AppointmentCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -3589,6 +3897,7 @@ export namespace Prisma {
       barbershop: Prisma.$BarbershopPayload<ExtArgs>
       barber: Prisma.$UserPayload<ExtArgs> | null
       services: Prisma.$ServicePayload<ExtArgs>[]
+      products: Prisma.$ProductPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3596,6 +3905,8 @@ export namespace Prisma {
       date: string
       time: string
       status: string
+      totalPrice: number | null
+      discount: number | null
       barbershopId: string
       barberId: string | null
       createdAt: Date
@@ -3942,6 +4253,7 @@ export namespace Prisma {
     barbershop<T extends BarbershopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BarbershopDefaultArgs<ExtArgs>>): Prisma__BarbershopClient<$Result.GetResult<Prisma.$BarbershopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     barber<T extends Appointment$barberArgs<ExtArgs> = {}>(args?: Subset<T, Appointment$barberArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     services<T extends Appointment$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Appointment$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    products<T extends Appointment$productsArgs<ExtArgs> = {}>(args?: Subset<T, Appointment$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3976,6 +4288,8 @@ export namespace Prisma {
     readonly date: FieldRef<"Appointment", 'String'>
     readonly time: FieldRef<"Appointment", 'String'>
     readonly status: FieldRef<"Appointment", 'String'>
+    readonly totalPrice: FieldRef<"Appointment", 'Float'>
+    readonly discount: FieldRef<"Appointment", 'Float'>
     readonly barbershopId: FieldRef<"Appointment", 'String'>
     readonly barberId: FieldRef<"Appointment", 'String'>
     readonly createdAt: FieldRef<"Appointment", 'DateTime'>
@@ -4367,6 +4681,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
+  }
+
+  /**
+   * Appointment.products
+   */
+  export type Appointment$productsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
   }
 
   /**
@@ -5413,6 +5751,2064 @@ export namespace Prisma {
 
 
   /**
+   * Model Product
+   */
+
+  export type AggregateProduct = {
+    _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
+    _min: ProductMinAggregateOutputType | null
+    _max: ProductMaxAggregateOutputType | null
+  }
+
+  export type ProductAvgAggregateOutputType = {
+    price: number | null
+    stock: number | null
+  }
+
+  export type ProductSumAggregateOutputType = {
+    price: number | null
+    stock: number | null
+  }
+
+  export type ProductMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    price: number | null
+    stock: number | null
+    barbershopId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    price: number | null
+    stock: number | null
+    barbershopId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductCountAggregateOutputType = {
+    id: number
+    name: number
+    price: number
+    stock: number
+    barbershopId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProductAvgAggregateInputType = {
+    price?: true
+    stock?: true
+  }
+
+  export type ProductSumAggregateInputType = {
+    price?: true
+    stock?: true
+  }
+
+  export type ProductMinAggregateInputType = {
+    id?: true
+    name?: true
+    price?: true
+    stock?: true
+    barbershopId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductMaxAggregateInputType = {
+    id?: true
+    name?: true
+    price?: true
+    stock?: true
+    barbershopId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductCountAggregateInputType = {
+    id?: true
+    name?: true
+    price?: true
+    stock?: true
+    barbershopId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProductAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Product to aggregate.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Products
+    **/
+    _count?: true | ProductCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProductAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProductSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductMaxAggregateInputType
+  }
+
+  export type GetProductAggregateType<T extends ProductAggregateArgs> = {
+        [P in keyof T & keyof AggregateProduct]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProduct[P]>
+      : GetScalarType<T[P], AggregateProduct[P]>
+  }
+
+
+
+
+  export type ProductGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithAggregationInput | ProductOrderByWithAggregationInput[]
+    by: ProductScalarFieldEnum[] | ProductScalarFieldEnum
+    having?: ProductScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductCountAggregateInputType | true
+    _avg?: ProductAvgAggregateInputType
+    _sum?: ProductSumAggregateInputType
+    _min?: ProductMinAggregateInputType
+    _max?: ProductMaxAggregateInputType
+  }
+
+  export type ProductGroupByOutputType = {
+    id: string
+    name: string
+    price: number
+    stock: number
+    barbershopId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
+    _min: ProductMinAggregateOutputType | null
+    _max: ProductMaxAggregateOutputType | null
+  }
+
+  type GetProductGroupByPayload<T extends ProductGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    price?: boolean
+    stock?: boolean
+    barbershopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
+    appointments?: boolean | Product$appointmentsArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["product"]>
+
+
+
+  export type ProductSelectScalar = {
+    id?: boolean
+    name?: boolean
+    price?: boolean
+    stock?: boolean
+    barbershopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "stock" | "barbershopId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
+    appointments?: boolean | Product$appointmentsArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
+  }
+
+  export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Product"
+    objects: {
+      barbershop: Prisma.$BarbershopPayload<ExtArgs>
+      appointments: Prisma.$AppointmentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      price: number
+      stock: number
+      barbershopId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["product"]>
+    composites: {}
+  }
+
+  type ProductGetPayload<S extends boolean | null | undefined | ProductDefaultArgs> = $Result.GetResult<Prisma.$ProductPayload, S>
+
+  type ProductCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductCountAggregateInputType | true
+    }
+
+  export interface ProductDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Product'], meta: { name: 'Product' } }
+    /**
+     * Find zero or one Product that matches the filter.
+     * @param {ProductFindUniqueArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductFindUniqueArgs>(args: SelectSubset<T, ProductFindUniqueArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Product that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductFindUniqueOrThrowArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Product that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindFirstArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductFindFirstArgs>(args?: SelectSubset<T, ProductFindFirstArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Product that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindFirstOrThrowArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Products that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Products
+     * const products = await prisma.product.findMany()
+     * 
+     * // Get first 10 Products
+     * const products = await prisma.product.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productWithIdOnly = await prisma.product.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductFindManyArgs>(args?: SelectSubset<T, ProductFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Product.
+     * @param {ProductCreateArgs} args - Arguments to create a Product.
+     * @example
+     * // Create one Product
+     * const Product = await prisma.product.create({
+     *   data: {
+     *     // ... data to create a Product
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductCreateArgs>(args: SelectSubset<T, ProductCreateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Products.
+     * @param {ProductCreateManyArgs} args - Arguments to create many Products.
+     * @example
+     * // Create many Products
+     * const product = await prisma.product.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductCreateManyArgs>(args?: SelectSubset<T, ProductCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Product.
+     * @param {ProductDeleteArgs} args - Arguments to delete one Product.
+     * @example
+     * // Delete one Product
+     * const Product = await prisma.product.delete({
+     *   where: {
+     *     // ... filter to delete one Product
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductDeleteArgs>(args: SelectSubset<T, ProductDeleteArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Product.
+     * @param {ProductUpdateArgs} args - Arguments to update one Product.
+     * @example
+     * // Update one Product
+     * const product = await prisma.product.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductUpdateArgs>(args: SelectSubset<T, ProductUpdateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Products.
+     * @param {ProductDeleteManyArgs} args - Arguments to filter Products to delete.
+     * @example
+     * // Delete a few Products
+     * const { count } = await prisma.product.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductDeleteManyArgs>(args?: SelectSubset<T, ProductDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Products.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Products
+     * const product = await prisma.product.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductUpdateManyArgs>(args: SelectSubset<T, ProductUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Product.
+     * @param {ProductUpsertArgs} args - Arguments to update or create a Product.
+     * @example
+     * // Update or create a Product
+     * const product = await prisma.product.upsert({
+     *   create: {
+     *     // ... data to create a Product
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Product we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductUpsertArgs>(args: SelectSubset<T, ProductUpsertArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Products.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductCountArgs} args - Arguments to filter Products to count.
+     * @example
+     * // Count the number of Products
+     * const count = await prisma.product.count({
+     *   where: {
+     *     // ... the filter for the Products we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductCountArgs>(
+      args?: Subset<T, ProductCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Product.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductAggregateArgs>(args: Subset<T, ProductAggregateArgs>): Prisma.PrismaPromise<GetProductAggregateType<T>>
+
+    /**
+     * Group by Product.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductGroupByArgs['orderBy'] }
+        : { orderBy?: ProductGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Product model
+   */
+  readonly fields: ProductFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Product.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    barbershop<T extends BarbershopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BarbershopDefaultArgs<ExtArgs>>): Prisma__BarbershopClient<$Result.GetResult<Prisma.$BarbershopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    appointments<T extends Product$appointmentsArgs<ExtArgs> = {}>(args?: Subset<T, Product$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Product model
+   */
+  interface ProductFieldRefs {
+    readonly id: FieldRef<"Product", 'String'>
+    readonly name: FieldRef<"Product", 'String'>
+    readonly price: FieldRef<"Product", 'Float'>
+    readonly stock: FieldRef<"Product", 'Int'>
+    readonly barbershopId: FieldRef<"Product", 'String'>
+    readonly createdAt: FieldRef<"Product", 'DateTime'>
+    readonly updatedAt: FieldRef<"Product", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Product findUnique
+   */
+  export type ProductFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product findUniqueOrThrow
+   */
+  export type ProductFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product findFirst
+   */
+  export type ProductFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product findFirstOrThrow
+   */
+  export type ProductFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product findMany
+   */
+  export type ProductFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Products to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product create
+   */
+  export type ProductCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Product.
+     */
+    data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+  }
+
+  /**
+   * Product createMany
+   */
+  export type ProductCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Products.
+     */
+    data: ProductCreateManyInput | ProductCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Product update
+   */
+  export type ProductUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Product.
+     */
+    data: XOR<ProductUpdateInput, ProductUncheckedUpdateInput>
+    /**
+     * Choose, which Product to update.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product updateMany
+   */
+  export type ProductUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Products.
+     */
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyInput>
+    /**
+     * Filter which Products to update
+     */
+    where?: ProductWhereInput
+    /**
+     * Limit how many Products to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Product upsert
+   */
+  export type ProductUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Product to update in case it exists.
+     */
+    where: ProductWhereUniqueInput
+    /**
+     * In case the Product found by the `where` argument doesn't exist, create a new Product with this data.
+     */
+    create: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    /**
+     * In case the Product was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductUpdateInput, ProductUncheckedUpdateInput>
+  }
+
+  /**
+   * Product delete
+   */
+  export type ProductDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter which Product to delete.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product deleteMany
+   */
+  export type ProductDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Products to delete
+     */
+    where?: ProductWhereInput
+    /**
+     * Limit how many Products to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Product.appointments
+   */
+  export type Product$appointmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Appointment
+     */
+    select?: AppointmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Appointment
+     */
+    omit?: AppointmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppointmentInclude<ExtArgs> | null
+    where?: AppointmentWhereInput
+    orderBy?: AppointmentOrderByWithRelationInput | AppointmentOrderByWithRelationInput[]
+    cursor?: AppointmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AppointmentScalarFieldEnum | AppointmentScalarFieldEnum[]
+  }
+
+  /**
+   * Product without action
+   */
+  export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UpsellRule
+   */
+
+  export type AggregateUpsellRule = {
+    _count: UpsellRuleCountAggregateOutputType | null
+    _avg: UpsellRuleAvgAggregateOutputType | null
+    _sum: UpsellRuleSumAggregateOutputType | null
+    _min: UpsellRuleMinAggregateOutputType | null
+    _max: UpsellRuleMaxAggregateOutputType | null
+  }
+
+  export type UpsellRuleAvgAggregateOutputType = {
+    discountAmount: number | null
+  }
+
+  export type UpsellRuleSumAggregateOutputType = {
+    discountAmount: number | null
+  }
+
+  export type UpsellRuleMinAggregateOutputType = {
+    id: string | null
+    barbershopId: string | null
+    triggerServiceId: string | null
+    offerServiceId: string | null
+    offerProductId: string | null
+    discountAmount: number | null
+    discountType: string | null
+    customCopy: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UpsellRuleMaxAggregateOutputType = {
+    id: string | null
+    barbershopId: string | null
+    triggerServiceId: string | null
+    offerServiceId: string | null
+    offerProductId: string | null
+    discountAmount: number | null
+    discountType: string | null
+    customCopy: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UpsellRuleCountAggregateOutputType = {
+    id: number
+    barbershopId: number
+    triggerServiceId: number
+    offerServiceId: number
+    offerProductId: number
+    discountAmount: number
+    discountType: number
+    customCopy: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UpsellRuleAvgAggregateInputType = {
+    discountAmount?: true
+  }
+
+  export type UpsellRuleSumAggregateInputType = {
+    discountAmount?: true
+  }
+
+  export type UpsellRuleMinAggregateInputType = {
+    id?: true
+    barbershopId?: true
+    triggerServiceId?: true
+    offerServiceId?: true
+    offerProductId?: true
+    discountAmount?: true
+    discountType?: true
+    customCopy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UpsellRuleMaxAggregateInputType = {
+    id?: true
+    barbershopId?: true
+    triggerServiceId?: true
+    offerServiceId?: true
+    offerProductId?: true
+    discountAmount?: true
+    discountType?: true
+    customCopy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UpsellRuleCountAggregateInputType = {
+    id?: true
+    barbershopId?: true
+    triggerServiceId?: true
+    offerServiceId?: true
+    offerProductId?: true
+    discountAmount?: true
+    discountType?: true
+    customCopy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UpsellRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UpsellRule to aggregate.
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UpsellRules to fetch.
+     */
+    orderBy?: UpsellRuleOrderByWithRelationInput | UpsellRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UpsellRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UpsellRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UpsellRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UpsellRules
+    **/
+    _count?: true | UpsellRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UpsellRuleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UpsellRuleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UpsellRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UpsellRuleMaxAggregateInputType
+  }
+
+  export type GetUpsellRuleAggregateType<T extends UpsellRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregateUpsellRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUpsellRule[P]>
+      : GetScalarType<T[P], AggregateUpsellRule[P]>
+  }
+
+
+
+
+  export type UpsellRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UpsellRuleWhereInput
+    orderBy?: UpsellRuleOrderByWithAggregationInput | UpsellRuleOrderByWithAggregationInput[]
+    by: UpsellRuleScalarFieldEnum[] | UpsellRuleScalarFieldEnum
+    having?: UpsellRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UpsellRuleCountAggregateInputType | true
+    _avg?: UpsellRuleAvgAggregateInputType
+    _sum?: UpsellRuleSumAggregateInputType
+    _min?: UpsellRuleMinAggregateInputType
+    _max?: UpsellRuleMaxAggregateInputType
+  }
+
+  export type UpsellRuleGroupByOutputType = {
+    id: string
+    barbershopId: string
+    triggerServiceId: string
+    offerServiceId: string | null
+    offerProductId: string | null
+    discountAmount: number
+    discountType: string
+    customCopy: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: UpsellRuleCountAggregateOutputType | null
+    _avg: UpsellRuleAvgAggregateOutputType | null
+    _sum: UpsellRuleSumAggregateOutputType | null
+    _min: UpsellRuleMinAggregateOutputType | null
+    _max: UpsellRuleMaxAggregateOutputType | null
+  }
+
+  type GetUpsellRuleGroupByPayload<T extends UpsellRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UpsellRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UpsellRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UpsellRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], UpsellRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UpsellRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    barbershopId?: boolean
+    triggerServiceId?: boolean
+    offerServiceId?: boolean
+    offerProductId?: boolean
+    discountAmount?: boolean
+    discountType?: boolean
+    customCopy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["upsellRule"]>
+
+
+
+  export type UpsellRuleSelectScalar = {
+    id?: boolean
+    barbershopId?: boolean
+    triggerServiceId?: boolean
+    offerServiceId?: boolean
+    offerProductId?: boolean
+    discountAmount?: boolean
+    discountType?: boolean
+    customCopy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UpsellRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "barbershopId" | "triggerServiceId" | "offerServiceId" | "offerProductId" | "discountAmount" | "discountType" | "customCopy" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["upsellRule"]>
+  export type UpsellRuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
+  }
+
+  export type $UpsellRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UpsellRule"
+    objects: {
+      barbershop: Prisma.$BarbershopPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      barbershopId: string
+      triggerServiceId: string
+      offerServiceId: string | null
+      offerProductId: string | null
+      discountAmount: number
+      discountType: string
+      customCopy: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["upsellRule"]>
+    composites: {}
+  }
+
+  type UpsellRuleGetPayload<S extends boolean | null | undefined | UpsellRuleDefaultArgs> = $Result.GetResult<Prisma.$UpsellRulePayload, S>
+
+  type UpsellRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UpsellRuleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UpsellRuleCountAggregateInputType | true
+    }
+
+  export interface UpsellRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UpsellRule'], meta: { name: 'UpsellRule' } }
+    /**
+     * Find zero or one UpsellRule that matches the filter.
+     * @param {UpsellRuleFindUniqueArgs} args - Arguments to find a UpsellRule
+     * @example
+     * // Get one UpsellRule
+     * const upsellRule = await prisma.upsellRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UpsellRuleFindUniqueArgs>(args: SelectSubset<T, UpsellRuleFindUniqueArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UpsellRule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UpsellRuleFindUniqueOrThrowArgs} args - Arguments to find a UpsellRule
+     * @example
+     * // Get one UpsellRule
+     * const upsellRule = await prisma.upsellRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UpsellRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, UpsellRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UpsellRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleFindFirstArgs} args - Arguments to find a UpsellRule
+     * @example
+     * // Get one UpsellRule
+     * const upsellRule = await prisma.upsellRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UpsellRuleFindFirstArgs>(args?: SelectSubset<T, UpsellRuleFindFirstArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UpsellRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleFindFirstOrThrowArgs} args - Arguments to find a UpsellRule
+     * @example
+     * // Get one UpsellRule
+     * const upsellRule = await prisma.upsellRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UpsellRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, UpsellRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UpsellRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UpsellRules
+     * const upsellRules = await prisma.upsellRule.findMany()
+     * 
+     * // Get first 10 UpsellRules
+     * const upsellRules = await prisma.upsellRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const upsellRuleWithIdOnly = await prisma.upsellRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UpsellRuleFindManyArgs>(args?: SelectSubset<T, UpsellRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UpsellRule.
+     * @param {UpsellRuleCreateArgs} args - Arguments to create a UpsellRule.
+     * @example
+     * // Create one UpsellRule
+     * const UpsellRule = await prisma.upsellRule.create({
+     *   data: {
+     *     // ... data to create a UpsellRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends UpsellRuleCreateArgs>(args: SelectSubset<T, UpsellRuleCreateArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UpsellRules.
+     * @param {UpsellRuleCreateManyArgs} args - Arguments to create many UpsellRules.
+     * @example
+     * // Create many UpsellRules
+     * const upsellRule = await prisma.upsellRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UpsellRuleCreateManyArgs>(args?: SelectSubset<T, UpsellRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a UpsellRule.
+     * @param {UpsellRuleDeleteArgs} args - Arguments to delete one UpsellRule.
+     * @example
+     * // Delete one UpsellRule
+     * const UpsellRule = await prisma.upsellRule.delete({
+     *   where: {
+     *     // ... filter to delete one UpsellRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UpsellRuleDeleteArgs>(args: SelectSubset<T, UpsellRuleDeleteArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UpsellRule.
+     * @param {UpsellRuleUpdateArgs} args - Arguments to update one UpsellRule.
+     * @example
+     * // Update one UpsellRule
+     * const upsellRule = await prisma.upsellRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UpsellRuleUpdateArgs>(args: SelectSubset<T, UpsellRuleUpdateArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UpsellRules.
+     * @param {UpsellRuleDeleteManyArgs} args - Arguments to filter UpsellRules to delete.
+     * @example
+     * // Delete a few UpsellRules
+     * const { count } = await prisma.upsellRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UpsellRuleDeleteManyArgs>(args?: SelectSubset<T, UpsellRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UpsellRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UpsellRules
+     * const upsellRule = await prisma.upsellRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UpsellRuleUpdateManyArgs>(args: SelectSubset<T, UpsellRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one UpsellRule.
+     * @param {UpsellRuleUpsertArgs} args - Arguments to update or create a UpsellRule.
+     * @example
+     * // Update or create a UpsellRule
+     * const upsellRule = await prisma.upsellRule.upsert({
+     *   create: {
+     *     // ... data to create a UpsellRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UpsellRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UpsellRuleUpsertArgs>(args: SelectSubset<T, UpsellRuleUpsertArgs<ExtArgs>>): Prisma__UpsellRuleClient<$Result.GetResult<Prisma.$UpsellRulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UpsellRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleCountArgs} args - Arguments to filter UpsellRules to count.
+     * @example
+     * // Count the number of UpsellRules
+     * const count = await prisma.upsellRule.count({
+     *   where: {
+     *     // ... the filter for the UpsellRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends UpsellRuleCountArgs>(
+      args?: Subset<T, UpsellRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UpsellRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UpsellRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UpsellRuleAggregateArgs>(args: Subset<T, UpsellRuleAggregateArgs>): Prisma.PrismaPromise<GetUpsellRuleAggregateType<T>>
+
+    /**
+     * Group by UpsellRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpsellRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UpsellRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UpsellRuleGroupByArgs['orderBy'] }
+        : { orderBy?: UpsellRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UpsellRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUpsellRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UpsellRule model
+   */
+  readonly fields: UpsellRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UpsellRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UpsellRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    barbershop<T extends BarbershopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BarbershopDefaultArgs<ExtArgs>>): Prisma__BarbershopClient<$Result.GetResult<Prisma.$BarbershopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UpsellRule model
+   */
+  interface UpsellRuleFieldRefs {
+    readonly id: FieldRef<"UpsellRule", 'String'>
+    readonly barbershopId: FieldRef<"UpsellRule", 'String'>
+    readonly triggerServiceId: FieldRef<"UpsellRule", 'String'>
+    readonly offerServiceId: FieldRef<"UpsellRule", 'String'>
+    readonly offerProductId: FieldRef<"UpsellRule", 'String'>
+    readonly discountAmount: FieldRef<"UpsellRule", 'Float'>
+    readonly discountType: FieldRef<"UpsellRule", 'String'>
+    readonly customCopy: FieldRef<"UpsellRule", 'String'>
+    readonly isActive: FieldRef<"UpsellRule", 'Boolean'>
+    readonly createdAt: FieldRef<"UpsellRule", 'DateTime'>
+    readonly updatedAt: FieldRef<"UpsellRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UpsellRule findUnique
+   */
+  export type UpsellRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which UpsellRule to fetch.
+     */
+    where: UpsellRuleWhereUniqueInput
+  }
+
+  /**
+   * UpsellRule findUniqueOrThrow
+   */
+  export type UpsellRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which UpsellRule to fetch.
+     */
+    where: UpsellRuleWhereUniqueInput
+  }
+
+  /**
+   * UpsellRule findFirst
+   */
+  export type UpsellRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which UpsellRule to fetch.
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UpsellRules to fetch.
+     */
+    orderBy?: UpsellRuleOrderByWithRelationInput | UpsellRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UpsellRules.
+     */
+    cursor?: UpsellRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UpsellRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UpsellRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UpsellRules.
+     */
+    distinct?: UpsellRuleScalarFieldEnum | UpsellRuleScalarFieldEnum[]
+  }
+
+  /**
+   * UpsellRule findFirstOrThrow
+   */
+  export type UpsellRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which UpsellRule to fetch.
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UpsellRules to fetch.
+     */
+    orderBy?: UpsellRuleOrderByWithRelationInput | UpsellRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UpsellRules.
+     */
+    cursor?: UpsellRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UpsellRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UpsellRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UpsellRules.
+     */
+    distinct?: UpsellRuleScalarFieldEnum | UpsellRuleScalarFieldEnum[]
+  }
+
+  /**
+   * UpsellRule findMany
+   */
+  export type UpsellRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which UpsellRules to fetch.
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UpsellRules to fetch.
+     */
+    orderBy?: UpsellRuleOrderByWithRelationInput | UpsellRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UpsellRules.
+     */
+    cursor?: UpsellRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UpsellRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UpsellRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UpsellRules.
+     */
+    distinct?: UpsellRuleScalarFieldEnum | UpsellRuleScalarFieldEnum[]
+  }
+
+  /**
+   * UpsellRule create
+   */
+  export type UpsellRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UpsellRule.
+     */
+    data: XOR<UpsellRuleCreateInput, UpsellRuleUncheckedCreateInput>
+  }
+
+  /**
+   * UpsellRule createMany
+   */
+  export type UpsellRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UpsellRules.
+     */
+    data: UpsellRuleCreateManyInput | UpsellRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UpsellRule update
+   */
+  export type UpsellRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UpsellRule.
+     */
+    data: XOR<UpsellRuleUpdateInput, UpsellRuleUncheckedUpdateInput>
+    /**
+     * Choose, which UpsellRule to update.
+     */
+    where: UpsellRuleWhereUniqueInput
+  }
+
+  /**
+   * UpsellRule updateMany
+   */
+  export type UpsellRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UpsellRules.
+     */
+    data: XOR<UpsellRuleUpdateManyMutationInput, UpsellRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which UpsellRules to update
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * Limit how many UpsellRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UpsellRule upsert
+   */
+  export type UpsellRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UpsellRule to update in case it exists.
+     */
+    where: UpsellRuleWhereUniqueInput
+    /**
+     * In case the UpsellRule found by the `where` argument doesn't exist, create a new UpsellRule with this data.
+     */
+    create: XOR<UpsellRuleCreateInput, UpsellRuleUncheckedCreateInput>
+    /**
+     * In case the UpsellRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UpsellRuleUpdateInput, UpsellRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * UpsellRule delete
+   */
+  export type UpsellRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+    /**
+     * Filter which UpsellRule to delete.
+     */
+    where: UpsellRuleWhereUniqueInput
+  }
+
+  /**
+   * UpsellRule deleteMany
+   */
+  export type UpsellRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UpsellRules to delete
+     */
+    where?: UpsellRuleWhereInput
+    /**
+     * Limit how many UpsellRules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UpsellRule without action
+   */
+  export type UpsellRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UpsellRule
+     */
+    select?: UpsellRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UpsellRule
+     */
+    omit?: UpsellRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UpsellRuleInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5464,6 +7860,8 @@ export namespace Prisma {
     date: 'date',
     time: 'time',
     status: 'status',
+    totalPrice: 'totalPrice',
+    discount: 'discount',
     barbershopId: 'barbershopId',
     barberId: 'barberId',
     createdAt: 'createdAt'
@@ -5483,6 +7881,36 @@ export namespace Prisma {
   };
 
   export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
+
+
+  export const ProductScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    price: 'price',
+    stock: 'stock',
+    barbershopId: 'barbershopId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+  export const UpsellRuleScalarFieldEnum: {
+    id: 'id',
+    barbershopId: 'barbershopId',
+    triggerServiceId: 'triggerServiceId',
+    offerServiceId: 'offerServiceId',
+    offerProductId: 'offerProductId',
+    discountAmount: 'discountAmount',
+    discountType: 'discountType',
+    customCopy: 'customCopy',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UpsellRuleScalarFieldEnum = (typeof UpsellRuleScalarFieldEnum)[keyof typeof UpsellRuleScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5573,6 +8001,28 @@ export namespace Prisma {
   export type ServiceOrderByRelevanceFieldEnum = (typeof ServiceOrderByRelevanceFieldEnum)[keyof typeof ServiceOrderByRelevanceFieldEnum]
 
 
+  export const ProductOrderByRelevanceFieldEnum: {
+    id: 'id',
+    name: 'name',
+    barbershopId: 'barbershopId'
+  };
+
+  export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFieldEnum)[keyof typeof ProductOrderByRelevanceFieldEnum]
+
+
+  export const UpsellRuleOrderByRelevanceFieldEnum: {
+    id: 'id',
+    barbershopId: 'barbershopId',
+    triggerServiceId: 'triggerServiceId',
+    offerServiceId: 'offerServiceId',
+    offerProductId: 'offerProductId',
+    discountType: 'discountType',
+    customCopy: 'customCopy'
+  };
+
+  export type UpsellRuleOrderByRelevanceFieldEnum = (typeof UpsellRuleOrderByRelevanceFieldEnum)[keyof typeof UpsellRuleOrderByRelevanceFieldEnum]
+
+
   /**
    * Field references
    */
@@ -5618,6 +8068,13 @@ export namespace Prisma {
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
   /**
    * Deep Input Types
    */
@@ -5641,6 +8098,8 @@ export namespace Prisma {
     appointments?: AppointmentListRelationFilter
     services?: ServiceListRelationFilter
     users?: UserListRelationFilter
+    products?: ProductListRelationFilter
+    upsellRules?: UpsellRuleListRelationFilter
   }
 
   export type BarbershopOrderByWithRelationInput = {
@@ -5658,6 +8117,8 @@ export namespace Prisma {
     appointments?: AppointmentOrderByRelationAggregateInput
     services?: ServiceOrderByRelationAggregateInput
     users?: UserOrderByRelationAggregateInput
+    products?: ProductOrderByRelationAggregateInput
+    upsellRules?: UpsellRuleOrderByRelationAggregateInput
     _relevance?: BarbershopOrderByRelevanceInput
   }
 
@@ -5679,6 +8140,8 @@ export namespace Prisma {
     appointments?: AppointmentListRelationFilter
     services?: ServiceListRelationFilter
     users?: UserListRelationFilter
+    products?: ProductListRelationFilter
+    upsellRules?: UpsellRuleListRelationFilter
   }, "id" | "abacateCustomerId" | "abacateSubscriptionId">
 
   export type BarbershopOrderByWithAggregationInput = {
@@ -5803,12 +8266,15 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
+    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
     barber?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     services?: ServiceListRelationFilter
+    products?: ProductListRelationFilter
   }
 
   export type AppointmentOrderByWithRelationInput = {
@@ -5817,12 +8283,15 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
+    totalPrice?: SortOrderInput | SortOrder
+    discount?: SortOrderInput | SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     barbershop?: BarbershopOrderByWithRelationInput
     barber?: UserOrderByWithRelationInput
     services?: ServiceOrderByRelationAggregateInput
+    products?: ProductOrderByRelationAggregateInput
     _relevance?: AppointmentOrderByRelevanceInput
   }
 
@@ -5835,12 +8304,15 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
+    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
     barber?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     services?: ServiceListRelationFilter
+    products?: ProductListRelationFilter
   }, "id">
 
   export type AppointmentOrderByWithAggregationInput = {
@@ -5849,6 +8321,8 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
+    totalPrice?: SortOrderInput | SortOrder
+    discount?: SortOrderInput | SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -5868,6 +8342,8 @@ export namespace Prisma {
     date?: StringWithAggregatesFilter<"Appointment"> | string
     time?: StringWithAggregatesFilter<"Appointment"> | string
     status?: StringWithAggregatesFilter<"Appointment"> | string
+    totalPrice?: FloatNullableWithAggregatesFilter<"Appointment"> | number | null
+    discount?: FloatNullableWithAggregatesFilter<"Appointment"> | number | null
     barbershopId?: StringWithAggregatesFilter<"Appointment"> | string
     barberId?: StringNullableWithAggregatesFilter<"Appointment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
@@ -5944,6 +8420,165 @@ export namespace Prisma {
     barbershopId?: StringWithAggregatesFilter<"Service"> | string
   }
 
+  export type ProductWhereInput = {
+    AND?: ProductWhereInput | ProductWhereInput[]
+    OR?: ProductWhereInput[]
+    NOT?: ProductWhereInput | ProductWhereInput[]
+    id?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    price?: FloatFilter<"Product"> | number
+    stock?: IntFilter<"Product"> | number
+    barbershopId?: StringFilter<"Product"> | string
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+    barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
+    appointments?: AppointmentListRelationFilter
+  }
+
+  export type ProductOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    price?: SortOrder
+    stock?: SortOrder
+    barbershopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    barbershop?: BarbershopOrderByWithRelationInput
+    appointments?: AppointmentOrderByRelationAggregateInput
+    _relevance?: ProductOrderByRelevanceInput
+  }
+
+  export type ProductWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProductWhereInput | ProductWhereInput[]
+    OR?: ProductWhereInput[]
+    NOT?: ProductWhereInput | ProductWhereInput[]
+    name?: StringFilter<"Product"> | string
+    price?: FloatFilter<"Product"> | number
+    stock?: IntFilter<"Product"> | number
+    barbershopId?: StringFilter<"Product"> | string
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+    barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
+    appointments?: AppointmentListRelationFilter
+  }, "id">
+
+  export type ProductOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    price?: SortOrder
+    stock?: SortOrder
+    barbershopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProductCountOrderByAggregateInput
+    _avg?: ProductAvgOrderByAggregateInput
+    _max?: ProductMaxOrderByAggregateInput
+    _min?: ProductMinOrderByAggregateInput
+    _sum?: ProductSumOrderByAggregateInput
+  }
+
+  export type ProductScalarWhereWithAggregatesInput = {
+    AND?: ProductScalarWhereWithAggregatesInput | ProductScalarWhereWithAggregatesInput[]
+    OR?: ProductScalarWhereWithAggregatesInput[]
+    NOT?: ProductScalarWhereWithAggregatesInput | ProductScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Product"> | string
+    name?: StringWithAggregatesFilter<"Product"> | string
+    price?: FloatWithAggregatesFilter<"Product"> | number
+    stock?: IntWithAggregatesFilter<"Product"> | number
+    barbershopId?: StringWithAggregatesFilter<"Product"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+  }
+
+  export type UpsellRuleWhereInput = {
+    AND?: UpsellRuleWhereInput | UpsellRuleWhereInput[]
+    OR?: UpsellRuleWhereInput[]
+    NOT?: UpsellRuleWhereInput | UpsellRuleWhereInput[]
+    id?: StringFilter<"UpsellRule"> | string
+    barbershopId?: StringFilter<"UpsellRule"> | string
+    triggerServiceId?: StringFilter<"UpsellRule"> | string
+    offerServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    offerProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    discountAmount?: FloatFilter<"UpsellRule"> | number
+    discountType?: StringFilter<"UpsellRule"> | string
+    customCopy?: StringNullableFilter<"UpsellRule"> | string | null
+    isActive?: BoolFilter<"UpsellRule"> | boolean
+    createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
+  }
+
+  export type UpsellRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    barbershopId?: SortOrder
+    triggerServiceId?: SortOrder
+    offerServiceId?: SortOrderInput | SortOrder
+    offerProductId?: SortOrderInput | SortOrder
+    discountAmount?: SortOrder
+    discountType?: SortOrder
+    customCopy?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    barbershop?: BarbershopOrderByWithRelationInput
+    _relevance?: UpsellRuleOrderByRelevanceInput
+  }
+
+  export type UpsellRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: UpsellRuleWhereInput | UpsellRuleWhereInput[]
+    OR?: UpsellRuleWhereInput[]
+    NOT?: UpsellRuleWhereInput | UpsellRuleWhereInput[]
+    barbershopId?: StringFilter<"UpsellRule"> | string
+    triggerServiceId?: StringFilter<"UpsellRule"> | string
+    offerServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    offerProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    discountAmount?: FloatFilter<"UpsellRule"> | number
+    discountType?: StringFilter<"UpsellRule"> | string
+    customCopy?: StringNullableFilter<"UpsellRule"> | string | null
+    isActive?: BoolFilter<"UpsellRule"> | boolean
+    createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
+  }, "id">
+
+  export type UpsellRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    barbershopId?: SortOrder
+    triggerServiceId?: SortOrder
+    offerServiceId?: SortOrderInput | SortOrder
+    offerProductId?: SortOrderInput | SortOrder
+    discountAmount?: SortOrder
+    discountType?: SortOrder
+    customCopy?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UpsellRuleCountOrderByAggregateInput
+    _avg?: UpsellRuleAvgOrderByAggregateInput
+    _max?: UpsellRuleMaxOrderByAggregateInput
+    _min?: UpsellRuleMinOrderByAggregateInput
+    _sum?: UpsellRuleSumOrderByAggregateInput
+  }
+
+  export type UpsellRuleScalarWhereWithAggregatesInput = {
+    AND?: UpsellRuleScalarWhereWithAggregatesInput | UpsellRuleScalarWhereWithAggregatesInput[]
+    OR?: UpsellRuleScalarWhereWithAggregatesInput[]
+    NOT?: UpsellRuleScalarWhereWithAggregatesInput | UpsellRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UpsellRule"> | string
+    barbershopId?: StringWithAggregatesFilter<"UpsellRule"> | string
+    triggerServiceId?: StringWithAggregatesFilter<"UpsellRule"> | string
+    offerServiceId?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
+    offerProductId?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
+    discountAmount?: FloatWithAggregatesFilter<"UpsellRule"> | number
+    discountType?: StringWithAggregatesFilter<"UpsellRule"> | string
+    customCopy?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
+    isActive?: BoolWithAggregatesFilter<"UpsellRule"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"UpsellRule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UpsellRule"> | Date | string
+  }
+
   export type BarbershopCreateInput = {
     id?: string
     name?: string | null
@@ -5959,6 +8594,8 @@ export namespace Prisma {
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     services?: ServiceCreateNestedManyWithoutBarbershopInput
     users?: UserCreateNestedManyWithoutBarbershopInput
+    products?: ProductCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateInput = {
@@ -5976,6 +8613,8 @@ export namespace Prisma {
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    products?: ProductUncheckedCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUpdateInput = {
@@ -5993,6 +8632,8 @@ export namespace Prisma {
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
     users?: UserUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateInput = {
@@ -6010,6 +8651,8 @@ export namespace Prisma {
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopCreateManyInput = {
@@ -6146,10 +8789,13 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
     barber?: UserCreateNestedOneWithoutAppointmentsInput
     services?: ServiceCreateNestedManyWithoutAppointmentsInput
+    products?: ProductCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentUncheckedCreateInput = {
@@ -6158,10 +8804,13 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barbershopId: string
     barberId?: string | null
     createdAt?: Date | string
     services?: ServiceUncheckedCreateNestedManyWithoutAppointmentsInput
+    products?: ProductUncheckedCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentUpdateInput = {
@@ -6169,10 +8818,13 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
     barber?: UserUpdateOneWithoutAppointmentsNestedInput
     services?: ServiceUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateInput = {
@@ -6181,10 +8833,13 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUncheckedUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentCreateManyInput = {
@@ -6193,6 +8848,8 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barbershopId: string
     barberId?: string | null
     createdAt?: Date | string
@@ -6203,6 +8860,8 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6212,6 +8871,8 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6288,6 +8949,176 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershopId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProductCreateInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    barbershop: BarbershopCreateNestedOneWithoutProductsInput
+    appointments?: AppointmentCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    barbershopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    barbershop?: BarbershopUpdateOneRequiredWithoutProductsNestedInput
+    appointments?: AppointmentUpdateManyWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUncheckedUpdateManyWithoutProductsNestedInput
+  }
+
+  export type ProductCreateManyInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    barbershopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleCreateInput = {
+    id?: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    barbershop: BarbershopCreateNestedOneWithoutUpsellRulesInput
+  }
+
+  export type UpsellRuleUncheckedCreateInput = {
+    id?: string
+    barbershopId: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UpsellRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    barbershop?: BarbershopUpdateOneRequiredWithoutUpsellRulesNestedInput
+  }
+
+  export type UpsellRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleCreateManyInput = {
+    id?: string
+    barbershopId: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UpsellRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6372,6 +9203,18 @@ export namespace Prisma {
     none?: UserWhereInput
   }
 
+  export type ProductListRelationFilter = {
+    every?: ProductWhereInput
+    some?: ProductWhereInput
+    none?: ProductWhereInput
+  }
+
+  export type UpsellRuleListRelationFilter = {
+    every?: UpsellRuleWhereInput
+    some?: UpsellRuleWhereInput
+    none?: UpsellRuleWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -6386,6 +9229,14 @@ export namespace Prisma {
   }
 
   export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UpsellRuleOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6594,6 +9445,17 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -6611,6 +9473,8 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
+    totalPrice?: SortOrder
+    discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
     createdAt?: SortOrder
@@ -6618,6 +9482,8 @@ export namespace Prisma {
 
   export type AppointmentAvgOrderByAggregateInput = {
     id?: SortOrder
+    totalPrice?: SortOrder
+    discount?: SortOrder
   }
 
   export type AppointmentMaxOrderByAggregateInput = {
@@ -6626,6 +9492,8 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
+    totalPrice?: SortOrder
+    discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
     createdAt?: SortOrder
@@ -6637,6 +9505,8 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
+    totalPrice?: SortOrder
+    discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
     createdAt?: SortOrder
@@ -6644,6 +9514,8 @@ export namespace Prisma {
 
   export type AppointmentSumOrderByAggregateInput = {
     id?: SortOrder
+    totalPrice?: SortOrder
+    discount?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6660,6 +9532,22 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -6735,6 +9623,121 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type ProductOrderByRelevanceInput = {
+    fields: ProductOrderByRelevanceFieldEnum | ProductOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type ProductCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    price?: SortOrder
+    stock?: SortOrder
+    barbershopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductAvgOrderByAggregateInput = {
+    price?: SortOrder
+    stock?: SortOrder
+  }
+
+  export type ProductMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    price?: SortOrder
+    stock?: SortOrder
+    barbershopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    price?: SortOrder
+    stock?: SortOrder
+    barbershopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductSumOrderByAggregateInput = {
+    price?: SortOrder
+    stock?: SortOrder
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type UpsellRuleOrderByRelevanceInput = {
+    fields: UpsellRuleOrderByRelevanceFieldEnum | UpsellRuleOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type UpsellRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    barbershopId?: SortOrder
+    triggerServiceId?: SortOrder
+    offerServiceId?: SortOrder
+    offerProductId?: SortOrder
+    discountAmount?: SortOrder
+    discountType?: SortOrder
+    customCopy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UpsellRuleAvgOrderByAggregateInput = {
+    discountAmount?: SortOrder
+  }
+
+  export type UpsellRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    barbershopId?: SortOrder
+    triggerServiceId?: SortOrder
+    offerServiceId?: SortOrder
+    offerProductId?: SortOrder
+    discountAmount?: SortOrder
+    discountType?: SortOrder
+    customCopy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UpsellRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    barbershopId?: SortOrder
+    triggerServiceId?: SortOrder
+    offerServiceId?: SortOrder
+    offerProductId?: SortOrder
+    discountAmount?: SortOrder
+    discountType?: SortOrder
+    customCopy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UpsellRuleSumOrderByAggregateInput = {
+    discountAmount?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type AppointmentCreateNestedManyWithoutBarbershopInput = {
     create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
@@ -6756,6 +9759,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
+  export type ProductCreateNestedManyWithoutBarbershopInput = {
+    create?: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput> | ProductCreateWithoutBarbershopInput[] | ProductUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutBarbershopInput | ProductCreateOrConnectWithoutBarbershopInput[]
+    createMany?: ProductCreateManyBarbershopInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type UpsellRuleCreateNestedManyWithoutBarbershopInput = {
+    create?: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput> | UpsellRuleCreateWithoutBarbershopInput[] | UpsellRuleUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: UpsellRuleCreateOrConnectWithoutBarbershopInput | UpsellRuleCreateOrConnectWithoutBarbershopInput[]
+    createMany?: UpsellRuleCreateManyBarbershopInputEnvelope
+    connect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+  }
+
   export type AppointmentUncheckedCreateNestedManyWithoutBarbershopInput = {
     create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
@@ -6775,6 +9792,20 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutBarbershopInput | UserCreateOrConnectWithoutBarbershopInput[]
     createMany?: UserCreateManyBarbershopInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutBarbershopInput = {
+    create?: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput> | ProductCreateWithoutBarbershopInput[] | ProductUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutBarbershopInput | ProductCreateOrConnectWithoutBarbershopInput[]
+    createMany?: ProductCreateManyBarbershopInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput = {
+    create?: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput> | UpsellRuleCreateWithoutBarbershopInput[] | UpsellRuleUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: UpsellRuleCreateOrConnectWithoutBarbershopInput | UpsellRuleCreateOrConnectWithoutBarbershopInput[]
+    createMany?: UpsellRuleCreateManyBarbershopInputEnvelope
+    connect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -6831,6 +9862,34 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type ProductUpdateManyWithoutBarbershopNestedInput = {
+    create?: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput> | ProductCreateWithoutBarbershopInput[] | ProductUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutBarbershopInput | ProductCreateOrConnectWithoutBarbershopInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutBarbershopInput | ProductUpsertWithWhereUniqueWithoutBarbershopInput[]
+    createMany?: ProductCreateManyBarbershopInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutBarbershopInput | ProductUpdateWithWhereUniqueWithoutBarbershopInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutBarbershopInput | ProductUpdateManyWithWhereWithoutBarbershopInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type UpsellRuleUpdateManyWithoutBarbershopNestedInput = {
+    create?: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput> | UpsellRuleCreateWithoutBarbershopInput[] | UpsellRuleUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: UpsellRuleCreateOrConnectWithoutBarbershopInput | UpsellRuleCreateOrConnectWithoutBarbershopInput[]
+    upsert?: UpsellRuleUpsertWithWhereUniqueWithoutBarbershopInput | UpsellRuleUpsertWithWhereUniqueWithoutBarbershopInput[]
+    createMany?: UpsellRuleCreateManyBarbershopInputEnvelope
+    set?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    disconnect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    delete?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    connect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    update?: UpsellRuleUpdateWithWhereUniqueWithoutBarbershopInput | UpsellRuleUpdateWithWhereUniqueWithoutBarbershopInput[]
+    updateMany?: UpsellRuleUpdateManyWithWhereWithoutBarbershopInput | UpsellRuleUpdateManyWithWhereWithoutBarbershopInput[]
+    deleteMany?: UpsellRuleScalarWhereInput | UpsellRuleScalarWhereInput[]
+  }
+
   export type AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput = {
     create?: XOR<AppointmentCreateWithoutBarbershopInput, AppointmentUncheckedCreateWithoutBarbershopInput> | AppointmentCreateWithoutBarbershopInput[] | AppointmentUncheckedCreateWithoutBarbershopInput[]
     connectOrCreate?: AppointmentCreateOrConnectWithoutBarbershopInput | AppointmentCreateOrConnectWithoutBarbershopInput[]
@@ -6871,6 +9930,34 @@ export namespace Prisma {
     update?: UserUpdateWithWhereUniqueWithoutBarbershopInput | UserUpdateWithWhereUniqueWithoutBarbershopInput[]
     updateMany?: UserUpdateManyWithWhereWithoutBarbershopInput | UserUpdateManyWithWhereWithoutBarbershopInput[]
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutBarbershopNestedInput = {
+    create?: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput> | ProductCreateWithoutBarbershopInput[] | ProductUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutBarbershopInput | ProductCreateOrConnectWithoutBarbershopInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutBarbershopInput | ProductUpsertWithWhereUniqueWithoutBarbershopInput[]
+    createMany?: ProductCreateManyBarbershopInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutBarbershopInput | ProductUpdateWithWhereUniqueWithoutBarbershopInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutBarbershopInput | ProductUpdateManyWithWhereWithoutBarbershopInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput = {
+    create?: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput> | UpsellRuleCreateWithoutBarbershopInput[] | UpsellRuleUncheckedCreateWithoutBarbershopInput[]
+    connectOrCreate?: UpsellRuleCreateOrConnectWithoutBarbershopInput | UpsellRuleCreateOrConnectWithoutBarbershopInput[]
+    upsert?: UpsellRuleUpsertWithWhereUniqueWithoutBarbershopInput | UpsellRuleUpsertWithWhereUniqueWithoutBarbershopInput[]
+    createMany?: UpsellRuleCreateManyBarbershopInputEnvelope
+    set?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    disconnect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    delete?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    connect?: UpsellRuleWhereUniqueInput | UpsellRuleWhereUniqueInput[]
+    update?: UpsellRuleUpdateWithWhereUniqueWithoutBarbershopInput | UpsellRuleUpdateWithWhereUniqueWithoutBarbershopInput[]
+    updateMany?: UpsellRuleUpdateManyWithWhereWithoutBarbershopInput | UpsellRuleUpdateManyWithWhereWithoutBarbershopInput[]
+    deleteMany?: UpsellRuleScalarWhereInput | UpsellRuleScalarWhereInput[]
   }
 
   export type BarbershopCreateNestedOneWithoutUsersInput = {
@@ -6951,10 +10038,30 @@ export namespace Prisma {
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
+  export type ProductCreateNestedManyWithoutAppointmentsInput = {
+    create?: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput> | ProductCreateWithoutAppointmentsInput[] | ProductUncheckedCreateWithoutAppointmentsInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutAppointmentsInput | ProductCreateOrConnectWithoutAppointmentsInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
   export type ServiceUncheckedCreateNestedManyWithoutAppointmentsInput = {
     create?: XOR<ServiceCreateWithoutAppointmentsInput, ServiceUncheckedCreateWithoutAppointmentsInput> | ServiceCreateWithoutAppointmentsInput[] | ServiceUncheckedCreateWithoutAppointmentsInput[]
     connectOrCreate?: ServiceCreateOrConnectWithoutAppointmentsInput | ServiceCreateOrConnectWithoutAppointmentsInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutAppointmentsInput = {
+    create?: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput> | ProductCreateWithoutAppointmentsInput[] | ProductUncheckedCreateWithoutAppointmentsInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutAppointmentsInput | ProductCreateOrConnectWithoutAppointmentsInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput = {
@@ -6988,6 +10095,19 @@ export namespace Prisma {
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
+  export type ProductUpdateManyWithoutAppointmentsNestedInput = {
+    create?: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput> | ProductCreateWithoutAppointmentsInput[] | ProductUncheckedCreateWithoutAppointmentsInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutAppointmentsInput | ProductCreateOrConnectWithoutAppointmentsInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutAppointmentsInput | ProductUpsertWithWhereUniqueWithoutAppointmentsInput[]
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutAppointmentsInput | ProductUpdateWithWhereUniqueWithoutAppointmentsInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutAppointmentsInput | ProductUpdateManyWithWhereWithoutAppointmentsInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -7007,6 +10127,19 @@ export namespace Prisma {
     update?: ServiceUpdateWithWhereUniqueWithoutAppointmentsInput | ServiceUpdateWithWhereUniqueWithoutAppointmentsInput[]
     updateMany?: ServiceUpdateManyWithWhereWithoutAppointmentsInput | ServiceUpdateManyWithWhereWithoutAppointmentsInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutAppointmentsNestedInput = {
+    create?: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput> | ProductCreateWithoutAppointmentsInput[] | ProductUncheckedCreateWithoutAppointmentsInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutAppointmentsInput | ProductCreateOrConnectWithoutAppointmentsInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutAppointmentsInput | ProductUpsertWithWhereUniqueWithoutAppointmentsInput[]
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutAppointmentsInput | ProductUpdateWithWhereUniqueWithoutAppointmentsInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutAppointmentsInput | ProductUpdateManyWithWhereWithoutAppointmentsInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
   export type BarbershopCreateNestedOneWithoutServicesInput = {
@@ -7067,6 +10200,76 @@ export namespace Prisma {
     update?: AppointmentUpdateWithWhereUniqueWithoutServicesInput | AppointmentUpdateWithWhereUniqueWithoutServicesInput[]
     updateMany?: AppointmentUpdateManyWithWhereWithoutServicesInput | AppointmentUpdateManyWithWhereWithoutServicesInput[]
     deleteMany?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
+  }
+
+  export type BarbershopCreateNestedOneWithoutProductsInput = {
+    create?: XOR<BarbershopCreateWithoutProductsInput, BarbershopUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: BarbershopCreateOrConnectWithoutProductsInput
+    connect?: BarbershopWhereUniqueInput
+  }
+
+  export type AppointmentCreateNestedManyWithoutProductsInput = {
+    create?: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput> | AppointmentCreateWithoutProductsInput[] | AppointmentUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutProductsInput | AppointmentCreateOrConnectWithoutProductsInput[]
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+  }
+
+  export type AppointmentUncheckedCreateNestedManyWithoutProductsInput = {
+    create?: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput> | AppointmentCreateWithoutProductsInput[] | AppointmentUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutProductsInput | AppointmentCreateOrConnectWithoutProductsInput[]
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+  }
+
+  export type BarbershopUpdateOneRequiredWithoutProductsNestedInput = {
+    create?: XOR<BarbershopCreateWithoutProductsInput, BarbershopUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: BarbershopCreateOrConnectWithoutProductsInput
+    upsert?: BarbershopUpsertWithoutProductsInput
+    connect?: BarbershopWhereUniqueInput
+    update?: XOR<XOR<BarbershopUpdateToOneWithWhereWithoutProductsInput, BarbershopUpdateWithoutProductsInput>, BarbershopUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type AppointmentUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput> | AppointmentCreateWithoutProductsInput[] | AppointmentUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutProductsInput | AppointmentCreateOrConnectWithoutProductsInput[]
+    upsert?: AppointmentUpsertWithWhereUniqueWithoutProductsInput | AppointmentUpsertWithWhereUniqueWithoutProductsInput[]
+    set?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    disconnect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    delete?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    update?: AppointmentUpdateWithWhereUniqueWithoutProductsInput | AppointmentUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: AppointmentUpdateManyWithWhereWithoutProductsInput | AppointmentUpdateManyWithWhereWithoutProductsInput[]
+    deleteMany?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
+  }
+
+  export type AppointmentUncheckedUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput> | AppointmentCreateWithoutProductsInput[] | AppointmentUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: AppointmentCreateOrConnectWithoutProductsInput | AppointmentCreateOrConnectWithoutProductsInput[]
+    upsert?: AppointmentUpsertWithWhereUniqueWithoutProductsInput | AppointmentUpsertWithWhereUniqueWithoutProductsInput[]
+    set?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    disconnect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    delete?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    connect?: AppointmentWhereUniqueInput | AppointmentWhereUniqueInput[]
+    update?: AppointmentUpdateWithWhereUniqueWithoutProductsInput | AppointmentUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: AppointmentUpdateManyWithWhereWithoutProductsInput | AppointmentUpdateManyWithWhereWithoutProductsInput[]
+    deleteMany?: AppointmentScalarWhereInput | AppointmentScalarWhereInput[]
+  }
+
+  export type BarbershopCreateNestedOneWithoutUpsellRulesInput = {
+    create?: XOR<BarbershopCreateWithoutUpsellRulesInput, BarbershopUncheckedCreateWithoutUpsellRulesInput>
+    connectOrCreate?: BarbershopCreateOrConnectWithoutUpsellRulesInput
+    connect?: BarbershopWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type BarbershopUpdateOneRequiredWithoutUpsellRulesNestedInput = {
+    create?: XOR<BarbershopCreateWithoutUpsellRulesInput, BarbershopUncheckedCreateWithoutUpsellRulesInput>
+    connectOrCreate?: BarbershopCreateOrConnectWithoutUpsellRulesInput
+    upsert?: BarbershopUpsertWithoutUpsellRulesInput
+    connect?: BarbershopWhereUniqueInput
+    update?: XOR<XOR<BarbershopUpdateToOneWithWhereWithoutUpsellRulesInput, BarbershopUpdateWithoutUpsellRulesInput>, BarbershopUncheckedUpdateWithoutUpsellRulesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7230,6 +10433,17 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -7257,6 +10471,22 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[]
@@ -7273,14 +10503,30 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type AppointmentCreateWithoutBarbershopInput = {
     clientName: string
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     createdAt?: Date | string
     barber?: UserCreateNestedOneWithoutAppointmentsInput
     services?: ServiceCreateNestedManyWithoutAppointmentsInput
+    products?: ProductCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentUncheckedCreateWithoutBarbershopInput = {
@@ -7289,9 +10535,12 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barberId?: string | null
     createdAt?: Date | string
     services?: ServiceUncheckedCreateNestedManyWithoutAppointmentsInput
+    products?: ProductUncheckedCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentCreateOrConnectWithoutBarbershopInput = {
@@ -7368,6 +10617,72 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProductCreateWithoutBarbershopInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateWithoutBarbershopInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductCreateOrConnectWithoutBarbershopInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput>
+  }
+
+  export type ProductCreateManyBarbershopInputEnvelope = {
+    data: ProductCreateManyBarbershopInput | ProductCreateManyBarbershopInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UpsellRuleCreateWithoutBarbershopInput = {
+    id?: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UpsellRuleUncheckedCreateWithoutBarbershopInput = {
+    id?: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UpsellRuleCreateOrConnectWithoutBarbershopInput = {
+    where: UpsellRuleWhereUniqueInput
+    create: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput>
+  }
+
+  export type UpsellRuleCreateManyBarbershopInputEnvelope = {
+    data: UpsellRuleCreateManyBarbershopInput | UpsellRuleCreateManyBarbershopInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AppointmentUpsertWithWhereUniqueWithoutBarbershopInput = {
     where: AppointmentWhereUniqueInput
     update: XOR<AppointmentUpdateWithoutBarbershopInput, AppointmentUncheckedUpdateWithoutBarbershopInput>
@@ -7393,6 +10708,8 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
+    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
@@ -7458,6 +10775,68 @@ export namespace Prisma {
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
+  export type ProductUpsertWithWhereUniqueWithoutBarbershopInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutBarbershopInput, ProductUncheckedUpdateWithoutBarbershopInput>
+    create: XOR<ProductCreateWithoutBarbershopInput, ProductUncheckedCreateWithoutBarbershopInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutBarbershopInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutBarbershopInput, ProductUncheckedUpdateWithoutBarbershopInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutBarbershopInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutBarbershopInput>
+  }
+
+  export type ProductScalarWhereInput = {
+    AND?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    OR?: ProductScalarWhereInput[]
+    NOT?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    id?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    price?: FloatFilter<"Product"> | number
+    stock?: IntFilter<"Product"> | number
+    barbershopId?: StringFilter<"Product"> | string
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+  }
+
+  export type UpsellRuleUpsertWithWhereUniqueWithoutBarbershopInput = {
+    where: UpsellRuleWhereUniqueInput
+    update: XOR<UpsellRuleUpdateWithoutBarbershopInput, UpsellRuleUncheckedUpdateWithoutBarbershopInput>
+    create: XOR<UpsellRuleCreateWithoutBarbershopInput, UpsellRuleUncheckedCreateWithoutBarbershopInput>
+  }
+
+  export type UpsellRuleUpdateWithWhereUniqueWithoutBarbershopInput = {
+    where: UpsellRuleWhereUniqueInput
+    data: XOR<UpsellRuleUpdateWithoutBarbershopInput, UpsellRuleUncheckedUpdateWithoutBarbershopInput>
+  }
+
+  export type UpsellRuleUpdateManyWithWhereWithoutBarbershopInput = {
+    where: UpsellRuleScalarWhereInput
+    data: XOR<UpsellRuleUpdateManyMutationInput, UpsellRuleUncheckedUpdateManyWithoutBarbershopInput>
+  }
+
+  export type UpsellRuleScalarWhereInput = {
+    AND?: UpsellRuleScalarWhereInput | UpsellRuleScalarWhereInput[]
+    OR?: UpsellRuleScalarWhereInput[]
+    NOT?: UpsellRuleScalarWhereInput | UpsellRuleScalarWhereInput[]
+    id?: StringFilter<"UpsellRule"> | string
+    barbershopId?: StringFilter<"UpsellRule"> | string
+    triggerServiceId?: StringFilter<"UpsellRule"> | string
+    offerServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    offerProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    discountAmount?: FloatFilter<"UpsellRule"> | number
+    discountType?: StringFilter<"UpsellRule"> | string
+    customCopy?: StringNullableFilter<"UpsellRule"> | string | null
+    isActive?: BoolFilter<"UpsellRule"> | boolean
+    createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+  }
+
   export type BarbershopCreateWithoutUsersInput = {
     id?: string
     name?: string | null
@@ -7472,6 +10851,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     services?: ServiceCreateNestedManyWithoutBarbershopInput
+    products?: ProductCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateWithoutUsersInput = {
@@ -7488,6 +10869,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
+    products?: ProductUncheckedCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopCreateOrConnectWithoutUsersInput = {
@@ -7500,9 +10883,12 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
     services?: ServiceCreateNestedManyWithoutAppointmentsInput
+    products?: ProductCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentUncheckedCreateWithoutBarberInput = {
@@ -7511,9 +10897,12 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barbershopId: string
     createdAt?: Date | string
     services?: ServiceUncheckedCreateNestedManyWithoutAppointmentsInput
+    products?: ProductUncheckedCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentCreateOrConnectWithoutBarberInput = {
@@ -7551,6 +10940,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateWithoutUsersInput = {
@@ -7567,6 +10958,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type AppointmentUpsertWithWhereUniqueWithoutBarberInput = {
@@ -7599,6 +10992,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     services?: ServiceCreateNestedManyWithoutBarbershopInput
     users?: UserCreateNestedManyWithoutBarbershopInput
+    products?: ProductCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateWithoutAppointmentsInput = {
@@ -7615,6 +11010,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    products?: ProductUncheckedCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopCreateOrConnectWithoutAppointmentsInput = {
@@ -7676,6 +11073,31 @@ export namespace Prisma {
     create: XOR<ServiceCreateWithoutAppointmentsInput, ServiceUncheckedCreateWithoutAppointmentsInput>
   }
 
+  export type ProductCreateWithoutAppointmentsInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    barbershop: BarbershopCreateNestedOneWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateWithoutAppointmentsInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    barbershopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductCreateOrConnectWithoutAppointmentsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput>
+  }
+
   export type BarbershopUpsertWithoutAppointmentsInput = {
     update: XOR<BarbershopUpdateWithoutAppointmentsInput, BarbershopUncheckedUpdateWithoutAppointmentsInput>
     create: XOR<BarbershopCreateWithoutAppointmentsInput, BarbershopUncheckedCreateWithoutAppointmentsInput>
@@ -7701,6 +11123,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUpdateManyWithoutBarbershopNestedInput
     users?: UserUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateWithoutAppointmentsInput = {
@@ -7717,6 +11141,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type UserUpsertWithoutAppointmentsInput = {
@@ -7770,6 +11196,22 @@ export namespace Prisma {
     data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutAppointmentsInput>
   }
 
+  export type ProductUpsertWithWhereUniqueWithoutAppointmentsInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutAppointmentsInput, ProductUncheckedUpdateWithoutAppointmentsInput>
+    create: XOR<ProductCreateWithoutAppointmentsInput, ProductUncheckedCreateWithoutAppointmentsInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutAppointmentsInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutAppointmentsInput, ProductUncheckedUpdateWithoutAppointmentsInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutAppointmentsInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutAppointmentsInput>
+  }
+
   export type BarbershopCreateWithoutServicesInput = {
     id?: string
     name?: string | null
@@ -7784,6 +11226,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
     users?: UserCreateNestedManyWithoutBarbershopInput
+    products?: ProductCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopUncheckedCreateWithoutServicesInput = {
@@ -7800,6 +11244,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
     users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    products?: ProductUncheckedCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput
   }
 
   export type BarbershopCreateOrConnectWithoutServicesInput = {
@@ -7812,9 +11258,12 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
     barber?: UserCreateNestedOneWithoutAppointmentsInput
+    products?: ProductCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentUncheckedCreateWithoutServicesInput = {
@@ -7823,9 +11272,12 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barbershopId: string
     barberId?: string | null
     createdAt?: Date | string
+    products?: ProductUncheckedCreateNestedManyWithoutAppointmentsInput
   }
 
   export type AppointmentCreateOrConnectWithoutServicesInput = {
@@ -7858,6 +11310,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
     users?: UserUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUpdateManyWithoutBarbershopNestedInput
   }
 
   export type BarbershopUncheckedUpdateWithoutServicesInput = {
@@ -7874,6 +11328,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
     users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput
   }
 
   export type AppointmentUpsertWithWhereUniqueWithoutServicesInput = {
@@ -7892,12 +11348,238 @@ export namespace Prisma {
     data: XOR<AppointmentUpdateManyMutationInput, AppointmentUncheckedUpdateManyWithoutServicesInput>
   }
 
+  export type BarbershopCreateWithoutProductsInput = {
+    id?: string
+    name?: string | null
+    phone?: string | null
+    address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
+    services?: ServiceCreateNestedManyWithoutBarbershopInput
+    users?: UserCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleCreateNestedManyWithoutBarbershopInput
+  }
+
+  export type BarbershopUncheckedCreateWithoutProductsInput = {
+    id?: string
+    name?: string | null
+    phone?: string | null
+    address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
+    users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    upsellRules?: UpsellRuleUncheckedCreateNestedManyWithoutBarbershopInput
+  }
+
+  export type BarbershopCreateOrConnectWithoutProductsInput = {
+    where: BarbershopWhereUniqueInput
+    create: XOR<BarbershopCreateWithoutProductsInput, BarbershopUncheckedCreateWithoutProductsInput>
+  }
+
+  export type AppointmentCreateWithoutProductsInput = {
+    clientName: string
+    date: string
+    time: string
+    status?: string
+    totalPrice?: number | null
+    discount?: number | null
+    createdAt?: Date | string
+    barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
+    barber?: UserCreateNestedOneWithoutAppointmentsInput
+    services?: ServiceCreateNestedManyWithoutAppointmentsInput
+  }
+
+  export type AppointmentUncheckedCreateWithoutProductsInput = {
+    id?: number
+    clientName: string
+    date: string
+    time: string
+    status?: string
+    totalPrice?: number | null
+    discount?: number | null
+    barbershopId: string
+    barberId?: string | null
+    createdAt?: Date | string
+    services?: ServiceUncheckedCreateNestedManyWithoutAppointmentsInput
+  }
+
+  export type AppointmentCreateOrConnectWithoutProductsInput = {
+    where: AppointmentWhereUniqueInput
+    create: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput>
+  }
+
+  export type BarbershopUpsertWithoutProductsInput = {
+    update: XOR<BarbershopUpdateWithoutProductsInput, BarbershopUncheckedUpdateWithoutProductsInput>
+    create: XOR<BarbershopCreateWithoutProductsInput, BarbershopUncheckedCreateWithoutProductsInput>
+    where?: BarbershopWhereInput
+  }
+
+  export type BarbershopUpdateToOneWithWhereWithoutProductsInput = {
+    where?: BarbershopWhereInput
+    data: XOR<BarbershopUpdateWithoutProductsInput, BarbershopUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type BarbershopUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: StringFieldUpdateOperationsInput | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
+    services?: ServiceUpdateManyWithoutBarbershopNestedInput
+    users?: UserUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUpdateManyWithoutBarbershopNestedInput
+  }
+
+  export type BarbershopUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: StringFieldUpdateOperationsInput | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
+    users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    upsellRules?: UpsellRuleUncheckedUpdateManyWithoutBarbershopNestedInput
+  }
+
+  export type AppointmentUpsertWithWhereUniqueWithoutProductsInput = {
+    where: AppointmentWhereUniqueInput
+    update: XOR<AppointmentUpdateWithoutProductsInput, AppointmentUncheckedUpdateWithoutProductsInput>
+    create: XOR<AppointmentCreateWithoutProductsInput, AppointmentUncheckedCreateWithoutProductsInput>
+  }
+
+  export type AppointmentUpdateWithWhereUniqueWithoutProductsInput = {
+    where: AppointmentWhereUniqueInput
+    data: XOR<AppointmentUpdateWithoutProductsInput, AppointmentUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type AppointmentUpdateManyWithWhereWithoutProductsInput = {
+    where: AppointmentScalarWhereInput
+    data: XOR<AppointmentUpdateManyMutationInput, AppointmentUncheckedUpdateManyWithoutProductsInput>
+  }
+
+  export type BarbershopCreateWithoutUpsellRulesInput = {
+    id?: string
+    name?: string | null
+    phone?: string | null
+    address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentCreateNestedManyWithoutBarbershopInput
+    services?: ServiceCreateNestedManyWithoutBarbershopInput
+    users?: UserCreateNestedManyWithoutBarbershopInput
+    products?: ProductCreateNestedManyWithoutBarbershopInput
+  }
+
+  export type BarbershopUncheckedCreateWithoutUpsellRulesInput = {
+    id?: string
+    name?: string | null
+    phone?: string | null
+    address?: string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: string
+    planExpiresAt?: Date | string
+    abacateCustomerId?: string | null
+    abacateSubscriptionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutBarbershopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutBarbershopInput
+    users?: UserUncheckedCreateNestedManyWithoutBarbershopInput
+    products?: ProductUncheckedCreateNestedManyWithoutBarbershopInput
+  }
+
+  export type BarbershopCreateOrConnectWithoutUpsellRulesInput = {
+    where: BarbershopWhereUniqueInput
+    create: XOR<BarbershopCreateWithoutUpsellRulesInput, BarbershopUncheckedCreateWithoutUpsellRulesInput>
+  }
+
+  export type BarbershopUpsertWithoutUpsellRulesInput = {
+    update: XOR<BarbershopUpdateWithoutUpsellRulesInput, BarbershopUncheckedUpdateWithoutUpsellRulesInput>
+    create: XOR<BarbershopCreateWithoutUpsellRulesInput, BarbershopUncheckedCreateWithoutUpsellRulesInput>
+    where?: BarbershopWhereInput
+  }
+
+  export type BarbershopUpdateToOneWithWhereWithoutUpsellRulesInput = {
+    where?: BarbershopWhereInput
+    data: XOR<BarbershopUpdateWithoutUpsellRulesInput, BarbershopUncheckedUpdateWithoutUpsellRulesInput>
+  }
+
+  export type BarbershopUpdateWithoutUpsellRulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: StringFieldUpdateOperationsInput | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUpdateManyWithoutBarbershopNestedInput
+    services?: ServiceUpdateManyWithoutBarbershopNestedInput
+    users?: UserUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUpdateManyWithoutBarbershopNestedInput
+  }
+
+  export type BarbershopUncheckedUpdateWithoutUpsellRulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    businessHours?: NullableJsonNullValueInput | InputJsonValue
+    planStatus?: StringFieldUpdateOperationsInput | string
+    planExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    abacateCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    abacateSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUncheckedUpdateManyWithoutBarbershopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutBarbershopNestedInput
+    users?: UserUncheckedUpdateManyWithoutBarbershopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutBarbershopNestedInput
+  }
+
   export type AppointmentCreateManyBarbershopInput = {
     id?: number
     clientName: string
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barberId?: string | null
     createdAt?: Date | string
   }
@@ -7922,14 +11604,39 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
   }
 
+  export type ProductCreateManyBarbershopInput = {
+    id?: string
+    name: string
+    price: number
+    stock?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UpsellRuleCreateManyBarbershopInput = {
+    id?: string
+    triggerServiceId: string
+    offerServiceId?: string | null
+    offerProductId?: string | null
+    discountAmount: number
+    discountType?: string
+    customCopy?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AppointmentUpdateWithoutBarbershopInput = {
     clientName?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barber?: UserUpdateOneWithoutAppointmentsNestedInput
     services?: ServiceUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateWithoutBarbershopInput = {
@@ -7938,9 +11645,12 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUncheckedUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateManyWithoutBarbershopInput = {
@@ -7949,6 +11659,8 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8017,12 +11729,82 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type ProductUpdateWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUpdateManyWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appointments?: AppointmentUncheckedUpdateManyWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleUpdateWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleUncheckedUpdateWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpsellRuleUncheckedUpdateManyWithoutBarbershopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    triggerServiceId?: StringFieldUpdateOperationsInput | string
+    offerServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    offerProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    discountAmount?: FloatFieldUpdateOperationsInput | number
+    discountType?: StringFieldUpdateOperationsInput | string
+    customCopy?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AppointmentCreateManyBarberInput = {
     id?: number
     clientName: string
     date: string
     time: string
     status?: string
+    totalPrice?: number | null
+    discount?: number | null
     barbershopId: string
     createdAt?: Date | string
   }
@@ -8032,9 +11814,12 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
     services?: ServiceUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateWithoutBarberInput = {
@@ -8043,9 +11828,12 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     services?: ServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
+    products?: ProductUncheckedUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateManyWithoutBarberInput = {
@@ -8054,6 +11842,8 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8088,14 +11878,47 @@ export namespace Prisma {
     barbershopId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type ProductUpdateWithoutAppointmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    barbershop?: BarbershopUpdateOneRequiredWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutAppointmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductUncheckedUpdateManyWithoutAppointmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    stock?: IntFieldUpdateOperationsInput | number
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AppointmentUpdateWithoutServicesInput = {
     clientName?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
     barber?: UserUpdateOneWithoutAppointmentsNestedInput
+    products?: ProductUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateWithoutServicesInput = {
@@ -8104,9 +11927,12 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    products?: ProductUncheckedUpdateManyWithoutAppointmentsNestedInput
   }
 
   export type AppointmentUncheckedUpdateManyWithoutServicesInput = {
@@ -8115,6 +11941,48 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    barberId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppointmentUpdateWithoutProductsInput = {
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
+    barber?: UserUpdateOneWithoutAppointmentsNestedInput
+    services?: ServiceUpdateManyWithoutAppointmentsNestedInput
+  }
+
+  export type AppointmentUncheckedUpdateWithoutProductsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
+    barbershopId?: StringFieldUpdateOperationsInput | string
+    barberId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    services?: ServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
+  }
+
+  export type AppointmentUncheckedUpdateManyWithoutProductsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientName?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    time?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

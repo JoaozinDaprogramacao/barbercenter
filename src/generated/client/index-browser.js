@@ -152,6 +152,8 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   date: 'date',
   time: 'time',
   status: 'status',
+  totalPrice: 'totalPrice',
+  discount: 'discount',
   barbershopId: 'barbershopId',
   barberId: 'barberId',
   createdAt: 'createdAt'
@@ -165,6 +167,30 @@ exports.Prisma.ServiceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   barbershopId: 'barbershopId'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  stock: 'stock',
+  barbershopId: 'barbershopId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UpsellRuleScalarFieldEnum = {
+  id: 'id',
+  barbershopId: 'barbershopId',
+  triggerServiceId: 'triggerServiceId',
+  offerServiceId: 'offerServiceId',
+  offerProductId: 'offerProductId',
+  discountAmount: 'discountAmount',
+  discountType: 'discountType',
+  customCopy: 'customCopy',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -228,12 +254,30 @@ exports.Prisma.ServiceOrderByRelevanceFieldEnum = {
   barbershopId: 'barbershopId'
 };
 
+exports.Prisma.ProductOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  barbershopId: 'barbershopId'
+};
+
+exports.Prisma.UpsellRuleOrderByRelevanceFieldEnum = {
+  id: 'id',
+  barbershopId: 'barbershopId',
+  triggerServiceId: 'triggerServiceId',
+  offerServiceId: 'offerServiceId',
+  offerProductId: 'offerProductId',
+  discountType: 'discountType',
+  customCopy: 'customCopy'
+};
+
 
 exports.Prisma.ModelName = {
   Barbershop: 'Barbershop',
   User: 'User',
   Appointment: 'Appointment',
-  Service: 'Service'
+  Service: 'Service',
+  Product: 'Product',
+  UpsellRule: 'UpsellRule'
 };
 
 /**

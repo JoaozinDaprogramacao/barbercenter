@@ -57,62 +57,66 @@ export function CardPaymentActivity({ onBack, onClose, onSuccess, userData }: Ca
     <motion.div
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="absolute inset-0 flex flex-col bg-[#05150e] overflow-hidden"
+      className="absolute inset-0 flex flex-col bg-[#050505] overflow-hidden"
     >
-      {/* Efeitos de Fundo Artísticos */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-500/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-yellow-500/10 blur-[100px] rounded-full pointer-events-none" />
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
-        style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/black-paper.png")` }}
-      />
+      {/* Efeitos Premium do Dashboard (Glows Acobreados) */}
+      <div className="absolute top-0 right-0 h-[400px] w-full bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.15),transparent_60%)] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 h-[400px] w-full bg-[radial-gradient(circle_at_bottom_left,rgba(212,154,98,0.10),transparent_50%)] pointer-events-none" />
 
-      <header className="relative z-10 p-6 flex justify-between items-center border-b border-emerald-900/30 bg-black/20 backdrop-blur-md">
-        <button onClick={onBack} className="w-10 flex justify-start text-emerald-100/50 hover:text-white transition-colors">
-          <ArrowLeft size={24} />
+      <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/5 bg-black/40 backdrop-blur-md">
+        <button 
+          onClick={onBack} 
+          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-zinc-400 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] active:scale-90"
+        >
+          <ArrowLeft size={20} strokeWidth={2.5} />
         </button>
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+        <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#B87333]">
           Pagamento Seguro
         </span>
-        <button onClick={onClose} className="w-10 flex justify-end text-emerald-100/50 hover:text-white transition-colors">
-          <X size={24} />
+        <button 
+          onClick={onClose} 
+          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-zinc-400 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] active:scale-90"
+        >
+          <X size={20} strokeWidth={2.5} />
         </button>
       </header>
 
       <div className="relative z-10 flex-1 overflow-y-auto p-8 flex flex-col items-center justify-center text-center">
         {!error ? (
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-[3rem] shadow-2xl flex flex-col items-center max-w-sm w-full relative overflow-hidden">
-            {/* Brilho interno no card */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
+          <div className="group relative w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.03] p-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_40%)]" />
             
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              className="mb-8 relative"
-            >
-              <div className="absolute inset-0 bg-yellow-400/30 blur-xl rounded-full" />
-              <Loader2 size={64} className="text-yellow-400 relative z-10 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" />
-            </motion.div>
+            <div className="relative z-10 flex flex-col items-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                className="mb-8"
+              >
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-[#B87333]/30 bg-[#B87333]/10 text-[#D49A62] shadow-[0_0_20px_rgba(184,115,51,0.2)]">
+                  <Loader2 size={36} strokeWidth={2.5} />
+                </div>
+              </motion.div>
 
-            <h2 className="text-2xl font-black text-white leading-tight mb-4 tracking-tighter italic">
-              Preparando ambiente <br /> <span className="text-emerald-400">seguro...</span>
-            </h2>
-            <p className="text-emerald-100/60 text-sm font-medium leading-relaxed">
-              Você será redirecionado para a página de pagamento criptografada.
-            </p>
+              <h2 className="text-2xl font-black leading-tight tracking-tighter text-[#F7EFE2] mb-3">
+                Preparando ambiente <br /> seguro...
+              </h2>
+              <p className="text-sm font-medium leading-relaxed text-zinc-400">
+                Você será redirecionado para a página criptografada.
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="bg-white/5 backdrop-blur-xl border border-red-500/20 p-10 rounded-[3rem] shadow-2xl flex flex-col items-center max-w-sm w-full">
-            <div className="w-20 h-20 bg-gradient-to-br from-red-500/20 to-red-900/40 rounded-full flex items-center justify-center text-red-400 mb-6 border border-red-500/30 shadow-inner">
-              <X size={36} />
+          <div className="w-full max-w-sm rounded-[2.5rem] border border-white/5 bg-white/[0.02] p-10 backdrop-blur-md shadow-xl">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.8rem] border border-red-500/20 bg-red-500/10 text-red-400 mb-6 shadow-inner">
+              <X size={36} strokeWidth={2.5} />
             </div>
-            <h2 className="text-2xl font-black text-white mb-4 italic">Ops! Algo deu errado.</h2>
-            <p className="text-emerald-100/60 text-sm mb-8">{error}</p>
+            <h2 className="text-2xl font-black tracking-tighter text-[#F7EFE2] mb-3">Ops! Algo deu errado.</h2>
+            <p className="text-sm font-medium text-zinc-500 mb-8">{error}</p>
             <button
               onClick={onBack}
-              className="w-full bg-gradient-to-r from-emerald-600 to-[#0d2b1d] border border-emerald-500/30 text-white py-4 rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:brightness-110 transition-all"
+              className="w-full rounded-[1.5rem] bg-zinc-800/80 border border-white/10 py-4 px-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#F7EFE2] transition-all hover:bg-zinc-700 hover:text-white active:scale-95"
             >
-              Voltar e tentar novamente
+              Voltar e Tentar Novamente
             </button>
           </div>
         )}

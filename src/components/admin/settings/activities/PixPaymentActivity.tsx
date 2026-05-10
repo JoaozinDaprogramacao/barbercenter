@@ -107,55 +107,58 @@ export function PixPaymentActivity({
     <motion.div
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="absolute inset-0 flex flex-col bg-[#05150e] z-50 overflow-hidden"
+      className="absolute inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden"
     >
-      {/* Efeitos Artísticos */}
-      <div className="absolute top-10 right-0 w-80 h-80 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-500/5 blur-[100px] rounded-full pointer-events-none" />
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
-        style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/black-paper.png")` }}
-      />
+      {/* Efeitos Artísticos Premium (Glows Acobreados) */}
+      <div className="absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.15),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom_left,rgba(212,154,98,0.10),transparent_50%)] pointer-events-none" />
 
-      <header className="relative z-10 p-6 flex justify-between items-center border-b border-emerald-900/30 bg-black/20 backdrop-blur-md">
-        <button onClick={onBack} className="w-10 text-emerald-100/50 hover:text-white transition-colors">
-          <ChevronLeft size={28} />
+      <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/5 bg-black/40 backdrop-blur-md">
+        <button 
+          onClick={onBack} 
+          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-zinc-400 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] active:scale-90"
+        >
+          <ChevronLeft size={24} strokeWidth={2.5} />
         </button>
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Pagamento Pix</span>
-        <button onClick={onClose} className="w-10 flex justify-end text-emerald-100/50 hover:text-white transition-colors">
-          <X size={24} />
+        <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#B87333]">Pagamento Pix</span>
+        <button 
+          onClick={onClose} 
+          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-zinc-400 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] active:scale-90"
+        >
+          <X size={20} strokeWidth={2.5} />
         </button>
       </header>
 
       <div className="relative z-10 flex-1 overflow-y-auto p-8 text-center no-scrollbar">
         {step === 'FORM' ? (
-          <form onSubmit={handleGeneratePix} className="max-w-sm mx-auto space-y-6 text-left mt-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-white tracking-tighter italic">
-                Dados de <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-200">Faturamento</span>
+          <form onSubmit={handleGeneratePix} className="mx-auto max-w-sm space-y-6 mt-6 text-left">
+            <div className="mb-8 text-left">
+              <h2 className="text-[2rem] font-black leading-none tracking-tighter text-[#F7EFE2]">
+                Dados de <br/>
+                <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Faturamento</span>
               </h2>
-              <p className="text-emerald-100/60 text-sm mt-3">Informe os dados para gerar a cobrança via AbacatePay.</p>
+              <p className="mt-3 text-[13px] font-medium text-zinc-400">Informe os dados para gerar a cobrança via Pix.</p>
             </div>
 
-            <div className="space-y-4 bg-white/5 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 shadow-xl">
-              <div>
-                <label className="text-[10px] font-bold text-emerald-100/50 uppercase ml-4 tracking-widest">CPF ou CNPJ</label>
+            <div className="space-y-4 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 shadow-xl backdrop-blur-sm">
+              <div className="text-left">
+                <label className="ml-3 text-[10px] font-black uppercase tracking-widest text-[#B87333]/80">CPF ou CNPJ</label>
                 <input
                   required
                   placeholder="000.000.000-00"
                   value={taxId}
                   onChange={e => setTaxId(e.target.value)}
-                  className="w-full bg-[#0d2b1d]/50 border border-emerald-900/50 rounded-2xl p-4 text-white placeholder:text-emerald-100/20 focus:border-emerald-400 focus:bg-[#0d2b1d] outline-none transition-all mt-2 shadow-inner"
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0A0A0A] p-4 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:outline-none focus:ring-1 focus:ring-[#B87333]/50 transition-all shadow-inner"
                 />
               </div>
-              <div>
-                <label className="text-[10px] font-bold text-emerald-100/50 uppercase ml-4 tracking-widest">WhatsApp / Celular</label>
+              <div className="text-left">
+                <label className="ml-3 text-[10px] font-black uppercase tracking-widest text-[#B87333]/80">WhatsApp / Celular</label>
                 <input
                   required
-                  placeholder="(38) 9 9999-9999"
+                  placeholder="(00) 9 0000-0000"
                   value={cellphone}
                   onChange={e => setCellphone(e.target.value)}
-                  className="w-full bg-[#0d2b1d]/50 border border-emerald-900/50 rounded-2xl p-4 text-white placeholder:text-emerald-100/20 focus:border-emerald-400 focus:bg-[#0d2b1d] outline-none transition-all mt-2 shadow-inner"
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0A0A0A] p-4 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:outline-none focus:ring-1 focus:ring-[#B87333]/50 transition-all shadow-inner"
                 />
               </div>
             </div>
@@ -163,50 +166,50 @@ export function PixPaymentActivity({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#05150e] py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] disabled:opacity-50"
+              className="mt-8 flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-gradient-to-r from-[#D49A62] to-[#B87333] py-4 text-[12px] font-black uppercase tracking-[0.2em] text-[#050505] shadow-[0_10px_25px_rgba(184,115,51,0.25)] transition-all hover:brightness-110 active:scale-95 disabled:opacity-60"
             >
-              {loading ? <Loader2 className="animate-spin text-[#05150e]" size={20} /> : "GERAR QR CODE"}
+              {loading ? <Loader2 className="animate-spin text-[#050505]" size={20} /> : "GERAR QR CODE PIX"}
             </button>
           </form>
         ) : (
-          <div className="max-w-sm mx-auto mt-4">
-            <h2 className="text-2xl font-black text-white mb-8 tracking-tighter italic">
-              PIX para <span className="text-emerald-400">pagamento</span>
+          <div className="mx-auto max-w-sm mt-4 flex flex-col items-center">
+            <h2 className="mb-8 text-[2rem] font-black tracking-tighter text-[#F7EFE2] leading-none">
+              PIX <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Gerado</span>
             </h2>
 
-            <div className="relative inline-block mb-8">
-              <div className="absolute inset-0 bg-emerald-400/20 blur-2xl rounded-full" />
-              <div className="relative bg-white p-6 rounded-[2.5rem] shadow-[0_0_40px_rgba(52,211,153,0.15)] border-4 border-emerald-50/10">
+            <div className="relative mb-8">
+              <div className="absolute inset-0 rounded-[2.5rem] bg-[#B87333]/20 blur-2xl" />
+              <div className="relative rounded-[2.5rem] border-4 border-white/5 bg-white p-6 shadow-[0_0_40px_rgba(184,115,51,0.15)]">
                 {pixData?.qr_code_base64 && (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={pixData.qr_code_base64}
                     width={220}
                     height={220}
-                    alt="QR Code AbacatePay"
+                    alt="QR Code Pix"
                     className="rounded-xl"
                   />
                 )}
               </div>
             </div>
 
-            <div className="bg-black/40 p-5 rounded-[1.5rem] border border-emerald-500/20 mb-6 font-mono text-[11px] text-emerald-200/80 break-all shadow-inner relative overflow-hidden">
-               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+            <div className="relative mb-6 w-full overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02] p-5 font-mono text-[11px] text-zinc-400 break-all shadow-inner backdrop-blur-md">
+               <div className="absolute top-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-[#B87333]/30 to-transparent" />
               {pixData?.pix_code}
             </div>
 
             <button
               onClick={handleCopy}
               disabled={!pixData?.pix_code}
-              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#05150e] py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest mb-8 flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] disabled:opacity-50"
+              className="mb-8 flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-gradient-to-r from-[#D49A62] to-[#B87333] py-4 text-[12px] font-black uppercase tracking-[0.2em] text-[#050505] shadow-[0_10px_25px_rgba(184,115,51,0.25)] transition-all hover:brightness-110 active:scale-95 disabled:opacity-60"
             >
-              {copied ? <Check size={20} className="text-[#05150e]" /> : <Copy size={20} className="text-[#05150e]" />}
+              {copied ? <Check size={20} className="text-[#050505]" /> : <Copy size={20} className="text-[#050505]" />}
               {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
             </button>
 
-            <div className="flex flex-col items-center justify-center gap-4 text-emerald-100/50">
-              <Loader2 className="animate-spin text-yellow-400" size={28} />
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">Aguardando pagamento...</p>
+            <div className="flex flex-col items-center justify-center gap-3 text-zinc-500">
+              <Loader2 className="animate-spin text-[#B87333]" size={28} />
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#D49A62] animate-pulse">Aguardando pagamento...</p>
             </div>
           </div>
         )}

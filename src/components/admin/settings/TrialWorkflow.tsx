@@ -50,7 +50,7 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[999] bg-zinc-950 flex flex-col"
+                        className="fixed inset-0 z-[999] bg-[#050505] flex flex-col overflow-hidden"
                     >
                         <AnimatePresence mode="popLayout">
                             {currentActivity === 'PLAN_SUMMARY' && (
@@ -79,7 +79,6 @@ export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWo
                                     userData={userData} 
                                 />
                             )}
-
                         </AnimatePresence>
                     </motion.div>
                 )}

@@ -1,4 +1,5 @@
 "use client";
+
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import Image from 'next/image';
@@ -8,63 +9,78 @@ export function PlanSummaryActivity({ onClose, onNext }: { onClose: () => void, 
     <motion.div 
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="absolute inset-0 flex flex-col bg-[#05150e] overflow-hidden"
+      className="absolute inset-0 flex flex-col bg-[#050505] overflow-hidden"
     >
-      {/* Efeitos Artísticos */}
-      <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-[#05150e] to-[#05150e] pointer-events-none" />
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-yellow-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
-        style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/black-paper.png")` }}
-      />
+      {/* Efeitos Artísticos Premium (Glows Acobreados) */}
+      <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.15),transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom,rgba(212,154,98,0.05),transparent_60%)] pointer-events-none" />
 
-      <header className="relative z-10 p-6 flex justify-between items-center border-b border-emerald-900/30 bg-black/20 backdrop-blur-md">
+      <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/5 bg-black/40 backdrop-blur-md">
         <div className="w-10" />
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400">Assinatura PRO</span>
-        <button onClick={onClose} className="w-10 flex justify-end text-emerald-100/50 hover:text-white transition-colors">
-          <X size={24} />
+        <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#B87333]">Assinatura PRO</span>
+        <button 
+          onClick={onClose} 
+          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-zinc-400 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] active:scale-90"
+        >
+          <X size={20} strokeWidth={2.5} />
         </button>
       </header>
 
       <div className="relative z-10 flex-1 overflow-y-auto p-8 flex flex-col items-center justify-center text-center">
-        <h2 className="text-3xl font-black text-white leading-tight mb-8 tracking-tighter italic">
-          Este é seu plano de <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-200">assinatura atual</span>
+        <h2 className="text-[2rem] font-black leading-tight tracking-tighter text-[#F7EFE2] mb-8">
+          Este é seu plano de <br/> 
+          <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">assinatura atual</span>
         </h2>
         
-        {/* Substituí a sombra laranja do foguete por um brilho esmeralda/dourado */}
-        <motion.div animate={{ y: [0, -15, 0] }} transition={{ duration: 4, repeat: Infinity }} className="relative w-52 h-52 mb-8">
-          <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/30 to-transparent blur-2xl rounded-full" />
-          <Image src="/rocket.png" alt="Foguete" fill className="object-contain drop-shadow-[0_10px_30px_rgba(52,211,153,0.4)] relative z-10" />
+        {/* Foguete com brilho em Cobre/Dourado */}
+        <motion.div 
+          animate={{ y: [0, -10, 0] }} 
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} 
+          className="relative w-48 h-48 mb-8"
+        >
+          <div className="absolute inset-0 rounded-full bg-[#B87333]/20 blur-3xl" />
+          <Image 
+            src="/rocket.png" 
+            alt="Foguete" 
+            fill 
+            className="object-contain drop-shadow-[0_15px_30px_rgba(184,115,51,0.4)] relative z-10" 
+          />
         </motion.div>
 
-        <div className="mb-10 bg-white/5 backdrop-blur-md p-8 rounded-[3rem] border border-white/10 w-full max-w-sm shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent" />
+        {/* Card de Preço - Glassmorphism Premium */}
+        <div className="group relative mb-10 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.02] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.10),transparent_40%)]" />
           
-          <p className="text-emerald-100/50 text-xs font-bold uppercase tracking-widest mb-2">Apenas</p>
-          <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-yellow-400 to-yellow-200 italic drop-shadow-sm">
-            R$ 32,90<span className="text-xl text-emerald-100/50 font-bold not-italic ml-1">/mês</span>
-          </h3>
-          <p className="text-emerald-400 text-sm font-bold mt-4 italic tracking-wide">por profissional</p>
-          
-          <div className="mt-6 bg-[#0d2b1d] px-6 py-2.5 rounded-full border border-emerald-500/30 inline-block text-emerald-100 text-sm font-bold shadow-inner">
-            Total R$ 32,90/ mês
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500 mb-2">Apenas</p>
+            <h3 className="text-[3rem] font-black tracking-tighter text-[#F7EFE2]">
+              R$ 32<span className="text-[2rem]">,90</span>
+            </h3>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#D49A62] mt-1">por profissional</p>
+            
+            <div className="mt-6 inline-block rounded-full border border-white/10 bg-[#0A0A0A] px-5 py-2.5 text-[11px] font-black tracking-widest uppercase text-zinc-400 shadow-inner">
+              Total <span className="text-[#F7EFE2]">R$ 32,90 / mês</span>
+            </div>
           </div>
         </div>
 
-        <p className="text-emerald-100/60 text-xs font-medium leading-relaxed max-w-xs mb-12">
+        <p className="mb-12 max-w-xs text-[13px] font-medium leading-relaxed text-zinc-400">
           A assinatura fortalece nossa parceria, nos permitindo evoluir a ferramenta constantemente.
         </p>
 
-        <div className="w-full max-w-sm space-y-4 mt-auto">
+        <div className="w-full max-w-sm space-y-3 mt-auto">
+          {/* Botão PIX - Mantive um tom verde-água luxuoso para remeter ao PIX, mas que combina com o tema dark */}
           <button 
             onClick={() => onNext('PIX')} 
-            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#05150e] py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(52,211,153,0.2)] hover:brightness-110 transition-all active:scale-95"
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-gradient-to-r from-[#00BFA6] to-[#00A382] py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#050505] shadow-[0_10px_20px_rgba(0,163,130,0.2)] transition-all hover:brightness-110 active:scale-95"
           >
-            PAGAR COM PIX
+            Pagar com PIX
           </button>
+          
+          {/* Botão Cartão - Transparente/Glass com hover acobreado */}
           <button 
             onClick={() => onNext('CARD')} 
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-300 text-[#05150e] py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:brightness-110 transition-all active:scale-95"
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.03] py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#F7EFE2] backdrop-blur-md transition-all hover:border-[#B87333]/40 hover:bg-white/[0.06] hover:text-[#D49A62] active:scale-95"
           >
             Cartão de Crédito
           </button>

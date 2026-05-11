@@ -14,7 +14,7 @@ export function useBarberChat(barbershopId: string) {
 
     const [userData, setUserData] = useState({
         name: "",
-        selectedServices: [] as any[], // Agora inclui {id, name, price, isUpsell, discount, type}
+        selectedServices: [] as any[], 
         barberId: "",
         barberName: "",
         date: "",
@@ -22,12 +22,11 @@ export function useBarberChat(barbershopId: string) {
         totalPrice: 0 
     });
 
-    // 🔥 MODIFICADO: Ignora os PRODUTOS na hora de somar o tempo da agenda!
     const totalDuration = useMemo(() => {
         if (!userData.selectedServices.length || !availableServices.length) return 30;
         
         return userData.selectedServices.reduce((total, selected) => {
-            if (selected.type === 'PRODUCT') return total; // Produto custa 0 minutos!
+            if (selected.type === 'PRODUCT') return total;
             
             const service = availableServices.find(s => s.id === selected.id);
             return total + (service?.duration || 0);
@@ -74,43 +73,39 @@ export function useBarberChat(barbershopId: string) {
         setStep(2);
     }, []);
 
-    // 🔥 MODIFICADO: Recebe um ID para podermos fazer o LOOP de ofertas
-    const checkUpsellAndProceed = async (serviceIdToCheck?: string, currentSelectedArray?: any[]) => {
-        const servicesArray = currentSelectedArray || userData.selectedServices;
-        if (servicesArray.length === 0) return;
+    // 🔥 LÓGICA DO LOOP CORRIGIDA
+    const checkUpsellAndProceed = async (currentCart?: any[]) => {
+        const cart = currentCart || userData.selectedServices;
+        if (cart.length === 0) return setStep(3);
         
-        // Pega o ID passado ou o último serviço adicionado no carrinho
-        const idToCheck = serviceIdToCheck || servicesArray[servicesArray.length - 1].id;
+        const cartIds = cart.map(s => s.id).join(',');
         
+        // Limpa a oferta anterior da tela para forçar uma nova animação caso ache outra
+        setActiveUpsell(null);
         setIsCheckingUpsell(true);
+        
         try {
-            const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&serviceId=${idToCheck}`);
+            const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&cartIds=${cartIds}`);
             const data = await res.json();
 
             if (res.ok && data.upsell) {
-                // Impede o cliente de adicionar a mesma oferta 2x
-                const alreadySelected = servicesArray.some(s => 
-                    s.id === data.upsell.offerServiceId || s.id === data.upsell.offerProductId
-                );
-                
-                if (!alreadySelected) {
-                    setActiveUpsell(data.upsell);
-                    setStep(2.5);
-                    return;
-                }
+                // Se a API encontrou uma oferta, mostra ela.
+                setActiveUpsell(data.upsell);
+                setStep(2.5);
+                setIsCheckingUpsell(false);
+                return;
             }
             
-            // Fim do funil de vendas, vai para a escolha de barbeiro
+            // Sem mais ofertas, vai pro barbeiro
+            setIsCheckingUpsell(false);
             setStep(3);
         } catch (error) {
             console.error("Erro ao checar upsell:", error);
-            setStep(3); 
-        } finally {
             setIsCheckingUpsell(false);
+            setStep(3); 
         }
     };
 
-    // 🔥 MODIFICADO: Usa os dados diretos da API e ativa o Loop
     const acceptUpsellAndProceed = () => {
         if (!activeUpsell) return;
 
@@ -120,28 +115,23 @@ export function useBarberChat(barbershopId: string) {
             price: activeUpsell.offerPrice,
             isUpsell: true, 
             discount: activeUpsell.discountAmount,
-            type: activeUpsell.offerType // 'SERVICE' ou 'PRODUCT'
+            type: activeUpsell.offerType 
         };
 
-        setUserData(prev => {
-            const newArray = [...prev.selectedServices, newItem];
-            
-            // 🔥 A MÁGICA DO LOOP DE VENDAS (Ex: Corte -> Barba -> Pomada)
-            // Usamos setTimeout para garantir que o state foi atualizado antes do fetch
-            if (newItem.type === 'SERVICE') {
-                setTimeout(() => checkUpsellAndProceed(newItem.id, newArray), 50);
-            } else {
-                setStep(3); // Produtos geralmente fecham o funil
-            }
+        // 1. Montamos o novo carrinho na memória
+        const newCart = [...userData.selectedServices, newItem];
+        
+        // 2. Atualizamos o estado do React
+        setUserData(prev => ({ ...prev, selectedServices: newCart }));
 
-            return { ...prev, selectedServices: newArray };
-        });
+        // 3. Batemos na API de novo IMEDIATAMENTE usando o carrinho da memória, 
+        // sem depender da re-renderização do React!
+        checkUpsellAndProceed(newCart);
     };
     
     const handleConfirmAppointment = async () => {
         setIsSubmitting(true);
         try {
-            // 🔥 MODIFICADO: Separa Serviços e Produtos para o Prisma salvar nas tabelas certas
             const serviceIds = userData.selectedServices.filter((s: any) => s.type !== 'PRODUCT').map((s: any) => s.id);
             const productIds = userData.selectedServices.filter((s: any) => s.type === 'PRODUCT').map((s: any) => s.id);
             
@@ -159,7 +149,7 @@ export function useBarberChat(barbershopId: string) {
                 body: JSON.stringify({
                     clientName: userData.name,
                     serviceIds: serviceIds,
-                    productIds: productIds, // Novo array enviado para o backend
+                    productIds: productIds,
                     date: userData.date,
                     time: userData.time,
                     barbershopId,

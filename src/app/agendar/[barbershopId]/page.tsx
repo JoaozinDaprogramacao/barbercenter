@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useBarberChat } from "@/hooks/useBarberChat";
 import { getAvailableTimesForDate } from "@/lib/date-utils";
-import { Percent, Loader2 } from "lucide-react"; // <-- Adicionei os ícones
+// 🔥 MODIFICADO: Importamos o Package
+import { Percent, Loader2, Package } from "lucide-react"; 
 
 import { ChatHeader } from "@/components/agendar/ChatHeader";
 import { ChatFooter } from "@/components/agendar/ChatFooter";
@@ -43,15 +44,12 @@ export default function BarberChat() {
     handleConfirmAppointment,
     totalDuration,
     bookedAppointments,
-    
-    // 🔥 NOVAS PROPS DO UPSELL
     checkUpsellAndProceed,
     isCheckingUpsell,
     activeUpsell,
     acceptUpsellAndProceed
   } = useBarberChat(barbershopId);
 
-  // 🔥 INTERCEPTADOR MÁGICO: Engana o ChatFooter para rodar o Upsell antes do Passo 3
   const handleSetStep = (val: any) => {
       const nextStep = typeof val === 'function' ? val(step) : val;
       if (step === 2 && nextStep === 3) {
@@ -73,7 +71,6 @@ export default function BarberChat() {
   return (
     <main className="fixed inset-0 flex flex-col bg-[#050505] max-w-md mx-auto border-x border-white/5 overflow-hidden">
       
-      {/* Efeitos de Fundo Premium */}
       <div className="absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom_left,rgba(212,154,98,0.08),transparent_50%)] pointer-events-none" />
 
@@ -99,7 +96,6 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* 🔥 INDICADOR DE LOADING DO UPSELL */}
             {isCheckingUpsell && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 pl-4 text-[#D49A62]">
                     <Loader2 size={18} className="animate-spin" />
@@ -107,7 +103,6 @@ export default function BarberChat() {
                 </motion.div>
             )}
 
-            {/* MOSTRA OS SERVIÇOS QUE O CLIENTE ESCOLHEU (Vai aparecer no Passo 2.5 E no Passo 3) */}
             {step > 2 && (
               <div key="step-services-chosen" className="space-y-8 pt-4">
                 <BigChatBubble
@@ -119,13 +114,12 @@ export default function BarberChat() {
 
             {/* 🔥 PASSO 2.5: A ISCA DO UPSELL */}
             {step >= 2.5 && activeUpsell && (
-                <div key="step-upsell-container" className="space-y-8 pt-4">
+                <div key={`step-upsell-${activeUpsell.id}`} className="space-y-8 pt-4">
                     <BigChatBubble
                         isAi
                         text={activeUpsell.customCopy || "Aproveite esta oferta especial que separei pra você!"}
                     />
                     
-                    {/* SÓ MOSTRA O CARD SE ELE AINDA ESTIVER NO PASSO 2.5 */}
                     {step === 2.5 && (
                         <motion.div 
                             initial={{ opacity: 0, y: 10, scale: 0.95 }} 
@@ -137,11 +131,17 @@ export default function BarberChat() {
                                 
                                 <div className="flex items-center gap-4 mb-6 relative z-10">
                                     <div className="w-12 h-12 rounded-[1.2rem] bg-gradient-to-br from-[#D49A62] to-[#B87333] flex items-center justify-center shadow-[0_5px_15px_rgba(184,115,51,0.3)] shrink-0">
-                                        <Percent className="text-[#050505]" size={24} strokeWidth={2.5} />
+                                        {/* 🔥 MODIFICADO: Ícone Dinâmico Produto vs Serviço */}
+                                        {activeUpsell.offerType === 'PRODUCT' ? (
+                                            <Package className="text-[#050505]" size={24} strokeWidth={2.5} />
+                                        ) : (
+                                            <Percent className="text-[#050505]" size={24} strokeWidth={2.5} />
+                                        )}
                                     </div>
                                     <div>
+                                        {/* 🔥 MODIFICADO: Puxa o nome direto do Backend */}
                                         <p className="text-[#F7EFE2] font-black text-lg leading-tight">
-                                            {availableServices.find(s => s.id === activeUpsell.offerServiceId)?.name}
+                                            {activeUpsell.offerName}
                                         </p>
                                         <p className="text-[#D49A62] text-[10px] font-black uppercase tracking-[0.25em] mt-1">
                                             {activeUpsell.discountType === 'PERCENTAGE' ? `${activeUpsell.discountAmount}% OFF` : `R$ ${activeUpsell.discountAmount} OFF`}
@@ -169,7 +169,6 @@ export default function BarberChat() {
                 </div>
             )}
 
-            {/* ESCOLHA DO PROFISSIONAL */}
             {step >= 3 && (
               <div key="step-3-container" className="space-y-8 pt-4">
                 <BigChatBubble isAi text="Com qual profissional você prefere agendar?" />
@@ -209,7 +208,6 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* DATA E HORA */}
             {step >= 4 && (
               <div key="step-4-container" className="space-y-8 pt-4">
                 <BigChatBubble text={userData.barberName} isUser />
@@ -247,7 +245,6 @@ export default function BarberChat() {
               </div>
             )}
 
-            {/* SUCESSO */}
             {step === 5 && <SuccessState date={userData.date} time={userData.time} />}
           </AnimatePresence>
         </div>
@@ -255,7 +252,7 @@ export default function BarberChat() {
 
       <ChatFooter
         step={step}
-        setStep={handleSetStep} // 🔥 PASSAMOS O INTERCEPTADOR AO INVÉS DO setStep ORIGINAL
+        setStep={handleSetStep}
         userData={userData}
         setUserData={setUserData}
         availableServices={availableServices}

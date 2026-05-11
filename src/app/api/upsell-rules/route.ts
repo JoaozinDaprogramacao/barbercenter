@@ -19,14 +19,21 @@ export async function GET(req: Request) {
             where: { barbershopId }
         });
 
+        // 🔥 NOVO: Buscando os produtos para podermos exibir o nome na lista
+        const products = await prisma.product.findMany({
+            where: { barbershopId }
+        });
+
         const rulesWithNames = rules.map(rule => {
             const triggerService = services.find(s => s.id === rule.triggerServiceId);
             const offerService = services.find(s => s.id === rule.offerServiceId);
+            const offerProduct = products.find(p => p.id === rule.offerProductId);
 
             return {
                 ...rule,
                 triggerName: triggerService?.name || "Serviço Removido",
-                offerName: offerService?.name || "Serviço Removido"
+                offerName: offerService?.name || "Serviço Removido",
+                offerProductName: offerProduct?.name || "Produto Removido"
             };
         });
 
@@ -40,9 +47,11 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { barbershopId, triggerServiceId, offerServiceId, discountAmount, customCopy } = body;
+        // 🔥 NOVO: Desestruturando o offerProductId
+        const { barbershopId, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy } = body;
 
-        if (!barbershopId || !triggerServiceId || !offerServiceId || !discountAmount) {
+        // 🔥 CORREÇÃO: Agora ele exige que TENHA o offerServiceId OU o offerProductId
+        if (!barbershopId || !triggerServiceId || !discountAmount || (!offerServiceId && !offerProductId)) {
             return NextResponse.json({ error: "Preencha todos os campos obrigatórios" }, { status: 400 });
         }
 
@@ -50,7 +59,8 @@ export async function POST(req: Request) {
             data: {
                 barbershopId,
                 triggerServiceId,
-                offerServiceId,
+                offerServiceId: offerServiceId || null,
+                offerProductId: offerProductId || null,
                 discountAmount: parseFloat(discountAmount),
                 customCopy,
                 discountType: "PERCENTAGE"
@@ -67,7 +77,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
     try {
         const body = await req.json();
-        const { id, triggerServiceId, offerServiceId, discountAmount, customCopy } = body;
+        const { id, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy } = body;
 
         if (!id) return NextResponse.json({ error: "ID da oferta é obrigatório" }, { status: 400 });
 
@@ -75,7 +85,8 @@ export async function PUT(req: Request) {
             where: { id },
             data: {
                 triggerServiceId,
-                offerServiceId,
+                offerServiceId: offerServiceId || null,
+                offerProductId: offerProductId || null,
                 discountAmount: parseFloat(discountAmount),
                 customCopy
             }

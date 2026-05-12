@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useBarberChat } from "@/hooks/useBarberChat";
 import { getAvailableTimesForDate } from "@/lib/date-utils";
-import { Percent, Package } from "lucide-react"; 
+import { Percent, Package } from "lucide-react";
 
 import { ChatHeader } from "@/components/agendar/ChatHeader";
 import { ChatFooter } from "@/components/agendar/ChatFooter";
@@ -86,22 +86,25 @@ export default function BarberChat() {
   } = useBarberChat(barbershopId);
 
   const handleSetStep = (val: any) => {
-      const nextStep = typeof val === 'function' ? val(step) : val;
-      
-      if (nextStep === 2 && step > 2) {
-          setUserData((prev: any) => ({
-              ...prev,
-              selectedServices: prev.selectedServices.filter((s: any) => !s.isUpsell)
-          }));
-          setStep(nextStep);
-          return;
-      }
+    const nextStep = typeof val === 'function' ? val(step) : val;
 
-      if (step === 2 && nextStep === 3) {
-          checkUpsellAndProceed();
-      } else {
-          setStep(nextStep);
-      }
+    if (nextStep === 2 && step > 2) {
+      setUserData((prev: any) => ({
+        ...prev,
+        selectedServices: prev.selectedServices.filter((s: any) => !s.isUpsell)
+      }));
+      setStep(nextStep);
+      return;
+    }
+
+    if (step === 2 && nextStep === 3) {
+      // 🔥 MUDANÇA AQUI: Avança para 2.5 imediatamente!
+      // Isso libera a renderização do Skeleton enquanto a API carrega.
+      setStep(2.5);
+      checkUpsellAndProceed();
+    } else {
+      setStep(nextStep);
+    }
   };
 
   const scrollToBottom = () => {
@@ -116,7 +119,7 @@ export default function BarberChat() {
 
   return (
     <main className="fixed inset-0 flex flex-col bg-[#050505] max-w-md mx-auto border-x border-white/5 overflow-hidden">
-      
+
       <div className="absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom_left,rgba(212,154,98,0.08),transparent_50%)] pointer-events-none" />
 
@@ -158,7 +161,7 @@ export default function BarberChat() {
                   {isCheckingUpsell ? (
                     <UpsellSkeleton key="upsell-skeleton" />
                   ) : activeUpsell ? (
-                    <motion.div 
+                    <motion.div
                       key={`step-upsell-${activeUpsell.id}`}
                       initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -170,11 +173,11 @@ export default function BarberChat() {
                         isAi
                         text={activeUpsell.customCopy || "Aproveite esta oferta especial que separei pra você!"}
                       />
-                      
+
                       <div className="pl-2 pr-4">
                         <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-[#B87333]/30 backdrop-blur-xl shadow-[0_15px_40px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(184,115,51,0.05)] relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-[#B87333]/20 blur-2xl rounded-full pointer-events-none" />
-                          
+
                           <div className="flex items-center gap-4 mb-6 relative z-10">
                             <div className="w-12 h-12 rounded-[1.2rem] bg-gradient-to-br from-[#D49A62] to-[#B87333] flex items-center justify-center shadow-[0_5px_15px_rgba(184,115,51,0.3)] shrink-0">
                               {activeUpsell.offerType === 'PRODUCT' ? (
@@ -194,14 +197,14 @@ export default function BarberChat() {
                           </div>
 
                           <div className="flex flex-col gap-3 relative z-10">
-                            <button 
-                              onClick={acceptUpsellAndProceed} 
+                            <button
+                              onClick={acceptUpsellAndProceed}
                               className="w-full py-4 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-lg hover:brightness-110 active:scale-95 transition-all"
                             >
                               Adicionar à reserva
                             </button>
-                            <button 
-                              onClick={() => setStep(3)} 
+                            <button
+                              onClick={() => setStep(3)}
                               className="w-full py-4 bg-white/5 border border-white/5 text-zinc-400 hover:text-white rounded-[1.5rem] font-bold uppercase tracking-[0.2em] text-[11px] active:scale-95 transition-all"
                             >
                               Não, obrigado
@@ -225,8 +228,7 @@ export default function BarberChat() {
                     onClick={() => {
                       setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "Qualquer profissional" }));
                     }}
-                    className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${
-                      userData.barberName === "Qualquer profissional"
+                    className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${userData.barberName === "Qualquer profissional"
                         ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
                         : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
                       } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
@@ -241,8 +243,7 @@ export default function BarberChat() {
                       onClick={() => {
                         setUserData((prev: any) => ({ ...prev, barberId: member.id, barberName: member.name }));
                       }}
-                      className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${
-                        userData.barberId === member.id
+                      className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${userData.barberId === member.id
                           ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
                           : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
                         } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
@@ -280,8 +281,8 @@ export default function BarberChat() {
                           businessHours,
                           bookedAppointments,
                           totalDuration,
-                          team,              
-                          userData.barberId    
+                          team,
+                          userData.barberId
                         )}
                         onChange={(time) => setUserData((prev: any) => ({ ...prev, time }))}
                       />
@@ -292,7 +293,7 @@ export default function BarberChat() {
             )}
 
             {step === 5 && <SuccessState key="success" date={userData.date} time={userData.time} />}
-            
+
             {/* 🔥 CORRIGIDO: Passando a prop "key" para a Âncora de Scroll */}
             <div key="scroll-anchor" ref={messagesEndRef} className="h-2" />
           </AnimatePresence>
@@ -301,7 +302,7 @@ export default function BarberChat() {
 
       <ChatFooter
         step={step}
-        setStep={handleSetStep} 
+        setStep={handleSetStep}
         userData={userData}
         setUserData={setUserData}
         availableServices={availableServices}

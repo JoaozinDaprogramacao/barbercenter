@@ -20,7 +20,7 @@ import { ptBR } from "date-fns/locale";
 
 function getScheduledDate(dateStr: string): Date {
     if (!dateStr) return new Date(0);
-    
+
     const parts = dateStr.toLowerCase().split(/[-/\s]/);
     const currentYear = new Date().getFullYear();
 
@@ -31,7 +31,7 @@ function getScheduledDate(dateStr: string): Date {
 
         const day = parseInt(parts[0], 10);
         let month = parseInt(parts[1], 10) - 1;
-        
+
         if (isNaN(month)) {
             const monthMap: Record<string, number> = { "jan": 0, "fev": 1, "mar": 2, "abr": 3, "mai": 4, "jun": 5, "jul": 6, "ago": 7, "set": 8, "out": 9, "nov": 10, "dez": 11 };
             const m = parts[1].substring(0, 3);
@@ -164,16 +164,22 @@ export async function GET(req: Request) {
             if (soldItems.length === 0) {
                 const existing = acc.find((s: any) => s.name === "Outros");
                 if (existing) existing.count += 1;
-                else acc.push({ name: "Outros", count: 1 });
+                else acc.push({ name: "Outros", count: 1, type: "SERVICE" });
                 return acc;
             }
 
             soldItems.forEach(item => {
+                // 🔥 CORREÇÃO: Usamos o operador 'in' para o TypeScript entender a diferença
+                // sem reclamar que a propriedade não existe no Produto
+                const itemType = 'duration' in item ? "SERVICE" : "PRODUCT";
+
                 const existing = acc.find((s: any) => s.name === item.name);
-                if (existing) existing.count += 1;
-                else acc.push({ name: item.name, count: 1 });
+                if (existing) {
+                    existing.count += 1;
+                } else {
+                    acc.push({ name: item.name, count: 1, type: itemType });
+                }
             });
-            
             return acc;
         }, []);
 

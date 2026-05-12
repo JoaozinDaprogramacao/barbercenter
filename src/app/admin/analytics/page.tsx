@@ -55,14 +55,12 @@ export default function FaturamentoPage() {
 
     return (
         <main className="min-h-screen w-full bg-black max-w-md mx-auto flex flex-col font-sans relative overflow-x-hidden border-x border-zinc-900">
-            {/* Background Glow */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
                 <div className="absolute bottom-20 right-0 w-64 h-64 bg-[#B87333]/5 blur-[100px] rounded-full" />
             </div>
 
             <div className="h-screen overflow-y-auto no-scrollbar z-10">
-
                 <AnalyticsHeader
                     onBack={() => router.back()}
                     activeTimeframe={activeTimeframe}

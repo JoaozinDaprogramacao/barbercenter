@@ -3628,13 +3628,13 @@ export namespace Prisma {
 
   export type AppointmentAvgAggregateOutputType = {
     id: number | null
-    totalPrice: number | null
+    price: number | null
     discount: number | null
   }
 
   export type AppointmentSumAggregateOutputType = {
     id: number | null
-    totalPrice: number | null
+    price: number | null
     discount: number | null
   }
 
@@ -3644,7 +3644,7 @@ export namespace Prisma {
     date: string | null
     time: string | null
     status: string | null
-    totalPrice: number | null
+    price: number | null
     discount: number | null
     barbershopId: string | null
     barberId: string | null
@@ -3657,7 +3657,7 @@ export namespace Prisma {
     date: string | null
     time: string | null
     status: string | null
-    totalPrice: number | null
+    price: number | null
     discount: number | null
     barbershopId: string | null
     barberId: string | null
@@ -3670,7 +3670,7 @@ export namespace Prisma {
     date: number
     time: number
     status: number
-    totalPrice: number
+    price: number
     discount: number
     barbershopId: number
     barberId: number
@@ -3681,13 +3681,13 @@ export namespace Prisma {
 
   export type AppointmentAvgAggregateInputType = {
     id?: true
-    totalPrice?: true
+    price?: true
     discount?: true
   }
 
   export type AppointmentSumAggregateInputType = {
     id?: true
-    totalPrice?: true
+    price?: true
     discount?: true
   }
 
@@ -3697,7 +3697,7 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
-    totalPrice?: true
+    price?: true
     discount?: true
     barbershopId?: true
     barberId?: true
@@ -3710,7 +3710,7 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
-    totalPrice?: true
+    price?: true
     discount?: true
     barbershopId?: true
     barberId?: true
@@ -3723,7 +3723,7 @@ export namespace Prisma {
     date?: true
     time?: true
     status?: true
-    totalPrice?: true
+    price?: true
     discount?: true
     barbershopId?: true
     barberId?: true
@@ -3823,7 +3823,7 @@ export namespace Prisma {
     date: string
     time: string
     status: string
-    totalPrice: number | null
+    price: number | null
     discount: number | null
     barbershopId: string
     barberId: string | null
@@ -3855,7 +3855,7 @@ export namespace Prisma {
     date?: boolean
     time?: boolean
     status?: boolean
-    totalPrice?: boolean
+    price?: boolean
     discount?: boolean
     barbershopId?: boolean
     barberId?: boolean
@@ -3875,14 +3875,14 @@ export namespace Prisma {
     date?: boolean
     time?: boolean
     status?: boolean
-    totalPrice?: boolean
+    price?: boolean
     discount?: boolean
     barbershopId?: boolean
     barberId?: boolean
     createdAt?: boolean
   }
 
-  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientName" | "date" | "time" | "status" | "totalPrice" | "discount" | "barbershopId" | "barberId" | "createdAt", ExtArgs["result"]["appointment"]>
+  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientName" | "date" | "time" | "status" | "price" | "discount" | "barbershopId" | "barberId" | "createdAt", ExtArgs["result"]["appointment"]>
   export type AppointmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
     barber?: boolean | Appointment$barberArgs<ExtArgs>
@@ -3905,7 +3905,7 @@ export namespace Prisma {
       date: string
       time: string
       status: string
-      totalPrice: number | null
+      price: number | null
       discount: number | null
       barbershopId: string
       barberId: string | null
@@ -4288,7 +4288,7 @@ export namespace Prisma {
     readonly date: FieldRef<"Appointment", 'String'>
     readonly time: FieldRef<"Appointment", 'String'>
     readonly status: FieldRef<"Appointment", 'String'>
-    readonly totalPrice: FieldRef<"Appointment", 'Float'>
+    readonly price: FieldRef<"Appointment", 'Float'>
     readonly discount: FieldRef<"Appointment", 'Float'>
     readonly barbershopId: FieldRef<"Appointment", 'String'>
     readonly barberId: FieldRef<"Appointment", 'String'>
@@ -7860,7 +7860,7 @@ export namespace Prisma {
     date: 'date',
     time: 'time',
     status: 'status',
-    totalPrice: 'totalPrice',
+    price: 'price',
     discount: 'discount',
     barbershopId: 'barbershopId',
     barberId: 'barberId',
@@ -8266,7 +8266,7 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
-    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    price?: FloatNullableFilter<"Appointment"> | number | null
     discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
@@ -8283,7 +8283,7 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
-    totalPrice?: SortOrderInput | SortOrder
+    price?: SortOrderInput | SortOrder
     discount?: SortOrderInput | SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrderInput | SortOrder
@@ -8304,7 +8304,7 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
-    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    price?: FloatNullableFilter<"Appointment"> | number | null
     discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
@@ -8321,7 +8321,7 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
-    totalPrice?: SortOrderInput | SortOrder
+    price?: SortOrderInput | SortOrder
     discount?: SortOrderInput | SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrderInput | SortOrder
@@ -8342,7 +8342,7 @@ export namespace Prisma {
     date?: StringWithAggregatesFilter<"Appointment"> | string
     time?: StringWithAggregatesFilter<"Appointment"> | string
     status?: StringWithAggregatesFilter<"Appointment"> | string
-    totalPrice?: FloatNullableWithAggregatesFilter<"Appointment"> | number | null
+    price?: FloatNullableWithAggregatesFilter<"Appointment"> | number | null
     discount?: FloatNullableWithAggregatesFilter<"Appointment"> | number | null
     barbershopId?: StringWithAggregatesFilter<"Appointment"> | string
     barberId?: StringNullableWithAggregatesFilter<"Appointment"> | string | null
@@ -8789,7 +8789,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
@@ -8804,7 +8804,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     barberId?: string | null
@@ -8818,7 +8818,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -8833,7 +8833,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8848,7 +8848,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     barberId?: string | null
@@ -8860,7 +8860,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8871,7 +8871,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9473,7 +9473,7 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
-    totalPrice?: SortOrder
+    price?: SortOrder
     discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
@@ -9482,7 +9482,7 @@ export namespace Prisma {
 
   export type AppointmentAvgOrderByAggregateInput = {
     id?: SortOrder
-    totalPrice?: SortOrder
+    price?: SortOrder
     discount?: SortOrder
   }
 
@@ -9492,7 +9492,7 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
-    totalPrice?: SortOrder
+    price?: SortOrder
     discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
@@ -9505,7 +9505,7 @@ export namespace Prisma {
     date?: SortOrder
     time?: SortOrder
     status?: SortOrder
-    totalPrice?: SortOrder
+    price?: SortOrder
     discount?: SortOrder
     barbershopId?: SortOrder
     barberId?: SortOrder
@@ -9514,7 +9514,7 @@ export namespace Prisma {
 
   export type AppointmentSumOrderByAggregateInput = {
     id?: SortOrder
-    totalPrice?: SortOrder
+    price?: SortOrder
     discount?: SortOrder
   }
 
@@ -10521,7 +10521,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     createdAt?: Date | string
     barber?: UserCreateNestedOneWithoutAppointmentsInput
@@ -10535,7 +10535,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barberId?: string | null
     createdAt?: Date | string
@@ -10708,7 +10708,7 @@ export namespace Prisma {
     date?: StringFilter<"Appointment"> | string
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
-    totalPrice?: FloatNullableFilter<"Appointment"> | number | null
+    price?: FloatNullableFilter<"Appointment"> | number | null
     discount?: FloatNullableFilter<"Appointment"> | number | null
     barbershopId?: StringFilter<"Appointment"> | string
     barberId?: StringNullableFilter<"Appointment"> | string | null
@@ -10883,7 +10883,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
@@ -10897,7 +10897,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     createdAt?: Date | string
@@ -11258,7 +11258,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
@@ -11272,7 +11272,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     barberId?: string | null
@@ -11394,7 +11394,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     createdAt?: Date | string
     barbershop: BarbershopCreateNestedOneWithoutAppointmentsInput
@@ -11408,7 +11408,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     barberId?: string | null
@@ -11578,7 +11578,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barberId?: string | null
     createdAt?: Date | string
@@ -11631,7 +11631,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barber?: UserUpdateOneWithoutAppointmentsNestedInput
@@ -11645,7 +11645,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11659,7 +11659,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11803,7 +11803,7 @@ export namespace Prisma {
     date: string
     time: string
     status?: string
-    totalPrice?: number | null
+    price?: number | null
     discount?: number | null
     barbershopId: string
     createdAt?: Date | string
@@ -11814,7 +11814,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -11828,7 +11828,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11842,7 +11842,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11913,7 +11913,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -11927,7 +11927,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11941,7 +11941,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11953,7 +11953,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barbershop?: BarbershopUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -11967,7 +11967,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11981,7 +11981,7 @@ export namespace Prisma {
     date?: StringFieldUpdateOperationsInput | string
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    totalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
     discount?: NullableFloatFieldUpdateOperationsInput | number | null
     barbershopId?: StringFieldUpdateOperationsInput | string
     barberId?: NullableStringFieldUpdateOperationsInput | string | null

@@ -29,9 +29,9 @@ export default function AppointmentDetailPage() {
     const [tempTime, setTempTime] = useState("");
     const [tempServiceIds, setTempServiceIds] = useState<string[]>([]);
 
-    const { 
-        appointment, isLoading, isUpdating, availableServices, 
-        getAvailableTimes, updateDateTime, updateServices, cancelAppointment 
+    const {
+        appointment, isLoading, isUpdating, availableServices,
+        getAvailableTimes, updateDateTime, updateServices, cancelAppointment
     } = useAppointmentManager(appointmentId);
 
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function AppointmentDetailPage() {
         date: appointment.dateLabel || appointment.date,
         time: appointment.time,
         client: { name: appointment.name || "Cliente", phone: appointment.phone || "" },
-        services: appointment.services || [],
+        services: [...(appointment.services || []), ...(appointment.products || [])],
         total: appointment.price || 0,
         paymentMethod: appointment.paymentMethod || "Presencial"
     };
@@ -97,9 +97,9 @@ export default function AppointmentDetailPage() {
                     />
                 </motion.div>
 
-                <motion.button 
+                <motion.button
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                    onClick={() => setActiveSheet("cancel")} 
+                    onClick={() => setActiveSheet("cancel")}
                     className="w-full py-5 rounded-[2rem] border border-red-500/20 text-red-500/60 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-red-500/5 active:scale-95"
                 >
                     Cancelar Agendamento
@@ -124,30 +124,30 @@ export default function AppointmentDetailPage() {
                 }
             >
                 {activeSheet === "date" && (
-                    <DateSheetContent 
-                        date={tempDate} 
-                        time={tempTime} 
-                        setDate={setTempDate} 
-                        setTime={setTempTime} 
-                        getTimes={getAvailableTimes} 
+                    <DateSheetContent
+                        date={tempDate}
+                        time={tempTime}
+                        setDate={setTempDate}
+                        setTime={setTempTime}
+                        getTimes={getAvailableTimes}
                     />
                 )}
-                
+
                 {activeSheet === "services" && (
-                    <ServicesSheetContent 
-                        selectedIds={tempServiceIds} 
-                        setSelectedIds={setTempServiceIds} 
-                        services={availableServices} 
+                    <ServicesSheetContent
+                        selectedIds={tempServiceIds}
+                        setSelectedIds={setTempServiceIds}
+                        services={availableServices}
                     />
                 )}
-                
+
                 {activeSheet === "cancel" && (
-                    <CancelSheetContent 
-                        onKeep={() => setActiveSheet(null)} 
+                    <CancelSheetContent
+                        onKeep={() => setActiveSheet(null)}
                         onConfirm={async () => {
                             const ok = await cancelAppointment();
                             if (ok) router.back();
-                        }} 
+                        }}
                     />
                 )}
             </AppointmentActionSheet>

@@ -152,7 +152,7 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   date: 'date',
   time: 'time',
   status: 'status',
-  totalPrice: 'totalPrice',
+  price: 'price',
   discount: 'discount',
   barbershopId: 'barbershopId',
   barberId: 'barberId',

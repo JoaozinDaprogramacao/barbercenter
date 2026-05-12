@@ -3,18 +3,16 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
     try {
-        // 👇 AQUI: Adicionamos a extração do barberId
-        const { clientName, serviceIds, date, time, barbershopId, barberId } = await req.json();
+        // 🔥 ATUALIZADO: Pegando productIds e totalPrice
+        const { clientName, serviceIds, productIds, date, time, barbershopId, barberId, totalPrice } = await req.json();
 
         if (!serviceIds || !Array.isArray(serviceIds) || serviceIds.length === 0) {
             return NextResponse.json({ error: "Nenhum serviço selecionado" }, { status: 400 });
         }
 
-        // 👇 AQUI: Lógica flexível para barbeiro único ou múltiplo
         let assignedBarberId = barberId;
 
         if (!assignedBarberId) {
-            // Se não veio barbeiro especificado, pega o primeiro da loja
             const firstAvailableBarber = await prisma.user.findFirst({
                 where: { barbershopId: barbershopId }
             });
@@ -24,6 +22,9 @@ export async function POST(req: Request) {
         }
 
         const connectServices = serviceIds.map((id: string) => ({ id }));
+        
+        // Conexão segura de produtos caso existam
+        const connectProducts = (productIds || []).map((id: string) => ({ id }));
 
         const newAppointment = await prisma.appointment.create({
             data: {
@@ -31,16 +32,34 @@ export async function POST(req: Request) {
                 date,
                 time,
                 barbershopId,
-                barberId: assignedBarberId, // <-- Salva o barbeiro aqui
+                barberId: assignedBarberId, 
+                price: parseFloat(totalPrice) || 0, // 🔥 ATUALIZADO: Salva o preço real no banco
                 services: {
                     connect: connectServices
-                }
+                },
+                // 🔥 ATUALIZADO: Conecta os produtos vendidos (upsell)
+                products: connectProducts.length > 0 ? {
+                    connect: connectProducts
+                } : undefined
             },
             include: {
                 services: true,
-                barber: { select: { name: true } } // Confirmação visual no retorno
+                products: true,
+                barber: { select: { name: true } } 
             }
         });
+
+        // 🔥 EXTRA: Se vendeu produto, abate do estoque
+        if (connectProducts.length > 0) {
+            await Promise.all(
+                connectProducts.map(async (p: { id: string }) => {
+                    await prisma.product.update({
+                        where: { id: p.id },
+                        data: { stock: { decrement: 1 } }
+                    });
+                })
+            );
+        }
 
         return NextResponse.json({ success: true, appointment: newAppointment }, { status: 201 });
     } catch (error) {
@@ -60,21 +79,17 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Faltam parâmetros" }, { status: 400 });
         }
 
-        // Filtra pela loja e data
         const whereClause: any = { barbershopId, date };
 
-        // Se escolheu um barbeiro específico, filtra só a agenda dele
         if (barberId) whereClause.barberId = barberId;
 
         const appointments = await prisma.appointment.findMany({
             where: whereClause,
-            // Precisamos dos serviços para saber a duração de cada agendamento feito!
             include: {
                 services: true
             }
         });
 
-        // Formata para o frontend
         const formattedAppointments = appointments.map((app) => {
             const totalDuration = app.services.reduce((acc, s) => acc + (s.duration || 30), 0);
             return {
@@ -83,6 +98,7 @@ export async function GET(req: Request) {
                 barberId: app.barberId
             };
         });
+        
         return NextResponse.json({ appointments: formattedAppointments }, { status: 200 });
     } catch (error) {
         console.error("Erro na busca de agendamentos:", error);

@@ -73,30 +73,28 @@ export function useBarberChat(barbershopId: string) {
         setStep(2);
     }, []);
 
-    // 🔥 LÓGICA DO LOOP CORRIGIDA
     const checkUpsellAndProceed = async (currentCart?: any[]) => {
         const cart = currentCart || userData.selectedServices;
         if (cart.length === 0) return setStep(3);
         
         const cartIds = cart.map(s => s.id).join(',');
         
-        // Limpa a oferta anterior da tela para forçar uma nova animação caso ache outra
         setActiveUpsell(null);
         setIsCheckingUpsell(true);
         
         try {
+            await new Promise(r => setTimeout(r, 1000)); 
+
             const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&cartIds=${cartIds}`);
             const data = await res.json();
 
             if (res.ok && data.upsell) {
-                // Se a API encontrou uma oferta, mostra ela.
                 setActiveUpsell(data.upsell);
                 setStep(2.5);
                 setIsCheckingUpsell(false);
                 return;
             }
             
-            // Sem mais ofertas, vai pro barbeiro
             setIsCheckingUpsell(false);
             setStep(3);
         } catch (error) {
@@ -118,14 +116,8 @@ export function useBarberChat(barbershopId: string) {
             type: activeUpsell.offerType 
         };
 
-        // 1. Montamos o novo carrinho na memória
         const newCart = [...userData.selectedServices, newItem];
-        
-        // 2. Atualizamos o estado do React
         setUserData(prev => ({ ...prev, selectedServices: newCart }));
-
-        // 3. Batemos na API de novo IMEDIATAMENTE usando o carrinho da memória, 
-        // sem depender da re-renderização do React!
         checkUpsellAndProceed(newCart);
     };
     
@@ -135,12 +127,23 @@ export function useBarberChat(barbershopId: string) {
             const serviceIds = userData.selectedServices.filter((s: any) => s.type !== 'PRODUCT').map((s: any) => s.id);
             const productIds = userData.selectedServices.filter((s: any) => s.type === 'PRODUCT').map((s: any) => s.id);
             
+            // 🔥 CORREÇÃO DO CÁLCULO DE PREÇO AQUI
             const total = userData.selectedServices.reduce((acc, s) => {
-                let p = s.price;
-                if (s.isUpsell) {
-                    p = p - (p * (s.discount / 100));
+                let basePrice = Number(s.price);
+                
+                // Se o preço não veio preenchido (Serviços normais escolhidos no Passo 2)
+                if (isNaN(basePrice) || basePrice === undefined) {
+                    const originalService = availableServices.find(cat => cat.id === s.id);
+                    basePrice = Number(originalService?.price) || 0;
                 }
-                return acc + p;
+
+                if (s.isUpsell) {
+                    const discountVal = Number(s.discount) || 0;
+                    // Aplica a porcentagem do banco
+                    basePrice = basePrice - (basePrice * (discountVal / 100));
+                }
+                
+                return acc + basePrice;
             }, 0);
 
             await fetch('/api/public/appointments', {
@@ -154,7 +157,7 @@ export function useBarberChat(barbershopId: string) {
                     time: userData.time,
                     barbershopId,
                     barberId: userData.barberId || undefined,
-                    totalPrice: total
+                    totalPrice: total // AGORA SIM VAI OS 161.50 CORRETOS!
                 })
             });
             
@@ -179,7 +182,6 @@ export function useBarberChat(barbershopId: string) {
         handleConfirmAppointment,
         totalDuration,
         bookedAppointments,
-        
         checkUpsellAndProceed,
         isCheckingUpsell,
         activeUpsell,

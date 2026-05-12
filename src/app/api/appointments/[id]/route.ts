@@ -10,14 +10,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const appointment = await prisma.appointment.findUnique({
             where: { id: appointmentId as any },
-            include: { services: true } // Alterado de service para services
+            include: { services: true, products: true } // 🔥 Busca ambos
         });
 
         if (!appointment) return NextResponse.json({ error: "404" }, { status: 404 });
 
-        // Consolida nomes e preços de todos os serviços vinculados
-        const serviceNames = appointment.services.map(s => s.name).join(", ");
-        const totalPrice = appointment.services.reduce((acc, s) => acc + s.price, 0);
+        const serviceNames = appointment.services.map(s => s.name);
+        const productNames = appointment.products.map(p => p.name);
+        const allItems = [...serviceNames, ...productNames].join(", ");
+
+        let finalPrice = appointment.price;
+        if (!finalPrice || finalPrice === 0) {
+            finalPrice = appointment.services.reduce((acc, s) => acc + s.price, 0) + appointment.products.reduce((acc, p) => acc + p.price, 0);
+        }
 
         return NextResponse.json({
             id: appointment.id,
@@ -26,9 +31,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             time: appointment.time,
             name: appointment.clientName,
             status: appointment.status,
-            service: serviceNames || "Nenhum serviço",
-            price: totalPrice,
-            services: appointment.services // Retorna a lista completa para o front se necessário
+            service: allItems || "Nenhum item",
+            price: finalPrice, 
+            services: appointment.services,
+            products: appointment.products
         });
     } catch (error) {
         return NextResponse.json({ error: "500" }, { status: 500 });
@@ -42,21 +48,56 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const appointmentId = isNaN(Number(id)) ? id : Number(id);
 
         const { serviceIds, ...otherData } = body;
-
-        // Prepara os dados de atualização
         const updateData: any = { ...otherData };
 
-        // Se vierem novos IDs de serviço, sobrescreve a lista atual
-        if (serviceIds && Array.isArray(serviceIds)) {
+        // 1. Busca o agendamento ANTES de alterar para descobrirmos se ele teve desconto
+        const currentAppt = await prisma.appointment.findUnique({
+            where: { id: appointmentId as any },
+            include: { services: true, products: true }
+        });
+
+        // 2. Se o barbeiro está editando a lista de serviços...
+        if (serviceIds && Array.isArray(serviceIds) && currentAppt) {
+            // Calcula qual era o valor "cheio" (sem desconto)
+            const oldBasePrice = currentAppt.services.reduce((acc, s) => acc + s.price, 0) + 
+                                 currentAppt.products.reduce((acc, p) => acc + p.price, 0);
+            
+            // Descobre quanto de desconto de Upsell foi dado no chat
+            const discountApplied = oldBasePrice - (currentAppt.price || oldBasePrice);
+
             updateData.services = {
                 set: serviceIds.map((sid: string) => ({ id: sid }))
             };
+
+            // Faz a atualização dos serviços no banco
+            const updated = await prisma.appointment.update({
+                where: { id: appointmentId as any },
+                data: updateData,
+                include: { services: true, products: true }
+            });
+
+            // Calcula o NOVO valor cheio (novos serviços + produtos mantidos)
+            const newBasePrice = updated.services.reduce((acc, s) => acc + s.price, 0) + 
+                                 updated.products.reduce((acc, p) => acc + p.price, 0);
+
+            // Mantém o desconto antigo e gera o preço final!
+            const finalPrice = Math.max(0, newBasePrice - discountApplied);
+
+            // Salva o preço corrigido
+            await prisma.appointment.update({
+                where: { id: appointmentId as any },
+                data: { price: finalPrice }
+            });
+
+            updated.price = finalPrice;
+            return NextResponse.json(updated);
         }
 
+        // Se ele está mudando apenas a Data/Hora (sem mexer nos serviços)
         const updated = await prisma.appointment.update({
             where: { id: appointmentId as any },
             data: updateData,
-            include: { services: true }
+            include: { services: true, products: true }
         });
 
         return NextResponse.json(updated);

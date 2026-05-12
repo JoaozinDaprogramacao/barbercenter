@@ -52,7 +52,7 @@ model Appointment {
   date         String
   time         String
   status       String       @default("CONFIRMED")
-  totalPrice   Float?
+  price        Float?       @default(0)
   discount     Float?       @default(0)
   barbershopId String
   barberId     String?

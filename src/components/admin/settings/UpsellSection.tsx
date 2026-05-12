@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Sparkles, ArrowRight, Percent, X, Loader2, Pencil, Trash2, AlertTriangle } from "lucide-react";
+import { Plus, Sparkles, ArrowRight, Percent, X, Loader2, Pencil, Trash2, AlertTriangle, Package } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 export function UpsellSection({ services }: { services: any[] }) {
@@ -10,35 +10,42 @@ export function UpsellSection({ services }: { services: any[] }) {
     const barbershopId = (session?.user as any)?.barbershopId;
 
     const [rules, setRules] = useState<any[]>([]);
+    const [products, setProducts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     
-    // Controles dos Modais
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingRule, setEditingRule] = useState<any>(null);
     
-    // Controle do Modal de Exclusão
     const [ruleToDelete, setRuleToDelete] = useState<any>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const fetchRules = useCallback(async () => {
+    const fetchRulesAndProducts = useCallback(async () => {
         if (!barbershopId) return;
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/upsell-rules?barbershopId=${barbershopId}`);
-            if (res.ok) {
-                const data = await res.json();
-                setRules(data.rules || []);
+            const [rulesRes, productsRes] = await Promise.all([
+                fetch(`/api/upsell-rules?barbershopId=${barbershopId}`),
+                fetch(`/api/products?barbershopId=${barbershopId}`)
+            ]);
+
+            if (rulesRes.ok) {
+                const rulesData = await rulesRes.json();
+                setRules(rulesData.rules || []);
+            }
+            if (productsRes.ok) {
+                const productsData = await productsRes.json();
+                setProducts(productsData.products || []);
             }
         } catch (error) {
-            console.error("Erro ao buscar regras", error);
+            console.error("Erro ao buscar dados", error);
         } finally {
             setIsLoading(false);
         }
     }, [barbershopId]);
 
     useEffect(() => {
-        fetchRules();
-    }, [fetchRules]);
+        fetchRulesAndProducts();
+    }, [fetchRulesAndProducts]);
 
     const handleOpenCreate = () => {
         setEditingRule(null);
@@ -50,12 +57,10 @@ export function UpsellSection({ services }: { services: any[] }) {
         setIsModalOpen(true);
     };
 
-    // Abre o modal de exclusão estilizado
     const handleDeleteClick = (rule: any) => {
         setRuleToDelete(rule);
     };
 
-    // Confirma a exclusão na API
     const confirmDelete = async () => {
         if (!ruleToDelete) return;
         
@@ -63,7 +68,7 @@ export function UpsellSection({ services }: { services: any[] }) {
         try {
             const res = await fetch(`/api/upsell-rules?id=${ruleToDelete.id}`, { method: 'DELETE' });
             if (res.ok) {
-                fetchRules();
+                fetchRulesAndProducts();
                 setRuleToDelete(null);
             } else {
                 alert("Erro ao excluir oferta.");
@@ -110,7 +115,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                                 <Sparkles size={20} className="text-zinc-600" />
                             </div>
                             <p className="text-zinc-400 text-xs font-medium leading-relaxed mb-5">
-                                Ofereça descontos automáticos combinando serviços e aumente o seu faturamento!
+                                Ofereça descontos automáticos combinando serviços ou produtos e aumente o seu faturamento!
                             </p>
                             <button
                                 onClick={handleOpenCreate}
@@ -125,11 +130,11 @@ export function UpsellSection({ services }: { services: any[] }) {
                                 <div key={rule.id} className="bg-[#0A0A0A] p-4 rounded-[1.5rem] border border-white/5 flex items-center justify-between group hover:border-[#B87333]/40 transition-all shadow-inner">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-[1rem] bg-white/5 flex items-center justify-center text-zinc-500 group-hover:text-[#D49A62] group-hover:bg-[#B87333]/10 transition-colors border border-transparent group-hover:border-[#B87333]/30">
-                                            <Percent size={16} strokeWidth={2.5} />
+                                            {rule.offerProductId ? <Package size={16} strokeWidth={2.5} /> : <Percent size={16} strokeWidth={2.5} />}
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-[#F7EFE2] flex items-center gap-2">
-                                                {rule.triggerName} <ArrowRight size={12} className="text-zinc-600" /> {rule.offerName}
+                                                {rule.triggerName} <ArrowRight size={12} className="text-zinc-600" /> {rule.offerProductId ? rule.offerProductName : rule.offerName}
                                             </p>
                                             <p className="text-[9px] text-[#B87333] font-black uppercase tracking-[0.2em] mt-1.5">
                                                 {rule.discountType === 'PERCENTAGE' ? `${rule.discountAmount}% OFF` : `R$ ${rule.discountAmount} OFF`}
@@ -137,7 +142,6 @@ export function UpsellSection({ services }: { services: any[] }) {
                                         </div>
                                     </div>
 
-                                    {/* Ações: Editar e Excluir */}
                                     <div className="flex items-center gap-2">
                                         <button 
                                             onClick={() => handleOpenEdit(rule)}
@@ -159,20 +163,19 @@ export function UpsellSection({ services }: { services: any[] }) {
                 </div>
             </div>
 
-            {/* MODAL DE CRIAÇÃO E EDIÇÃO */}
             <AnimatePresence>
                 {isModalOpen && barbershopId && (
                     <UpsellRuleModal 
                         onClose={() => setIsModalOpen(false)} 
                         services={services} 
+                        products={products}
                         barbershopId={barbershopId}
-                        onSuccess={fetchRules}
+                        onSuccess={fetchRulesAndProducts}
                         initialData={editingRule}
                     />
                 )}
             </AnimatePresence>
 
-            {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO ESTILIZADO */}
             <AnimatePresence>
                 {ruleToDelete && (
                     <motion.div
@@ -198,7 +201,7 @@ export function UpsellSection({ services }: { services: any[] }) {
                                 Excluir Oferta?
                             </h3>
                             <p className="text-zinc-400 text-xs font-medium leading-relaxed mb-8">
-                                Você está prestes a excluir a oferta de <strong className="text-zinc-200">{ruleToDelete.triggerName} + {ruleToDelete.offerName}</strong>. Essa ação não poderá ser desfeita.
+                                Você está prestes a excluir a oferta de <strong className="text-zinc-200">{ruleToDelete.triggerName} + {ruleToDelete.offerProductId ? ruleToDelete.offerProductName : ruleToDelete.offerName}</strong>. Essa ação não poderá ser desfeita.
                             </p>
 
                             <div className="flex flex-col gap-3">
@@ -225,29 +228,35 @@ export function UpsellSection({ services }: { services: any[] }) {
     );
 }
 
-// Sub-componente do Modal de Criação/Edição (Mantido igualzinho)
 function UpsellRuleModal({ 
     onClose, 
     services, 
+    products,
     barbershopId, 
     onSuccess,
     initialData
 }: { 
     onClose: () => void; 
     services: any[]; 
+    products: any[];
     barbershopId: string; 
     onSuccess: () => void;
     initialData?: any; 
 }) {
     const [triggerId, setTriggerId] = useState(initialData?.triggerServiceId || "");
-    const [offerId, setOfferId] = useState(initialData?.offerServiceId || "");
+    const [offerType, setOfferType] = useState<'SERVICE' | 'PRODUCT'>(initialData?.offerProductId ? 'PRODUCT' : 'SERVICE');
+    const [offerId, setOfferId] = useState(initialData?.offerServiceId || initialData?.offerProductId || "");
     const [discount, setDiscount] = useState(initialData?.discountAmount || "");
-    const [copy, setCopy] = useState(initialData?.customCopy || "Aproveite o desconto especial e faça também este serviço!");
+    const [copy, setCopy] = useState(initialData?.customCopy || "Aproveite o desconto especial!");
     const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        setOfferId("");
+    }, [offerType]);
 
     const handleSave = async () => {
         if (!triggerId || !offerId || !discount) {
-            alert("Preencha os campos de serviço base, oferta e desconto!");
+            alert("Preencha os campos base, oferta e desconto!");
             return;
         }
 
@@ -257,10 +266,17 @@ function UpsellRuleModal({
             const bodyPayload: any = {
                 barbershopId,
                 triggerServiceId: triggerId,
-                offerServiceId: offerId,
                 discountAmount: discount,
                 customCopy: copy
             };
+
+            if (offerType === 'SERVICE') {
+                bodyPayload.offerServiceId = offerId;
+                bodyPayload.offerProductId = null;
+            } else {
+                bodyPayload.offerProductId = offerId;
+                bodyPayload.offerServiceId = null;
+            }
 
             if (initialData) bodyPayload.id = initialData.id;
 
@@ -279,7 +295,7 @@ function UpsellRuleModal({
             }
         } catch (error) {
             console.error("Erro na requisição:", error);
-            alert("Erro de conexão ao tentar salvar.");
+            alert("Erro de conexão.");
         } finally {
             setIsSaving(false);
         }
@@ -319,14 +335,14 @@ function UpsellRuleModal({
 
                 <div className="space-y-5 relative z-10">
                     <div>
-                        <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-2 ml-4">Quando o cliente escolher:</label>
+                        <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-2 ml-4">Quando escolher o serviço:</label>
                         <select 
                             value={triggerId} 
                             onChange={(e) => setTriggerId(e.target.value)}
                             disabled={isSaving}
                             className="w-full bg-[#0A0A0A] border border-white/10 rounded-[1.5rem] px-5 py-4 text-[#F7EFE2] text-[13px] font-medium outline-none focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 appearance-none shadow-inner disabled:opacity-50"
                         >
-                            <option value="" disabled>Selecione um serviço base...</option>
+                            <option value="" disabled>Selecione...</option>
                             {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </div>
@@ -339,15 +355,33 @@ function UpsellRuleModal({
                     </div>
 
                     <div>
-                        <label className="block text-[9px] font-black text-[#D49A62] uppercase tracking-[0.2em] mb-2 ml-4">Oferecer com desconto:</label>
+                        <label className="block text-[9px] font-black text-[#D49A62] uppercase tracking-[0.2em] mb-3 ml-4">O que deseja oferecer?</label>
+                        <div className="flex bg-[#0A0A0A] border border-white/10 rounded-[1.5rem] p-1.5 mb-4 shadow-inner">
+                            <button
+                                onClick={() => setOfferType('SERVICE')}
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${offerType === 'SERVICE' ? 'bg-white/10 text-[#F7EFE2] shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            >
+                                Serviço
+                            </button>
+                            <button
+                                onClick={() => setOfferType('PRODUCT')}
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${offerType === 'PRODUCT' ? 'bg-white/10 text-[#F7EFE2] shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            >
+                                Produto
+                            </button>
+                        </div>
+
                         <select 
                             value={offerId} 
                             onChange={(e) => setOfferId(e.target.value)}
                             disabled={isSaving}
                             className="w-full bg-[#0A0A0A] border border-[#B87333]/30 rounded-[1.5rem] px-5 py-4 text-[#F7EFE2] text-[13px] font-medium outline-none focus:border-[#B87333] focus:ring-1 focus:ring-[#B87333] appearance-none shadow-[inset_0_0_20px_rgba(184,115,51,0.05)] disabled:opacity-50"
                         >
-                            <option value="" disabled>Selecione o serviço extra...</option>
-                            {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            <option value="" disabled>Selecione a oferta...</option>
+                            {offerType === 'SERVICE' 
+                                ? services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)
+                                : products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)
+                            }
                         </select>
                     </div>
 

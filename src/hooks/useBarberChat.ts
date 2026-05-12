@@ -8,27 +8,26 @@ export function useBarberChat(barbershopId: string) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [bookedAppointments, setBookedAppointments] = useState<{ time: string, duration: number }[]>([]);
     
-    // 🔥 NOVO: Suportando o passo 2.5 (Upsell)
     const [step, setStep] = useState<1 | 2 | 2.5 | 3 | 4 | 5>(1); 
-    
-    // 🔥 NOVO: Estado para armazenar a oferta que apareceu para o cliente
     const [activeUpsell, setActiveUpsell] = useState<any>(null);
     const [isCheckingUpsell, setIsCheckingUpsell] = useState(false);
 
     const [userData, setUserData] = useState({
         name: "",
-        selectedServices: [] as any[], // Agora os itens podem ter {id, name, price, isUpsell, discount}
+        selectedServices: [] as any[], 
         barberId: "",
         barberName: "",
         date: "",
         time: "",
-        totalPrice: 0 // NOVO: Para sabermos quanto cobrar no final
+        totalPrice: 0 
     });
 
     const totalDuration = useMemo(() => {
         if (!userData.selectedServices.length || !availableServices.length) return 30;
         
         return userData.selectedServices.reduce((total, selected) => {
+            if (selected.type === 'PRODUCT') return total;
+            
             const service = availableServices.find(s => s.id === selected.id);
             return total + (service?.duration || 0);
         }, 0);
@@ -74,77 +73,77 @@ export function useBarberChat(barbershopId: string) {
         setStep(2);
     }, []);
 
-    // 🔥 NOVO: Interceptador antes de ir para a tela de Barbeiro/Data
-    const checkUpsellAndProceed = async () => {
-        if (userData.selectedServices.length === 0) return;
+    const checkUpsellAndProceed = async (currentCart?: any[]) => {
+        const cart = currentCart || userData.selectedServices;
+        if (cart.length === 0) return setStep(3);
         
-        // Pega o ID do primeiro serviço escolhido para usar como Gatilho
-        const mainServiceId = userData.selectedServices[0].id;
+        const cartIds = cart.map(s => s.id).join(',');
         
+        setActiveUpsell(null);
         setIsCheckingUpsell(true);
+        
         try {
-            // Busca se existe alguma regra ativa para esse serviço
-            const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&serviceId=${mainServiceId}`);
+            await new Promise(r => setTimeout(r, 1000)); 
+
+            const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&cartIds=${cartIds}`);
             const data = await res.json();
 
             if (res.ok && data.upsell) {
-                // Se achou uma oferta E O CLIENTE AINDA NÃO SELECIONOU ELA NORMALMENTE, joga a isca
-                const alreadySelected = userData.selectedServices.some(s => s.id === data.upsell.offerServiceId);
-                
-                if (!alreadySelected) {
-                    setActiveUpsell(data.upsell);
-                    setStep(2.5); // Vai para a tela de oferta
-                    return;
-                }
+                setActiveUpsell(data.upsell);
+                setStep(2.5);
+                setIsCheckingUpsell(false);
+                return;
             }
             
-            // Se não tem oferta ou já selecionou, vai direto pro Passo 3
+            setIsCheckingUpsell(false);
             setStep(3);
         } catch (error) {
             console.error("Erro ao checar upsell:", error);
-            setStep(3); // Falha silenciosa para não travar o cliente
-        } finally {
             setIsCheckingUpsell(false);
+            setStep(3); 
         }
     };
 
-    // 🔥 NOVO: Função para o cliente aceitar a oferta
     const acceptUpsellAndProceed = () => {
         if (!activeUpsell) return;
 
-        // Encontra o serviço na lista original para pegar nome/preço real
-        const serviceOferecido = availableServices.find(s => s.id === activeUpsell.offerServiceId);
-        if (!serviceOferecido) return setStep(3);
+        const newItem = { 
+            id: activeUpsell.offerType === 'PRODUCT' ? activeUpsell.offerProductId : activeUpsell.offerServiceId, 
+            name: activeUpsell.offerName,
+            price: activeUpsell.offerPrice,
+            isUpsell: true, 
+            discount: activeUpsell.discountAmount,
+            type: activeUpsell.offerType 
+        };
 
-        setUserData(prev => ({
-            ...prev,
-            selectedServices: [
-                ...prev.selectedServices, 
-                { 
-                    id: activeUpsell.offerServiceId, 
-                    name: serviceOferecido.name,
-                    price: serviceOferecido.price,
-                    isUpsell: true, // Tag para sabermos que teve desconto
-                    discount: activeUpsell.discountAmount
-                }
-            ]
-        }));
-        
-        setStep(3); // Agora sim vai pro barbeiro/horário, mas com o carrinho mais gordo!
+        const newCart = [...userData.selectedServices, newItem];
+        setUserData(prev => ({ ...prev, selectedServices: newCart }));
+        checkUpsellAndProceed(newCart);
     };
     
     const handleConfirmAppointment = async () => {
         setIsSubmitting(true);
         try {
-            const selectedIds = userData.selectedServices.map((s: any) => s.id);
+            const serviceIds = userData.selectedServices.filter((s: any) => s.type !== 'PRODUCT').map((s: any) => s.id);
+            const productIds = userData.selectedServices.filter((s: any) => s.type === 'PRODUCT').map((s: any) => s.id);
             
-            // 🔥 Calcula o total para mandar pro banco
+            // 🔥 CORREÇÃO DO CÁLCULO DE PREÇO AQUI
             const total = userData.selectedServices.reduce((acc, s) => {
-                let p = s.price;
-                if (s.isUpsell) {
-                    p = p - (p * (s.discount / 100)); // Aplica a % de desconto
+                let basePrice = Number(s.price);
+                
+                // Se o preço não veio preenchido (Serviços normais escolhidos no Passo 2)
+                if (isNaN(basePrice) || basePrice === undefined) {
+                    const originalService = availableServices.find(cat => cat.id === s.id);
+                    basePrice = Number(originalService?.price) || 0;
                 }
-                return acc + p;
+
+                if (s.isUpsell) {
+                    const discountVal = Number(s.discount) || 0;
+                    // Aplica a porcentagem do banco
+                    basePrice = basePrice - (basePrice * (discountVal / 100));
+                }
+                
+                return acc + basePrice;
             }, 0);
 
             await fetch('/api/public/appointments', {
@@ -152,12 +151,13 @@ export function useBarberChat(barbershopId: string) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     clientName: userData.name,
-                    serviceIds: selectedIds,
+                    serviceIds: serviceIds,
+                    productIds: productIds,
                     date: userData.date,
                     time: userData.time,
                     barbershopId,
                     barberId: userData.barberId || undefined,
-                    totalPrice: total // Mandando o valor final fechado
+                    totalPrice: total // AGORA SIM VAI OS 161.50 CORRETOS!
                 })
             });
             
@@ -182,8 +182,6 @@ export function useBarberChat(barbershopId: string) {
         handleConfirmAppointment,
         totalDuration,
         bookedAppointments,
-        
-        // Expondo a lógica do Upsell pro Visual
         checkUpsellAndProceed,
         isCheckingUpsell,
         activeUpsell,

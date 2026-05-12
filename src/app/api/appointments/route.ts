@@ -12,7 +12,8 @@ export async function GET() {
             where: { barbershopId: session.user.barbershopId },
             include: {
                 services: true,
-                barber: { select: { id: true, name: true } } // <-- BUSCA O NOME DO BARBEIRO
+                products: true, // 🔥 Busca produtos vinculados
+                barber: { select: { id: true, name: true } }
             },
             orderBy: { time: 'asc' }
         });
@@ -22,16 +23,24 @@ export async function GET() {
         appointments.forEach(appt => {
             if (!formattedAgenda[appt.date]) formattedAgenda[appt.date] = [];
 
-            const serviceNames = appt.services.map(s => s.name).join(", ");
-            const totalPrice = appt.services.reduce((total, s) => total + s.price, 0);
+            // 🔥 Mistura Nomes de Serviços e Produtos para exibir na agenda
+            const serviceNames = appt.services.map(s => s.name);
+            const productNames = appt.products.map(p => p.name);
+            const itemsSold = [...serviceNames, ...productNames].join(", ");
+
+            // Se o appt.price já existir (gravado na hora do agendamento c/ desconto), usa ele.
+            // Se for um agendamento antigo (sem appt.price salvo), soma na hora.
+            let finalPrice = appt.price;
+            if (!finalPrice || finalPrice === 0) {
+                finalPrice = appt.services.reduce((t, s) => t + s.price, 0) + appt.products.reduce((t, p) => t + p.price, 0);
+            }
 
             formattedAgenda[appt.date].push({
                 id: appt.id,
                 time: appt.time,
                 name: appt.clientName,
-                service: serviceNames,
-                price: totalPrice,
-                // 👇 AQUI: Mandamos o nome pro Frontend exibir no Card do Agendamento
+                service: itemsSold, 
+                price: finalPrice, // 🔥 Exibe o valor que foi de fato cobrado
                 barberName: appt.barber?.name || "Não atribuído",
                 barberId: appt.barber?.id
             });
@@ -41,36 +50,5 @@ export async function GET() {
     } catch (error) {
         console.error("Erro no GET:", error);
         return NextResponse.json({ error: "Erro ao buscar" }, { status: 500 });
-    }
-}
-
-export async function POST(req: Request) {
-    try {
-        // Pegamos serviceIds (array) em vez de serviceId
-        const { clientName, serviceIds, date, time, barbershopId } = await req.json();
-
-        // Criamos o formato que o Prisma exige para o connect: [{ id: "1" }, { id: "2" }]
-        const connectServices = serviceIds.map((id: string) => ({ id }));
-
-        const newAppointment = await prisma.appointment.create({
-            data: {
-                clientName,
-                date,
-                time,
-                barbershopId,
-                // Aqui conectamos a lista de serviços ao agendamento
-                services: {
-                    connect: connectServices
-                }
-            },
-            include: {
-                services: true // Retorna os dados para confirmarmos que deu certo
-            }
-        });
-
-        return NextResponse.json({ message: "Criado!", appointment: newAppointment }, { status: 201 });
-    } catch (error) {
-        console.error("Erro no agendamento:", error);
-        return NextResponse.json({ error: "Erro ao criar" }, { status: 500 });
     }
 }

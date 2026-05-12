@@ -13,6 +13,8 @@ import { useServices } from "@/hooks/useServices";
 import { SubscriptionSection } from "./SubscriptionSection";
 import { TeamSection } from "./TeamSection";
 
+import { ProductsSection } from "./ProductsSection";
+
 // 🔥 NOVO IMPORT PARA O UPSELL
 import { UpsellSection } from "./UpsellSection";
 
@@ -155,15 +157,20 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             />
                         )}
                     </section>
-                    
-                    {/* 🔥 NOVA SEÇÃO DE UPSELL ADICIONADA AQUI 🔥 */}
+
+                    <section>
+                        <div className="flex items-center justify-between mb-4 px-2">
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Produtos</p>
+                        </div>
+                        <ProductsSection />
+                    </section>
+
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-[#D49A62] uppercase tracking-[0.2em]">Vendas & Upsell</p>
                         </div>
                         <UpsellSection services={services} />
                     </section>
-
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>

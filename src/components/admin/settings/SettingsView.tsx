@@ -3,24 +3,28 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
+import { ShoppingBag, ChevronRight } from "lucide-react";
+
 import { SettingsHeader } from "./SettingsHeader";
 import { CompanySection } from "./CompanySection";
 import { ServicesSection } from "./ServicesSection";
 import { ServiceEditForm } from "./ServiceEditForm";
 import { BusinessHoursSection } from "./BusinessHoursSection";
-import { useCompanySettings } from "@/hooks/useCompanySettings";
-import { useServices } from "@/hooks/useServices";
 import { SubscriptionSection } from "./SubscriptionSection";
 import { TeamSection } from "./TeamSection";
 
-import { ProductsSection } from "./ProductsSection";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useServices } from "@/hooks/useServices";
 
-// 🔥 NOVO IMPORT PARA O UPSELL
-import { UpsellSection } from "./UpsellSection";
+// 👇 Importando a nova tela que criamos acima
+import { SalesView } from "./SalesView"; 
 
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const { data: session } = useSession();
     const isOwner = (session?.user as any)?.role === "OWNER";
+
+    // 👇 Estado para controlar qual tela estamos vendo (Main Settings ou Sales View)
+    const [activeScreen, setActiveScreen] = useState<'MAIN' | 'SALES'>('MAIN');
 
     const {
         companyData, setCompanyData,
@@ -40,7 +44,6 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
 
     const handleSaveService = async () => {
         if (!editingService || isSavingService) return;
-
         setIsSavingService(true);
         try {
             await saveService(editingService);
@@ -54,12 +57,10 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
 
     const handleDeleteService = async (id: any) => {
         if (isSavingService) return;
-
         if (typeof id === 'number' || String(id).length < 15) {
             setEditingService(null);
             return;
         }
-
         setIsSavingService(true);
         try {
             await deleteService(id);
@@ -70,6 +71,11 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
             setIsSavingService(false);
         }
     };
+
+    // 👇 Renderiza a tela de Vendas se o estado for 'SALES'
+    if (activeScreen === 'SALES') {
+        return <SalesView onBack={() => setActiveScreen('MAIN')} services={services} />;
+    }
 
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-[#050505] max-w-md mx-auto relative overflow-hidden font-sans border-x border-white/5">
@@ -116,6 +122,27 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                         </section>
                     )}
 
+                    {/* 👇 NOVO BOTÃO DE ACESSO À TELA DE VENDAS */}
+                    <section>
+                        <button 
+                            onClick={() => setActiveScreen('SALES')}
+                            className="w-full bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-[#B87333]/30 rounded-[2rem] p-6 flex items-center justify-between group hover:border-[#B87333]/60 transition-all shadow-lg active:scale-[0.98]"
+                        >
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D49A62] to-[#B87333] flex items-center justify-center shadow-[0_5px_15px_rgba(184,115,51,0.3)] text-[#050505]">
+                                    <ShoppingBag size={24} strokeWidth={2.5} />
+                                </div>
+                                <div className="text-left">
+                                    <h3 className="text-[#F7EFE2] font-black text-lg">Catálogo & Ofertas</h3>
+                                    <p className="text-[#D49A62] text-[10px] font-bold uppercase tracking-[0.1em] mt-1">Produtos, Upsell e Downsell</p>
+                                </div>
+                            </div>
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+                                <ChevronRight size={20} />
+                            </div>
+                        </button>
+                    </section>
+
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Horário de Funcionamento</p>
@@ -144,33 +171,17 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
                             <ServicesSection
                                 services={services}
                                 editingId={editingService?.id}
-                                onAdd={() => {
-                                    setEditingService({ id: Date.now(), name: "", price: "", duration: 30 });
-                                }}
+                                onAdd={() => setEditingService({ id: Date.now(), name: "", price: "", duration: 30 })}
                                 onSelect={(service) => {
                                     const priceFormatted = typeof service.price === 'number'
                                         ? (service.price * 100).toFixed(0)
                                         : service.price;
-
                                     setEditingService({ ...service, price: priceFormatted });
                                 }}
                             />
                         )}
                     </section>
 
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Produtos</p>
-                        </div>
-                        <ProductsSection />
-                    </section>
-
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-[#D49A62] uppercase tracking-[0.2em]">Vendas & Upsell</p>
-                        </div>
-                        <UpsellSection services={services} />
-                    </section>
                     <section>
                         <div className="flex items-center justify-between mb-4 px-2">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>

@@ -2,33 +2,35 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 export function useBarberChat(barbershopId: string) {
     const [shopName, setShopName] = useState("Carregando...");
+    const [activeDownsell, setActiveDownsell] = useState<any>(null);
+    const [isCheckingDownsell, setIsCheckingDownsell] = useState(false);
     const [availableServices, setAvailableServices] = useState<any[]>([]);
-    const [availableProducts, setAvailableProducts] = useState<any[]>([]); // 👈 NOVO: Estado para guardar os produtos
+    const [availableProducts, setAvailableProducts] = useState<any[]>([]); 
     const [businessHours, setBusinessHours] = useState<any>(null);
-    const [team, setTeam] = useState<any[]>([]); 
+    const [team, setTeam] = useState<any[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [bookedAppointments, setBookedAppointments] = useState<{ time: string, duration: number }[]>([]);
-    
-    const [step, setStep] = useState<1 | 2 | 2.5 | 3 | 4 | 5>(1); 
+
+    const [step, setStep] = useState<1 | 2 | 2.5 | 2.7 | 3 | 4 | 5>(1);
     const [activeUpsell, setActiveUpsell] = useState<any>(null);
     const [isCheckingUpsell, setIsCheckingUpsell] = useState(false);
 
     const [userData, setUserData] = useState({
         name: "",
-        selectedServices: [] as any[], 
+        selectedServices: [] as any[],
         barberId: "",
         barberName: "",
         date: "",
         time: "",
-        totalPrice: 0 
+        totalPrice: 0
     });
 
     const totalDuration = useMemo(() => {
         if (!userData.selectedServices.length || !availableServices.length) return 30;
-        
+
         return userData.selectedServices.reduce((total, selected) => {
             if (selected.type === 'PRODUCT') return total;
-            
+
             const service = availableServices.find(s => s.id === selected.id);
             return total + (service?.duration || 0);
         }, 0);
@@ -43,7 +45,7 @@ export function useBarberChat(barbershopId: string) {
             date: userData.date,
             barbershopId: barbershopId
         });
-        
+
         if (userData.barberId) params.append("barberId", userData.barberId);
 
         fetch(`/api/public/appointments?${params.toString()}`)
@@ -58,15 +60,15 @@ export function useBarberChat(barbershopId: string) {
 
     useEffect(() => {
         if (!barbershopId) return;
-        
+
         fetch(`/api/public/barbershop/${barbershopId}`)
             .then(res => res.json())
             .then(data => {
                 setShopName(data.name);
                 setAvailableServices(data.services || []);
-                setAvailableProducts(data.products || []); // 👈 NOVO: Pega os produtos que vêm da API
+                setAvailableProducts(data.products || []);
                 setBusinessHours(data.businessHours);
-                setTeam(data.users || []); 
+                setTeam(data.users || []);
             });
     }, [barbershopId]);
 
@@ -78,14 +80,14 @@ export function useBarberChat(barbershopId: string) {
     const checkUpsellAndProceed = async (currentCart?: any[]) => {
         const cart = currentCart || userData.selectedServices;
         if (cart.length === 0) return setStep(3);
-        
+
         const cartIds = cart.map(s => s.id).join(',');
-        
+
         setActiveUpsell(null);
         setIsCheckingUpsell(true);
-        
+
         try {
-            await new Promise(r => setTimeout(r, 1000)); 
+            await new Promise(r => setTimeout(r, 1000));
 
             const res = await fetch(`/api/public/check-upsell?barbershopId=${barbershopId}&cartIds=${cartIds}`);
             const data = await res.json();
@@ -96,44 +98,89 @@ export function useBarberChat(barbershopId: string) {
                 setIsCheckingUpsell(false);
                 return;
             }
-            
+
             setIsCheckingUpsell(false);
             setStep(3);
         } catch (error) {
             console.error("Erro ao checar upsell:", error);
             setIsCheckingUpsell(false);
-            setStep(3); 
+            setStep(3);
         }
     };
 
     const acceptUpsellAndProceed = () => {
         if (!activeUpsell) return;
 
-        const newItem = { 
-            id: activeUpsell.offerType === 'PRODUCT' ? activeUpsell.offerProductId : activeUpsell.offerServiceId, 
+        const newItem = {
+            id: activeUpsell.offerType === 'PRODUCT' ? activeUpsell.offerProductId : activeUpsell.offerServiceId,
             name: activeUpsell.offerName,
             price: activeUpsell.offerPrice,
-            isUpsell: true, 
+            isUpsell: true,
             discount: activeUpsell.discountAmount,
-            type: activeUpsell.offerType 
+            type: activeUpsell.offerType
         };
 
         const newCart = [...userData.selectedServices, newItem];
         setUserData(prev => ({ ...prev, selectedServices: newCart }));
         checkUpsellAndProceed(newCart);
     };
-    
+
+    const handleDeclineUpsell = async () => {
+        if (!activeUpsell || !activeUpsell.downsellId) {
+            return setStep(3);
+        }
+
+        setIsCheckingDownsell(true);
+        setStep(2.7);
+
+        try {
+            const res = await fetch(`/api/public/check-downsell?downsellId=${activeUpsell.downsellId}&barbershopId=${barbershopId}`);
+            const data = await res.json();
+
+            if (res.ok && data.downsell) {
+                setActiveDownsell(data.downsell);
+            } else {
+                setStep(3);
+            }
+        } catch (error) {
+            console.error("Erro ao checar downsell:", error);
+            setStep(3);
+        } finally {
+            setIsCheckingDownsell(false);
+        }
+    };
+
+    const acceptDownsellAndProceed = () => {
+        if (!activeDownsell) return;
+
+        const newItem = {
+            id: activeDownsell.offerType === 'PRODUCT' ? activeDownsell.offerProductId : activeDownsell.offerServiceId,
+            name: activeDownsell.offerName,
+            price: activeDownsell.offerPrice,
+            isUpsell: true,
+            discount: activeDownsell.discountAmount,
+            type: activeDownsell.offerType
+        };
+
+        const newCart = [...userData.selectedServices, newItem];
+        setUserData(prev => ({ ...prev, selectedServices: newCart }));
+        setStep(3);
+    };
+
+    const declineDownsellAndProceed = () => {
+        setStep(3);
+    };
+
     const handleConfirmAppointment = async () => {
         setIsSubmitting(true);
         try {
             const serviceIds = userData.selectedServices.filter((s: any) => s.type !== 'PRODUCT').map((s: any) => s.id);
             const productIds = userData.selectedServices.filter((s: any) => s.type === 'PRODUCT').map((s: any) => s.id);
-            
+
             const total = userData.selectedServices.reduce((acc, s) => {
                 let basePrice = Number(s.price);
-                
+
                 if (isNaN(basePrice) || basePrice === undefined) {
-                    // Tenta achar em serviços ou produtos
                     const originalService = availableServices.find(cat => cat.id === s.id);
                     const originalProduct = availableProducts.find(cat => cat.id === s.id);
                     basePrice = Number(originalService?.price) || Number(originalProduct?.price) || 0;
@@ -143,7 +190,7 @@ export function useBarberChat(barbershopId: string) {
                     const discountVal = Number(s.discount) || 0;
                     basePrice = basePrice - (basePrice * (discountVal / 100));
                 }
-                
+
                 return acc + basePrice;
             }, 0);
 
@@ -158,11 +205,11 @@ export function useBarberChat(barbershopId: string) {
                     time: userData.time,
                     barbershopId,
                     barberId: userData.barberId || undefined,
-                    totalPrice: total 
+                    totalPrice: total
                 })
             });
-            
-            setStep(5); 
+
+            setStep(5);
         } catch (error) {
             alert("Erro ao agendar.");
         } finally {
@@ -173,7 +220,7 @@ export function useBarberChat(barbershopId: string) {
     return {
         shopName,
         availableServices,
-        availableProducts, // 👈 NOVO: Agora você exporta os produtos para usar lá na tela!
+        availableProducts,
         businessHours,
         team,
         isSubmitting,
@@ -187,6 +234,11 @@ export function useBarberChat(barbershopId: string) {
         checkUpsellAndProceed,
         isCheckingUpsell,
         activeUpsell,
-        acceptUpsellAndProceed
+        acceptUpsellAndProceed,
+        handleDeclineUpsell,
+        activeDownsell,
+        isCheckingDownsell,
+        acceptDownsellAndProceed,
+        declineDownsellAndProceed
     };
 }

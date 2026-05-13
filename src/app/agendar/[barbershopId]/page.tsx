@@ -98,8 +98,6 @@ export default function BarberChat() {
     }
 
     if (step === 2 && nextStep === 3) {
-      // 🔥 MUDANÇA AQUI: Avança para 2.5 imediatamente!
-      // Isso libera a renderização do Skeleton enquanto a API carrega.
       setStep(2.5);
       checkUpsellAndProceed();
     } else {
@@ -116,6 +114,25 @@ export default function BarberChat() {
     const timeout = setTimeout(scrollToBottom, 800);
     return () => clearTimeout(timeout);
   }, [step, userData.date, userData.time, userData.selectedServices, userData.barberId, activeUpsell, isCheckingUpsell]);
+
+  // 👇 Função auxiliar para calcular o preço final e formatar
+  const getCalculatedPrice = (upsell: any) => {
+    if (!upsell || !upsell.servicePrice) return null;
+    
+    const originalPrice = Number(upsell.servicePrice);
+    let finalPrice = originalPrice;
+
+    if (upsell.discountType === 'PERCENTAGE') {
+      finalPrice = originalPrice - (originalPrice * (Number(upsell.discountAmount) / 100));
+    } else {
+      finalPrice = originalPrice - Number(upsell.discountAmount);
+    }
+
+    return {
+      original: `R$ ${originalPrice.toFixed(2).replace('.', ',')}`,
+      final: `R$ ${Math.max(0, finalPrice).toFixed(2).replace('.', ',')}`
+    };
+  };
 
   return (
     <main className="fixed inset-0 flex flex-col bg-[#050505] max-w-md mx-auto border-x border-white/5 overflow-hidden">
@@ -154,7 +171,6 @@ export default function BarberChat() {
               </motion.div>
             )}
 
-            {/* 🔥 CORRIGIDO: Passando uma prop "key" para a Div do Upsell Wrapper */}
             {step >= 2.5 && step < 3 && (
               <div key="upsell-wrapper" className="pt-4">
                 <AnimatePresence mode="wait">
@@ -190,9 +206,22 @@ export default function BarberChat() {
                               <p className="text-[#F7EFE2] font-black text-lg leading-tight">
                                 {activeUpsell.offerName}
                               </p>
-                              <p className="text-[#D49A62] text-[10px] font-black uppercase tracking-[0.25em] mt-1">
-                                {activeUpsell.discountType === 'PERCENTAGE' ? `${activeUpsell.discountAmount}% OFF` : `R$ ${activeUpsell.discountAmount} OFF`}
-                              </p>
+                              
+                              {/* 👇 Nova lógica de preço "De X Por Y" */}
+                              {getCalculatedPrice(activeUpsell) ? (
+                                <p className="text-[11px] font-bold mt-1">
+                                  <span className="text-zinc-500 line-through mr-2">
+                                    {getCalculatedPrice(activeUpsell)?.original}
+                                  </span>
+                                  <span className="text-[#D49A62] uppercase tracking-[0.1em]">
+                                    Por {getCalculatedPrice(activeUpsell)?.final}
+                                  </span>
+                                </p>
+                              ) : (
+                                <p className="text-[#D49A62] text-[10px] font-black uppercase tracking-[0.25em] mt-1">
+                                  {activeUpsell.discountType === 'PERCENTAGE' ? `${activeUpsell.discountAmount}% OFF` : `R$ ${activeUpsell.discountAmount} OFF`}
+                                </p>
+                              )}
                             </div>
                           </div>
 
@@ -203,11 +232,12 @@ export default function BarberChat() {
                             >
                               Adicionar à reserva
                             </button>
+                            {/* 👇 Novo texto de recusa */}
                             <button
                               onClick={() => setStep(3)}
                               className="w-full py-4 bg-white/5 border border-white/5 text-zinc-400 hover:text-white rounded-[1.5rem] font-bold uppercase tracking-[0.2em] text-[11px] active:scale-95 transition-all"
                             >
-                              Não, obrigado
+                              Perder essa oportunidade
                             </button>
                           </div>
                         </div>
@@ -294,7 +324,6 @@ export default function BarberChat() {
 
             {step === 5 && <SuccessState key="success" date={userData.date} time={userData.time} />}
 
-            {/* 🔥 CORRIGIDO: Passando a prop "key" para a Âncora de Scroll */}
             <div key="scroll-anchor" ref={messagesEndRef} className="h-2" />
           </AnimatePresence>
         </div>

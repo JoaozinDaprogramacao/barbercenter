@@ -1,34 +1,37 @@
 "use client";
 
-import { ChevronLeft } from "lucide-react";
-import { ProductsSection } from "../sales/ProductsSection";
+// 1. IMPORTS CORRETOS (Ajuste os caminhos se suas pastas forem diferentes)
+import { ScreenLayout } from "../layout/ScreenLayout"; 
+import { ProductsSection } from "./../sales/ProductsSection"; 
+import { UpsellSection } from "./../sales/UpsellSection"; // ou "@/components/admin/settings/sales/UpsellSection"
 
-import { UpsellSection } from "@/components/admin/settings/sales/UpsellSection";
+interface SalesViewProps {
+  onBack: () => void;
+  services: any[];
+}
 
-export const SalesView = ({ onBack, services }: { onBack: () => void, services: any[] }) => {
-    return (
-        <main className="h-[100dvh] w-full flex flex-col bg-[#050505] max-w-md mx-auto relative overflow-hidden font-sans">
-            {/* Header Estilo Barra de Título Nativa */}
-            <header className="px-4 py-4 flex items-center border-b border-zinc-900 bg-[#050505] sticky top-0 z-20">
-                <button 
-                    onClick={onBack}
-                    className="flex items-center gap-1 text-[#D49A62] active:opacity-50 transition-opacity"
-                >
-                    <ChevronLeft size={24} />
-                    <span className="text-sm font-medium">Voltar</span>
-                </button>
-                <div className="absolute left-1/2 -translate-x-1/2">
-                    <h1 className="text-sm font-bold text-white uppercase tracking-widest">Catálogo</h1>
-                </div>
-            </header>
+export const SalesView = ({ onBack, services }: SalesViewProps) => {
+  return (
+    // O ScreenLayout já cria o cabeçalho preto perfeito sem a palavra "Voltar"
+    <ScreenLayout title="Catálogo" onBack={onBack}>
+      
+      {/* O flex-1 bg-[#050505] aqui garante que a faixa cinza desapareça */}
+      <div className="flex flex-col flex-1 bg-[#050505]">
+        
+        {/* Seção de Produtos */}
+        <ProductsSection />
+        
+        {/* Linha Divisória de Sistema (Separa Produtos de Ofertas) */}
+        <div className="w-full h-3 bg-[#080808] border-y border-zinc-900/50 my-2"></div>
 
-            <div className="flex-1 overflow-y-auto no-scrollbar pb-20">
-                {/* Seção de Produtos */}
-                <ProductsSection />
-
-                {/* Seção de Upsell */}
-                <UpsellSection services={services} />
-            </div>
-        </main>
-    );
+        {/* Seção de Upsell (Ofertas) */}
+        <UpsellSection services={services} />
+        
+        {/* Preenchimento final para empurrar a tela até o fundo */}
+        <div className="flex-1 bg-[#050505] min-h-[150px]"></div>
+        
+      </div>
+      
+    </ScreenLayout>
+  );
 };

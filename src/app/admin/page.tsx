@@ -9,10 +9,10 @@ import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
 import { AppointmentCard } from "@/components/admin/dashboard/AppointmentCard";
 import { CalendarPickerModal } from "@/components/admin/dashboard/CalendarPickerModal";
-import { Sidebar } from "@/components/admin/Sidebar";
+import { Sidebar } from "@/components/admin/settings/layout/Sidebar";
 import { TrialBanner } from "@/components/TrialBanner"
 
-import { TrialWorkflow } from '@/components/admin/settings/TrialWorkflow';
+import { TrialWorkflow } from '@/components/admin/settings/billing/TrialWorkflow';
 
 import { useAgenda } from "@/hooks/useAgenda";
 import { useSubscription } from "@/hooks/useSubscription"; // Importando seu novo hook

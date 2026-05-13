@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Clock } from "lucide-react";
 import { motion } from "framer-motion";
-import { TimePickerModal } from "./TimePickerModal";
+import { TimePickerModal } from "../services/TimePickerModal";
 
 // Expandindo os campos para suportar a lógica da imagem (turnos antes e depois do almoço)
 type TimeField = 'openTime' | 'lunchStart' | 'lunchEnd' | 'closeTime';

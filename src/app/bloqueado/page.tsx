@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, ArrowRight, LogOut, Loader2 } from "lucide-react";
 
-import { TrialWorkflow } from '@/components/admin/settings/TrialWorkflow';
+import { TrialWorkflow } from '@/components/admin/settings/billing/TrialWorkflow';
 
 export default function BloqueadoPage() {
   const { data: session, status } = useSession();

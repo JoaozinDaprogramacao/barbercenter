@@ -1,4 +1,6 @@
-import { Crown, CalendarCheck, CheckCircle2 } from 'lucide-react';
+"use client";
+
+import { Crown } from 'lucide-react';
 
 interface ActivePlanDetailsProps {
   expiresAt?: string | Date;
@@ -11,47 +13,66 @@ export function ActivePlanDetails({ expiresAt }: ActivePlanDetailsProps) {
     : 'Data não disponível';
 
   return (
-    <div className="relative overflow-hidden bg-[#B87333]/5 border border-[#B87333]/20 rounded-[2.5rem] p-8 group">
-      {/* Luz de fundo dourada */}
-      <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#B87333]/15 blur-[60px] rounded-full pointer-events-none" />
+    <div className="w-full flex flex-col flex-1 pb-10">
       
-      <div className="relative z-10 flex flex-col items-center text-center">
-        <div className="w-16 h-16 bg-[#B87333]/10 border border-[#B87333]/20 rounded-full flex items-center justify-center mb-4">
-          <Crown className="text-[#C88A52]" size={32} />
+      {/* 1. SEÇÃO HERO (Destaque do Plano) */}
+      <div className="flex flex-col items-center py-12 bg-[#050505]">
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#D49A62]/10 to-transparent border border-[#D49A62]/20 flex items-center justify-center mb-5 shadow-[0_0_40px_rgba(212,154,98,0.05)]">
+          <Crown className="text-[#D49A62]" size={40} strokeWidth={1.5} />
         </div>
-
-        <h3 className="text-2xl font-black text-white tracking-tight mb-2">
-          BarberCenter <span className="text-[#C88A52]">PRO</span>
-        </h3>
-
-        <p className="text-zinc-400 text-xs font-medium leading-relaxed mb-6 max-w-[240px]">
-          Sua barbearia está operando com potência máxima. Todos os recursos ilimitados estão liberados.
+        
+        <h2 className="text-3xl font-black text-white tracking-tight text-center">
+          BarberCenter <span className="text-[#D49A62]">PRO</span>
+        </h2>
+        
+        <p className="text-[13px] text-zinc-500 font-medium text-center mt-3 px-8 max-w-[300px]">
+          Sua barbearia está operando com potência máxima e recursos ilimitados.
         </p>
+      </div>
 
-        <div className="w-full bg-black/40 border border-zinc-800/80 rounded-2xl p-4 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <CheckCircle2 size={14} className="text-[#C88A52]" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Status</span>
-            </div>
-            <span className="text-xs font-black text-[#C88A52] bg-[#B87333]/10 px-2 py-1 rounded-md uppercase tracking-wider">
+      {/* 2. HEADER DA LISTA */}
+      <div className="flex justify-between items-end px-5 pb-3">
+        <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">
+          Detalhes da Assinatura
+        </h3>
+      </div>
+
+      {/* 3. LISTA DE DADOS (Estilo iOS/PWA) */}
+      <div className="w-full bg-[#080808] border-y border-zinc-900">
+        
+        {/* Linha Status */}
+        <div className="flex items-center px-5 py-5 min-h-[64px] border-b border-zinc-900/50">
+          <span className="text-[14px] font-medium text-zinc-500 w-28 shrink-0">
+            Status
+          </span>
+          <div className="flex-1 text-right">
+            <span className="text-[11px] font-black text-green-500 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-lg uppercase tracking-widest">
               Ativo
             </span>
           </div>
+        </div>
 
-          <div className="w-full h-px bg-zinc-800/50" />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <CalendarCheck size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Válido até</span>
-            </div>
-            <span className="text-xs font-bold text-white">
+        {/* Linha Vencimento */}
+        <div className="flex items-center px-5 py-5 min-h-[64px]">
+          <span className="text-[14px] font-medium text-zinc-500 w-28 shrink-0">
+            Vencimento
+          </span>
+          <div className="flex-1 text-right">
+            <span className="text-[15px] font-semibold text-white truncate">
               {formattedDate}
             </span>
           </div>
         </div>
+
       </div>
+
+      {/* 4. FOOTER INFORMATIVO */}
+      <div className="px-8 py-10 flex-1 bg-[#050505]">
+        <p className="text-[11px] text-zinc-600 leading-relaxed text-center max-w-[280px] mx-auto">
+          Sua assinatura garante acesso a todas as atualizações de IA, gestão de catálogo e agendamentos inteligentes.
+        </p>
+      </div>
+      
     </div>
   );
 }

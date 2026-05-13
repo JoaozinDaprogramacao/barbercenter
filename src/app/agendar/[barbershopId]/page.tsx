@@ -21,7 +21,11 @@ export default function BarberChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
-    shopName, availableServices, businessHours, team,
+    shopName, 
+    availableServices, 
+    availableProducts, // 👈 1. ADICIONADO AQUI! Puxando os produtos do hook
+    businessHours, 
+    team,
     isSubmitting, step, setStep, userData, setUserData,
     handleConfirmAppointment,
     totalDuration,
@@ -88,13 +92,13 @@ export default function BarberChat() {
               </motion.div>
             )}
 
-            {/* 👇 Upsell renderizado via componente! Muito mais limpo */}
             {step >= 2.5 && step < 3 && (
               <div key="upsell-wrapper" className="pt-4">
                 <UpsellBubble 
                   isChecking={isCheckingUpsell}
                   upsell={activeUpsell}
                   availableServices={availableServices}
+                  availableProducts={availableProducts} // 👈 2. ADICIONADO AQUI! Passando para a bolha
                   onAccept={acceptUpsellAndProceed}
                   onDecline={() => setStep(3)}
                 />

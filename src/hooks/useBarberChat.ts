@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 export function useBarberChat(barbershopId: string) {
     const [shopName, setShopName] = useState("Carregando...");
     const [availableServices, setAvailableServices] = useState<any[]>([]);
+    const [availableProducts, setAvailableProducts] = useState<any[]>([]); // 👈 NOVO: Estado para guardar os produtos
     const [businessHours, setBusinessHours] = useState<any>(null);
     const [team, setTeam] = useState<any[]>([]); 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +64,7 @@ export function useBarberChat(barbershopId: string) {
             .then(data => {
                 setShopName(data.name);
                 setAvailableServices(data.services || []);
+                setAvailableProducts(data.products || []); // 👈 NOVO: Pega os produtos que vêm da API
                 setBusinessHours(data.businessHours);
                 setTeam(data.users || []); 
             });
@@ -127,19 +129,18 @@ export function useBarberChat(barbershopId: string) {
             const serviceIds = userData.selectedServices.filter((s: any) => s.type !== 'PRODUCT').map((s: any) => s.id);
             const productIds = userData.selectedServices.filter((s: any) => s.type === 'PRODUCT').map((s: any) => s.id);
             
-            // 🔥 CORREÇÃO DO CÁLCULO DE PREÇO AQUI
             const total = userData.selectedServices.reduce((acc, s) => {
                 let basePrice = Number(s.price);
                 
-                // Se o preço não veio preenchido (Serviços normais escolhidos no Passo 2)
                 if (isNaN(basePrice) || basePrice === undefined) {
+                    // Tenta achar em serviços ou produtos
                     const originalService = availableServices.find(cat => cat.id === s.id);
-                    basePrice = Number(originalService?.price) || 0;
+                    const originalProduct = availableProducts.find(cat => cat.id === s.id);
+                    basePrice = Number(originalService?.price) || Number(originalProduct?.price) || 0;
                 }
 
                 if (s.isUpsell) {
                     const discountVal = Number(s.discount) || 0;
-                    // Aplica a porcentagem do banco
                     basePrice = basePrice - (basePrice * (discountVal / 100));
                 }
                 
@@ -157,7 +158,7 @@ export function useBarberChat(barbershopId: string) {
                     time: userData.time,
                     barbershopId,
                     barberId: userData.barberId || undefined,
-                    totalPrice: total // AGORA SIM VAI OS 161.50 CORRETOS!
+                    totalPrice: total 
                 })
             });
             
@@ -172,6 +173,7 @@ export function useBarberChat(barbershopId: string) {
     return {
         shopName,
         availableServices,
+        availableProducts, // 👈 NOVO: Agora você exporta os produtos para usar lá na tela!
         businessHours,
         team,
         isSubmitting,

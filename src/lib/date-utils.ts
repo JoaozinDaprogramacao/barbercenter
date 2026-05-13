@@ -32,6 +32,16 @@ export const getAvailableTimesForDate = (
   let current = h * 60 + m;
   const end = eh * 60 + em;
 
+  // 👇 NOVO: Pega o horário de almoço e converte para minutos (se existir)
+  let lunchStartMins = -1;
+  let lunchEndMins = -1;
+  if (dayConfig.lunchStart && dayConfig.lunchEnd) {
+    const [lh, lm] = dayConfig.lunchStart.split(":").map(Number);
+    const [leh, lem] = dayConfig.lunchEnd.split(":").map(Number);
+    lunchStartMins = lh * 60 + lm;
+    lunchEndMins = leh * 60 + lem;
+  }
+
   const isToday =
     dateObj.getDate() === now.getDate() &&
     dateObj.getMonth() === now.getMonth() &&
@@ -53,28 +63,29 @@ export const getAvailableTimesForDate = (
 
     let isAvailable = false;
 
-    // Primeiro verifica se o horário já passou ou passa do fechamento da loja
-    if (!(isToday && current <= currentTotalMinutes) && proposedEnd <= end) {
+    // 👇 NOVO: Lógica que checa se o serviço invade o horário de almoço
+    const isDuringLunch = lunchStartMins !== -1 && lunchEndMins !== -1 &&
+                          (current < lunchEndMins && proposedEnd > lunchStartMins);
+
+    // Adicionamos a regra !isDuringLunch aqui:
+    if (!(isToday && current <= currentTotalMinutes) && proposedEnd <= end && !isDuringLunch) {
       
-      // Se selecionou barbeiro, checa só ele. Se não, checa todos.
       const barbersToCheck = selectedBarberId ? [{ id: selectedBarberId }] : team;
 
-      // Verifica cada barbeiro
       for (const barber of barbersToCheck) {
-        // Pega só a agenda deste barbeiro específico
         const barberAppointments = bookedRanges.filter(app => app.barberId === barber.id);
         let barberIsFree = true;
 
         for (const range of barberAppointments) {
           if (current < range.end && proposedEnd > range.start) {
-            barberIsFree = false; // Bateu horário com este barbeiro
+            barberIsFree = false; 
             break;
           }
         }
 
         if (barberIsFree) {
-          isAvailable = true; // Pelo menos um barbeiro está livre!
-          break; // Não precisa olhar o resto da equipe
+          isAvailable = true; 
+          break; 
         }
       }
     }

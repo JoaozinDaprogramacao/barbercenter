@@ -1,12 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, ChevronRight } from "lucide-react";
+import { Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { TimePickerModal } from "./TimePickerModal";
 
+// Expandindo os campos para suportar a lógica da imagem (turnos antes e depois do almoço)
+type TimeField = 'openTime' | 'lunchStart' | 'lunchEnd' | 'closeTime';
+
+interface PickerConfig {
+  index: number;
+  field: TimeField;
+  label: string;
+}
+
 export const BusinessHoursSection = ({ isEditing, isSaving, data, onEdit, onSave, onChange }: any) => {
-  const [pickerConfig, setPickerConfig] = useState<{ index: number, field: 'openTime' | 'closeTime', label: string } | null>(null);
+  const [pickerConfig, setPickerConfig] = useState<PickerConfig | null>(null);
 
   const updateDay = (dayIndex: number, field: string, value: any) => {
     const newHours = [...data.businessHours];
@@ -14,9 +23,25 @@ export const BusinessHoursSection = ({ isEditing, isSaving, data, onEdit, onSave
     onChange({ ...data, businessHours: newHours });
   };
 
+  const renderTimeButton = (item: any, index: number, field: TimeField, defaultTime: string, label: string) => (
+    <button
+      disabled={!isEditing || !item.isOpen}
+      onClick={() => setPickerConfig({ index, field, label: `${label}: ${item.label}` })}
+      className={`w-full py-3 rounded-xl text-sm font-semibold tracking-wider transition-all border
+        ${item.isOpen 
+          ? (isEditing ? 'bg-zinc-900/80 hover:bg-zinc-800 border-zinc-800 text-zinc-100' : 'bg-transparent border-zinc-800 text-zinc-300') 
+          : 'bg-zinc-900/30 border-transparent text-zinc-600'
+        }
+      `}
+    >
+      {item[field] || defaultTime}
+    </button>
+  );
+
   return (
     <section className="mb-12">
-      <div className="flex justify-between items-center mb-6 px-2">
+      {/* Header  */}
+      <div className="flex justify-between items-center mb-10 px-2">
         <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] flex items-center gap-2">
           <Clock size={12} /> Horários de Operação
         </h3>
@@ -32,61 +57,76 @@ export const BusinessHoursSection = ({ isEditing, isSaving, data, onEdit, onSave
         </motion.button>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-[2.5rem] overflow-hidden shadow-2xl">
+      <div className="flex flex-col gap-10">
         {data.businessHours?.map((item: any, index: number) => (
-          <div key={item.day} className="flex items-center justify-between p-5 border-b border-zinc-800/50 last:border-0 group">
-            <div className="flex items-center gap-4">
-              {isEditing ? (
-                <button
-                  onClick={() => updateDay(index, 'isOpen', !item.isOpen)}
-                  className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${item.isOpen ? 'bg-green-600' : 'bg-zinc-800'}`}
-                >
-                  <motion.div 
-                    animate={{ x: item.isOpen ? 26 : 4 }}
-                    className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
-                  />
-                </button>
-              ) : (
-                <div className={`w-2 h-2 rounded-full ${item.isOpen ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-zinc-800'}`} />
-              )}
-              <span className={`text-sm font-black uppercase tracking-tight ${item.isOpen ? 'text-white' : 'text-zinc-600'}`}>
+          <div key={item.day} className="flex flex-col gap-4">
+            
+            {/* Top row: Day label, Divider Line, Status, Toggle */}
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 shrink-0">
                 {item.label}
               </span>
+              
+              <div className="flex-1 h-[1px] bg-zinc-800"></div>
+              
+              <div className="flex items-center gap-3 shrink-0">
+                <span className={`text-[10px] font-bold tracking-wider ${item.isOpen ? 'text-green-500' : 'text-zinc-500'}`}>
+                  {item.isOpen ? 'ATENDENDO' : 'NÃO ATENDENDO'}
+                </span>
+                
+                {isEditing ? (
+                  <button
+                    onClick={() => updateDay(index, 'isOpen', !item.isOpen)}
+                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${
+                      item.isOpen ? 'bg-green-500' : 'bg-zinc-300' // Fundo branco/cinza quando desligado (igual a imagem)
+                    }`}
+                  >
+                    <motion.div 
+                      animate={{ x: item.isOpen ? 22 : 2 }}
+                      className="absolute top-[2px] w-5 h-5 bg-white rounded-full shadow-sm"
+                    />
+                  </button>
+                ) : (
+                  <div className={`w-2 h-2 rounded-full ${item.isOpen ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-zinc-800'}`} />
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {item.isOpen ? (
-                <div className="flex items-center gap-1.5">
-                  {isEditing ? (
-                    <div className="flex items-center bg-zinc-950 rounded-xl p-1 border border-zinc-800">
-                      <button
-                        onClick={() => setPickerConfig({ index, field: 'openTime', label: `Abrir: ${item.label}` })}
-                        className="px-3 py-1.5 rounded-lg text-[11px] font-black text-white hover:bg-zinc-800 transition-colors"
-                      >
-                        {item.openTime}
-                      </button>
-                      <span className="text-zinc-800 font-bold mx-0.5">/</span>
-                      <button
-                        onClick={() => setPickerConfig({ index, field: 'closeTime', label: `Fechar: ${item.label}` })}
-                        className="px-3 py-1.5 rounded-lg text-[11px] font-black text-white hover:bg-zinc-800 transition-colors"
-                      >
-                        {item.closeTime}
-                      </button>
-                    </div>
-                  ) : (
-                    <span className="text-xs font-bold text-zinc-400 bg-zinc-950 px-4 py-2 rounded-xl border border-zinc-800/50">
-                      {item.openTime} — {item.closeTime}
-                    </span>
-                  )}
+            {/* Bottom row: Time Slots & Bracket Labels */}
+            <div className={`transition-opacity duration-300 ${!item.isOpen ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+              <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                {renderTimeButton(item, index, 'openTime', '09:00', 'Início')}
+                {renderTimeButton(item, index, 'lunchStart', '12:00', 'Saída Almoço')}
+                {renderTimeButton(item, index, 'lunchEnd', '13:00', 'Volta Almoço')}
+                {renderTimeButton(item, index, 'closeTime', '18:00', 'Fim')}
+              </div>
+              
+              {/* Labels under the inputs (INÍCIO, ALMOÇO, FIM) */}
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 mt-1 relative">
+                <div className="text-center text-[9px] font-bold text-zinc-600 uppercase tracking-widest pt-2">
+                  Início
                 </div>
-              ) : (
-                <span className="text-[10px] font-black text-zinc-800 uppercase tracking-widest mr-2">Fechado</span>
-              )}
+                
+                {/* Construção visual do Bracket "└─ ALMOÇO ─┘" */}
+                <div className="col-span-2 relative flex flex-col items-center justify-start pt-2">
+                  <div className="absolute top-0 w-[60%] sm:w-[70%] h-2 border-b border-l border-r border-zinc-800 rounded-b-sm"></div>
+                  {/* Nota: Troque 'bg-[#09090B]' para a exata cor de fundo do seu app para cortar a linha perfeitamente */}
+                  <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest bg-[#09090B] px-2 z-10 -mt-[6px] relative">
+                    Almoço
+                  </span>
+                </div>
+                
+                <div className="text-center text-[9px] font-bold text-zinc-600 uppercase tracking-widest pt-2">
+                  Fim
+                </div>
+              </div>
             </div>
+
           </div>
         ))}
       </div>
 
+      {/* Modal Picker */}
       {pickerConfig && (
         <TimePickerModal
           isOpen={!!pickerConfig}

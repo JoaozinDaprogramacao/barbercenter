@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Plus } from "lucide-react"; // <-- Ícone Plus adicionado
 
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
@@ -230,6 +230,15 @@ export default function BarberDashboard() {
                             Nenhum agendamento para este dia.
                         </div>
                     )}
+
+                    {/* Botão de Adicionar Agendamento */}
+                    <button
+                        onClick={() => router.push("/admin/agendar")}
+                        className="w-full mt-4 py-4 bg-[#100D0B] hover:bg-white/[0.02] border border-white/10 text-[#D49A62] rounded-[1.2rem] font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-all active:scale-95"
+                    >
+                        <Plus size={16} strokeWidth={3} />
+                        Novo Agendamento
+                    </button>
                 </div>
             </div>
         </main>

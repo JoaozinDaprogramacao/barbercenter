@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { SettingsHeader } from "@/components/admin/settings/SettingsHeader";
+import { SettingsHeader } from "@/components/admin/settings/layout/SettingsHeader";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Copy, Check, Share2, ExternalLink, Sparkles } from "lucide-react";

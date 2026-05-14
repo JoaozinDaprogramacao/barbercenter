@@ -13,7 +13,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                 services: {
                     select: { id: true, name: true, price: true, duration: true }
                 },
-                // 👇 AQUI: Retorna os barbeiros disponíveis na loja
+                // 👇 O SEGREDO AQUI: Agora a API vai mandar os produtos para o frontend!
+                products: {
+                    select: { id: true, name: true, price: true }
+                },
                 users: {
                     select: { id: true, name: true, role: true }
                 }

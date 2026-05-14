@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlanSummaryActivity } from './activities/PlanSummaryActivity';
-import { PixPaymentActivity } from './activities/PixPaymentActivity';
-import { CardPaymentActivity } from './activities/CardPaymentActivity';
+import { PlanSummaryActivity } from '../activities/PlanSummaryActivity';
+import { PixPaymentActivity } from '../activities/PixPaymentActivity';
+import { CardPaymentActivity } from '../activities/CardPaymentActivity';
 
 interface UserData {
     id: string;

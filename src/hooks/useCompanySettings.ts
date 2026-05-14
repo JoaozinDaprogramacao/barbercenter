@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
-// Horários padrão para uma nova barbearia
+// Adicionamos lunchStart e lunchEnd aos horários padrão
 const DEFAULT_HOURS = [
-    { day: 0, label: "Domingo", isOpen: false, openTime: "09:00", closeTime: "13:00" },
-    { day: 1, label: "Segunda", isOpen: true, openTime: "09:00", closeTime: "19:00" },
-    { day: 2, label: "Terça", isOpen: true, openTime: "09:00", closeTime: "19:00" },
-    { day: 3, label: "Quarta", isOpen: true, openTime: "09:00", closeTime: "19:00" },
-    { day: 4, label: "Quinta", isOpen: true, openTime: "09:00", closeTime: "19:00" },
-    { day: 5, label: "Sexta", isOpen: true, openTime: "09:00", closeTime: "20:00" },
-    { day: 6, label: "Sábado", isOpen: true, openTime: "08:00", closeTime: "17:00" },
+    { day: 0, label: "Domingo", isOpen: false, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "13:00" },
+    { day: 1, label: "Segunda", isOpen: true, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "19:00" },
+    { day: 2, label: "Terça", isOpen: true, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "19:00" },
+    { day: 3, label: "Quarta", isOpen: true, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "19:00" },
+    { day: 4, label: "Quinta", isOpen: true, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "19:00" },
+    { day: 5, label: "Sexta", isOpen: true, openTime: "09:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "20:00" },
+    { day: 6, label: "Sábado", isOpen: true, openTime: "08:00", lunchStart: "12:00", lunchEnd: "13:00", closeTime: "17:00" },
 ];
 
 export function useCompanySettings() {
@@ -28,12 +28,22 @@ export function useCompanySettings() {
             .then(res => res.json())
             .then(data => {
                 if (data.barbershop) {
+                    
+                    // Tratamento para garantir que dados antigos do banco recebam os novos campos de almoço
+                    let safeBusinessHours = DEFAULT_HOURS;
+                    if (data.barbershop.businessHours && data.barbershop.businessHours.length > 0) {
+                        safeBusinessHours = data.barbershop.businessHours.map((hour: any) => ({
+                            ...hour,
+                            lunchStart: hour.lunchStart || "12:00",
+                            lunchEnd: hour.lunchEnd || "13:00"
+                        }));
+                    }
+
                     setCompanyData({
                         nome: data.barbershop.name || "",
                         endereco: data.barbershop.address || "",
                         telefone: data.barbershop.phone || "",
-                        // Se existir no banco, usa. Se não, usa o DEFAULT
-                        businessHours: data.barbershop.businessHours || DEFAULT_HOURS
+                        businessHours: safeBusinessHours
                     });
                 }
             })
@@ -50,7 +60,7 @@ export function useCompanySettings() {
                     name: companyData.nome,
                     phone: companyData.telefone,
                     address: companyData.endereco,
-                    businessHours: companyData.businessHours // Manda pra API
+                    businessHours: companyData.businessHours // Agora vai mandar o array com os horários de almoço!
                 })
             });
             setIsEditingCompany(false);

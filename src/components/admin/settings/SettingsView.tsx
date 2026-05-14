@@ -3,24 +3,33 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { SettingsHeader } from "./SettingsHeader";
-import { CompanySection } from "./CompanySection";
-import { ServicesSection } from "./ServicesSection";
-import { ServiceEditForm } from "./ServiceEditForm";
-import { BusinessHoursSection } from "./BusinessHoursSection";
+import { ShoppingBag, Store, Clock, Scissors, Users, Star } from "lucide-react";
+
+import { SettingsHeader } from "./layout/SettingsHeader";
+import { CompanySection } from "./company/CompanyScreen";
+import { ServicesSection } from "./services/ServiceScreen";
+import { ServiceEditForm } from "./services/ServiceEditForm";
+import { BusinessHoursSection } from "./company/BusinessHoursSection";
+import { SubscriptionSection } from "./billing/SubscriptionScreen";
+import { TeamSection } from "./team/TeamScreen";
+
+import { ScreenLayout } from "./layout/ScreenLayout"
+import { MenuItem } from "./layout/MenuItem"
+
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useServices } from "@/hooks/useServices";
-import { SubscriptionSection } from "./SubscriptionSection";
-import { TeamSection } from "./TeamSection";
+import { SalesView } from "./billing/SalesScreen";
 
-import { ProductsSection } from "./ProductsSection";
 
-// 🔥 NOVO IMPORT PARA O UPSELL
-import { UpsellSection } from "./UpsellSection";
 
+// ==========================================
+// TELA PRINCIPAL: ROTEADOR DE CONFIGURAÇÕES
+// ==========================================
 export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     const { data: session } = useSession();
     const isOwner = (session?.user as any)?.role === "OWNER";
+
+    const [activeScreen, setActiveScreen] = useState<'MAIN' | 'PROFILE' | 'HOURS' | 'SERVICES' | 'SALES' | 'TEAM' | 'SUBSCRIPTION'>('MAIN');
 
     const {
         companyData, setCompanyData,
@@ -29,10 +38,7 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
     } = useCompanySettings();
 
     const {
-        services,
-        isLoading: isLoadingServices,
-        saveService,
-        deleteService
+        services, isLoading: isLoadingServices, saveService, deleteService
     } = useServices();
 
     const [editingService, setEditingService] = useState<any>(null);
@@ -40,160 +46,141 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
 
     const handleSaveService = async () => {
         if (!editingService || isSavingService) return;
-
         setIsSavingService(true);
         try {
             await saveService(editingService);
             setEditingService(null);
-        } catch (error) {
-            console.error("Erro ao salvar serviço:", error);
-        } finally {
-            setIsSavingService(false);
-        }
+        } catch (error) { console.error(error); } 
+        finally { setIsSavingService(false); }
     };
 
     const handleDeleteService = async (id: any) => {
         if (isSavingService) return;
-
         if (typeof id === 'number' || String(id).length < 15) {
             setEditingService(null);
             return;
         }
-
         setIsSavingService(true);
         try {
             await deleteService(id);
             setEditingService(null);
-        } catch (error) {
-            console.error("Erro ao deletar serviço:", error);
-        } finally {
-            setIsSavingService(false);
-        }
+        } catch (error) { console.error(error); } 
+        finally { setIsSavingService(false); }
     };
 
+
+    if (activeScreen === 'PROFILE') {
+        return (
+            <ScreenLayout title="Dados da Barbearia" onBack={() => setActiveScreen('MAIN')}>
+                {isLoadingCompany ? (
+                    <div className="animate-pulse bg-zinc-900/50 h-48 w-full rounded-[2rem]"></div>
+                ) : (
+                    <div className="space-y-10">
+                        <CompanySection isEditing={isEditingCompany} data={companyData} isSaving={isSavingCompany} onEdit={() => setIsEditingCompany(true)} onSave={saveCompanyData} onChange={setCompanyData} />
+                    </div>
+                )}
+            </ScreenLayout>
+        );
+    }
+
+    if (activeScreen === 'HOURS') {
+        return (
+            <ScreenLayout title="Horários" onBack={() => setActiveScreen('MAIN')}>
+                {isLoadingCompany ? (
+                    <div className="animate-pulse bg-zinc-900/50 h-64 w-full rounded-[2rem]"></div>
+                ) : (
+                    <div className="space-y-10">
+                        <BusinessHoursSection isEditing={isEditingCompany} data={companyData} isSaving={isSavingCompany} onEdit={() => setIsEditingCompany(true)} onSave={saveCompanyData} onChange={setCompanyData} />
+                    </div>
+                )}
+            </ScreenLayout>
+        );
+    }
+
+    if (activeScreen === 'SERVICES') {
+        return (
+            <ScreenLayout title="Catálogo" onBack={() => setActiveScreen('MAIN')}>
+                {isLoadingServices ? (
+                    <div className="animate-pulse bg-zinc-900/50 h-40 w-full rounded-[2rem]"></div>
+                ) : (
+                    <div className="space-y-10">
+                        <ServicesSection services={services} editingId={editingService?.id} onAdd={() => setEditingService({ id: Date.now(), name: "", price: "", duration: 30 })} onSelect={(service) => { const priceFormatted = typeof service.price === 'number' ? (service.price * 100).toFixed(0) : service.price; setEditingService({ ...service, price: priceFormatted }); }} />
+                    </div>
+                )}
+                <AnimatePresence>
+                    {editingService && (
+                        <ServiceEditForm service={editingService} isOpen={!!editingService} isSaving={isSavingService} onDone={handleSaveService} onRemove={handleDeleteService} onUpdate={(id: any, f: string, v: any) => { setEditingService((prev: any) => ({ ...prev, [f]: v })); }} />
+                    )}
+                </AnimatePresence>
+            </ScreenLayout>
+        );
+    }
+
+    if (activeScreen === 'TEAM') {
+        return (
+            <ScreenLayout title="Sua Equipe" onBack={() => setActiveScreen('MAIN')}>
+                <div className="space-y-10">
+                    <TeamSection />
+                </div>
+            </ScreenLayout>
+        );
+    }
+
+    if (activeScreen === 'SUBSCRIPTION') {
+        return (
+            <ScreenLayout title="Configurações de Plano" onBack={() => setActiveScreen('MAIN')}>
+                <div className="space-y-10">
+                    <SubscriptionSection />
+                </div>
+            </ScreenLayout>
+        );
+    }
+
+    if (activeScreen === 'SALES') {
+        return <SalesView onBack={() => setActiveScreen('MAIN')} services={services} />;
+    }
+
+    // ==========================================
+    // RENDERIZAÇÃO DO MENU PRINCIPAL (MAIN)
+    // ==========================================
     return (
         <main className="h-[100dvh] w-full flex flex-col bg-[#050505] max-w-md mx-auto relative overflow-hidden font-sans border-x border-white/5">
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#B87333]/10 blur-[100px] rounded-full" />
-                <div className="absolute bottom-40 left-0 w-64 h-64 bg-[#D49A62]/5 blur-[100px] rounded-full" />
-            </div>
-
             <SettingsHeader onBack={onBack} />
 
-            <div className="flex-1 overflow-y-auto px-6 no-scrollbar pb-32 z-10">
-                <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="mb-10"
-                >
-                    <p className="text-[#B87333] text-[10px] font-black uppercase tracking-[0.3em] mb-1">Painel de</p>
-                    <h2 className="text-[2.5rem] font-black text-[#F7EFE2] tracking-tighter leading-none">Configurações</h2>
-                </motion.div>
+            <div className="flex-1 overflow-y-auto no-scrollbar pb-32">
+                <header className="px-6 pt-10 pb-12">
+                    <p className="text-[#B87333] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Preferências</p>
+                    <h2 className="text-4xl font-black text-white tracking-tighter leading-none">Ajustes</h2>
+                </header>
 
-                <div className="space-y-12">
+                <div className="space-y-10">
+                    {/* Bloco 1: A Empresa */}
                     <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Perfil da Barbearia</p>
+                        <div className="px-7 mb-3">
+                            <p className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">Informações Gerais</p>
                         </div>
-                        {isLoadingCompany ? (
-                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-48 rounded-[2.5rem] w-full"></div>
-                        ) : (
-                            <CompanySection
-                                isEditing={isEditingCompany}
-                                data={companyData}
-                                isSaving={isSavingCompany}
-                                onEdit={() => setIsEditingCompany(true)}
-                                onSave={saveCompanyData}
-                                onChange={setCompanyData}
-                            />
-                        )}
+                        <div className="w-full border-y border-zinc-900 bg-[#050505]">
+                            <MenuItem icon={Store} title="Perfil da Barbearia" subtitle="Nome, logo e localização" onClick={() => setActiveScreen('PROFILE')} />
+                            <MenuItem icon={Clock} title="Horários de Operação" subtitle="Agenda de funcionamento" onClick={() => setActiveScreen('HOURS')} />
+                            {isOwner && (
+                                <MenuItem icon={Star} title="Meu Plano" subtitle="Gerenciar assinatura" onClick={() => setActiveScreen('SUBSCRIPTION')} />
+                            )}
+                        </div>
                     </section>
 
-                    {isOwner && (
-                        <section className="px-1">
-                            <SubscriptionSection />
-                        </section>
-                    )}
-
+                    {/* Bloco 2: Operação Diária */}
                     <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Horário de Funcionamento</p>
+                        <div className="px-7 mb-3">
+                            <p className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">Serviços e Vendas</p>
                         </div>
-                        {isLoadingCompany ? (
-                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-64 rounded-[2.5rem] w-full"></div>
-                        ) : (
-                            <BusinessHoursSection
-                                isEditing={isEditingCompany}
-                                data={companyData}
-                                isSaving={isSavingCompany}
-                                onEdit={() => setIsEditingCompany(true)}
-                                onSave={saveCompanyData}
-                                onChange={setCompanyData}
-                            />
-                        )}
-                    </section>
-
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Serviços</p>
+                        <div className="w-full border-y border-zinc-900 bg-[#050505]">
+                            <MenuItem icon={Scissors} title="Serviços Oferecidos" subtitle="Gerenciar cortes e barbas" onClick={() => setActiveScreen('SERVICES')} />
+                            <MenuItem icon={ShoppingBag} title="Catálogo & Ofertas" subtitle="Produtos, Upsell e Downsell" onClick={() => setActiveScreen('SALES')} />
+                            <MenuItem icon={Users} title="Equipe de Barbeiros" subtitle="Membros e acessos" onClick={() => setActiveScreen('TEAM')} />
                         </div>
-                        {isLoadingServices ? (
-                            <div className="animate-pulse bg-white/[0.02] border border-white/5 h-40 rounded-[2.5rem] w-full"></div>
-                        ) : (
-                            <ServicesSection
-                                services={services}
-                                editingId={editingService?.id}
-                                onAdd={() => {
-                                    setEditingService({ id: Date.now(), name: "", price: "", duration: 30 });
-                                }}
-                                onSelect={(service) => {
-                                    const priceFormatted = typeof service.price === 'number'
-                                        ? (service.price * 100).toFixed(0)
-                                        : service.price;
-
-                                    setEditingService({ ...service, price: priceFormatted });
-                                }}
-                            />
-                        )}
-                    </section>
-
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Catálogo de Produtos</p>
-                        </div>
-                        <ProductsSection />
-                    </section>
-
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-[#D49A62] uppercase tracking-[0.2em]">Vendas & Upsell</p>
-                        </div>
-                        <UpsellSection services={services} />
-                    </section>
-                    <section>
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Gestão de Equipe</p>
-                        </div>
-                        <TeamSection />
                     </section>
                 </div>
             </div>
-
-            <AnimatePresence>
-                {editingService && (
-                    <ServiceEditForm
-                        service={editingService}
-                        isOpen={!!editingService}
-                        isSaving={isSavingService}
-                        onDone={handleSaveService}
-                        onRemove={handleDeleteService}
-                        onUpdate={(id: any, f: string, v: any) => {
-                            setEditingService((prev: any) => ({ ...prev, [f]: v }));
-                        }}
-                    />
-                )}
-            </AnimatePresence>
         </main>
     );
 };

@@ -14,7 +14,7 @@ export default function AdminAgendarPage() {
     const router = useRouter();
     const { data: session } = useSession();
     const barbershopId = session?.user?.barbershopId as string;
-    
+
     const { state, actions } = useAdminAgendar(barbershopId);
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
 
@@ -22,12 +22,12 @@ export default function AdminAgendarPage() {
         return Array.from({ length: 14 }, (_, index) => {
             const date = new Date();
             date.setDate(date.getDate() + index);
-            
+
             // Correção de Data: Formato YYYY-MM-DD local sem desvio de fuso
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
-            
+
             return {
                 value: `${y}-${m}-${d}`,
                 weekDay: date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""),
@@ -45,26 +45,73 @@ export default function AdminAgendarPage() {
     }, [state.selectedDate]);
 
     const handleSubmit = async () => {
+        if (!barbershopId) {
+            alert("Barbearia não encontrada na sessão.");
+            return;
+        }
+
+        if (!state.clientName.trim()) {
+            alert("Informe o nome do cliente.");
+            return;
+        }
+
+        if (state.selectedServices.length === 0) {
+            alert("Selecione pelo menos um serviço.");
+            return;
+        }
+
+        if (!state.selectedBarber) {
+            alert("Selecione um profissional.");
+            return;
+        }
+
+        if (!state.selectedDate || !state.selectedTime) {
+            alert("Selecione data e horário.");
+            return;
+        }
+
         actions.setIsSubmitting(true);
+
+        const payload = {
+            clientName: state.clientName.trim(),
+            serviceIds: state.selectedServices,
+            productIds: state.selectedProducts,
+            date: state.selectedDate,
+            time: state.selectedTime,
+            barbershopId,
+            barberId: state.selectedBarber,
+            totalPrice: state.totalPrice,
+        };
+
+        console.log("PAYLOAD ENVIADO PARA CRIAR AGENDAMENTO:", payload);
+
         try {
             const res = await fetch("/api/public/appointments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    clientName: state.clientName,
-                    serviceIds: state.selectedServices,
-                    productIds: state.selectedProducts,
-                    date: state.selectedDate,
-                    time: state.selectedTime,
-                    barbershopId,
-                    barberId: state.selectedBarber,
-                    totalPrice: state.totalPrice,
-                }),
+                body: JSON.stringify(payload),
             });
-            if (res.ok) {
-                router.push("/admin/dashboard");
-                router.refresh();
+
+            const data = await res.json().catch(() => null);
+
+            console.log("STATUS DA RESPOSTA:", res.status);
+            console.log("RESPOSTA DA API:", data);
+            console.log("AGENDAMENTO CRIADO:", JSON.stringify(data.appointment, null, 2));
+
+            if (!res.ok) {
+                alert(data?.error || "Erro ao salvar agendamento.");
+                return;
             }
+
+            if (!data?.appointment && !data?.id && !data?.success) {
+                alert("A API respondeu sucesso, mas não retornou confirmação do agendamento. Veja o console.");
+                return;
+            }
+
+            window.location.href = "/admin";
+        } catch (error) {
+            console.error("ERRO AO FINALIZAR AGENDAMENTO:", error);
+            alert("Erro inesperado ao salvar agendamento.");
         } finally {
             actions.setIsSubmitting(false);
         }
@@ -163,8 +210,27 @@ export default function AdminAgendarPage() {
                         <div className="flex flex-col"><span className="text-zinc-500 font-bold text-[10px] uppercase">Total a cobrar</span><span className="text-2xl font-black text-[#D49A62]">R$ {state.totalPrice.toFixed(2).replace(".", ",")}</span></div>
                         <div className="text-right"><span className="text-zinc-500 font-bold text-[10px] uppercase block">Duração</span><span className="text-zinc-300 font-bold">{state.totalDuration} min</span></div>
                     </div>
-                    <button type="button" onClick={handleSubmit} disabled={state.isSubmitting || !state.clientName || state.selectedServices.length === 0 || !state.selectedDate || !state.selectedTime} className="w-full py-5 bg-gradient-to-br from-[#D49A62] via-[#B87333] to-[#8B5A2B] text-[#050505] rounded-[1.5rem] font-black uppercase text-sm shadow-lg shadow-[#D49A62]/10 active:scale-[0.97] transition-all disabled:opacity-40 flex items-center justify-center gap-2">
-                        {state.isSubmitting ? <Loader2 size={22} className="animate-spin" /> : <><Check size={20} strokeWidth={3} /> Finalizar Agendamento</>}
+                    <button
+                        onClick={handleSubmit}
+                        disabled={
+                            state.isSubmitting ||
+                            !state.clientName.trim() ||
+                            state.selectedServices.length === 0 ||
+                            !state.selectedBarber ||
+                            !state.selectedDate ||
+                            !state.selectedTime
+                        }
+                        className={`w-full h-14 rounded-2xl font-bold text-[15px] transition-all ${state.isSubmitting ||
+                            !state.clientName.trim() ||
+                            state.selectedServices.length === 0 ||
+                            !state.selectedBarber ||
+                            !state.selectedDate ||
+                            !state.selectedTime
+                            ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                            : "bg-[#D49A62] text-[#050505] hover:bg-[#E6AD78] active:scale-[0.98]"
+                            }`}
+                    >
+                        {state.isSubmitting ? "Salvando..." : "Salvar agendamento"}
                     </button>
                 </div>
             </div>

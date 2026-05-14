@@ -190,7 +190,12 @@ exports.Prisma.UpsellRuleScalarFieldEnum = {
   customCopy: 'customCopy',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  hasDownsell: 'hasDownsell',
+  downsellOfferServiceId: 'downsellOfferServiceId',
+  downsellOfferProductId: 'downsellOfferProductId',
+  downsellDiscountAmount: 'downsellDiscountAmount',
+  downsellCustomCopy: 'downsellCustomCopy'
 };
 
 exports.Prisma.SortOrder = {
@@ -267,7 +272,10 @@ exports.Prisma.UpsellRuleOrderByRelevanceFieldEnum = {
   offerServiceId: 'offerServiceId',
   offerProductId: 'offerProductId',
   discountType: 'discountType',
-  customCopy: 'customCopy'
+  customCopy: 'customCopy',
+  downsellOfferServiceId: 'downsellOfferServiceId',
+  downsellOfferProductId: 'downsellOfferProductId',
+  downsellCustomCopy: 'downsellCustomCopy'
 };
 
 

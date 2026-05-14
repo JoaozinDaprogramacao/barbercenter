@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useBarberChat } from "@/hooks/useBarberChat";
 import { getAvailableTimesForDate } from "@/lib/date-utils";
 
-// Componentes extraídos
 import { ChatHeader } from "@/components/agendar/ChatHeader";
 import { ChatFooter } from "@/components/agendar/ChatFooter";
 import { SuccessState } from "@/components/agendar/SuccessState";
@@ -14,6 +13,7 @@ import { DateSelector } from "@/components/DateSelector";
 import { TimeGrid } from "@/components/TimeGrid";
 import { BigChatBubble } from "@/components/agendar/BigChatBubble";
 import { UpsellBubble } from "@/components/agendar/UpsellBubble";
+import { DownsellBubble } from "@/components/agendar/DownsellBubble";
 
 export default function BarberChat() {
   const params = useParams();
@@ -23,7 +23,7 @@ export default function BarberChat() {
   const {
     shopName, 
     availableServices, 
-    availableProducts, // 👈 1. ADICIONADO AQUI! Puxando os produtos do hook
+    availableProducts, 
     businessHours, 
     team,
     isSubmitting, step, setStep, userData, setUserData,
@@ -33,7 +33,12 @@ export default function BarberChat() {
     checkUpsellAndProceed,
     isCheckingUpsell,
     activeUpsell,
-    acceptUpsellAndProceed
+    acceptUpsellAndProceed,
+    handleDeclineUpsell,
+    activeDownsell,
+    isCheckingDownsell,
+    acceptDownsellAndProceed,
+    declineDownsellAndProceed
   } = useBarberChat(barbershopId);
 
   const handleSetStep = (val: any) => {
@@ -92,15 +97,28 @@ export default function BarberChat() {
               </motion.div>
             )}
 
-            {step >= 2.5 && step < 3 && (
+            {step === 2.5 && (
               <div key="upsell-wrapper" className="pt-4">
                 <UpsellBubble 
                   isChecking={isCheckingUpsell}
                   upsell={activeUpsell}
                   availableServices={availableServices}
-                  availableProducts={availableProducts} // 👈 2. ADICIONADO AQUI! Passando para a bolha
+                  availableProducts={availableProducts}
                   onAccept={acceptUpsellAndProceed}
-                  onDecline={() => setStep(3)}
+                  onDecline={handleDeclineUpsell}
+                />
+              </div>
+            )}
+
+            {step === 2.7 && (
+              <div key="downsell-wrapper" className="pt-4">
+                <DownsellBubble 
+                  isChecking={isCheckingDownsell}
+                  downsell={activeDownsell}
+                  availableServices={availableServices}
+                  availableProducts={availableProducts}
+                  onAccept={acceptDownsellAndProceed}
+                  onDecline={declineDownsellAndProceed}
                 />
               </div>
             )}

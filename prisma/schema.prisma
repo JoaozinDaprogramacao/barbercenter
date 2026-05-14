@@ -113,4 +113,10 @@ model UpsellRule {
 
   @@index([barbershopId], map: "upsellrules_barbershopId_fkey")
   @@map("upsell_rules")
+
+  hasDownsell             Boolean  @default(false)
+  downsellOfferServiceId  String?
+  downsellOfferProductId  String?
+  downsellDiscountAmount  Float?
+  downsellCustomCopy      String?
 }

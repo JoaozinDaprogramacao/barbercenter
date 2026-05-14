@@ -19,7 +19,6 @@ export async function GET(req: Request) {
             where: { barbershopId }
         });
 
-        // 🔥 NOVO: Buscando os produtos para podermos exibir o nome na lista
         const products = await prisma.product.findMany({
             where: { barbershopId }
         });
@@ -47,10 +46,13 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        // 🔥 NOVO: Desestruturando o offerProductId
-        const { barbershopId, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy } = body;
+        
+        // 🔥 CORREÇÃO: Desestruturando TODOS os campos, incluindo os de downsell
+        const { 
+            barbershopId, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy,
+            hasDownsell, downsellOfferServiceId, downsellOfferProductId, downsellDiscountAmount, downsellCustomCopy
+        } = body;
 
-        // 🔥 CORREÇÃO: Agora ele exige que TENHA o offerServiceId OU o offerProductId
         if (!barbershopId || !triggerServiceId || !discountAmount || (!offerServiceId && !offerProductId)) {
             return NextResponse.json({ error: "Preencha todos os campos obrigatórios" }, { status: 400 });
         }
@@ -63,7 +65,13 @@ export async function POST(req: Request) {
                 offerProductId: offerProductId || null,
                 discountAmount: parseFloat(discountAmount),
                 customCopy,
-                discountType: "PERCENTAGE"
+                discountType: "PERCENTAGE",
+                // 🔥 CORREÇÃO: Salvando os dados do Downsell no banco!
+                hasDownsell: hasDownsell || false,
+                downsellOfferServiceId: downsellOfferServiceId || null,
+                downsellOfferProductId: downsellOfferProductId || null,
+                downsellDiscountAmount: downsellDiscountAmount ? parseFloat(downsellDiscountAmount) : null,
+                downsellCustomCopy: downsellCustomCopy || null
             }
         });
 
@@ -77,7 +85,12 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
     try {
         const body = await req.json();
-        const { id, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy } = body;
+        
+        // 🔥 CORREÇÃO: Desestruturando TODOS os campos na edição também
+        const { 
+            id, triggerServiceId, offerServiceId, offerProductId, discountAmount, customCopy,
+            hasDownsell, downsellOfferServiceId, downsellOfferProductId, downsellDiscountAmount, downsellCustomCopy
+        } = body;
 
         if (!id) return NextResponse.json({ error: "ID da oferta é obrigatório" }, { status: 400 });
 
@@ -88,7 +101,13 @@ export async function PUT(req: Request) {
                 offerServiceId: offerServiceId || null,
                 offerProductId: offerProductId || null,
                 discountAmount: parseFloat(discountAmount),
-                customCopy
+                customCopy,
+                // 🔥 CORREÇÃO: Atualizando os dados do Downsell no banco!
+                hasDownsell: hasDownsell || false,
+                downsellOfferServiceId: downsellOfferServiceId || null,
+                downsellOfferProductId: downsellOfferProductId || null,
+                downsellDiscountAmount: downsellDiscountAmount ? parseFloat(downsellDiscountAmount) : null,
+                downsellCustomCopy: downsellCustomCopy || null
             }
         });
 

@@ -5,7 +5,7 @@ export function useBarberChat(barbershopId: string) {
     const [activeDownsell, setActiveDownsell] = useState<any>(null);
     const [isCheckingDownsell, setIsCheckingDownsell] = useState(false);
     const [availableServices, setAvailableServices] = useState<any[]>([]);
-    const [availableProducts, setAvailableProducts] = useState<any[]>([]); 
+    const [availableProducts, setAvailableProducts] = useState<any[]>([]);
     const [businessHours, setBusinessHours] = useState<any>(null);
     const [team, setTeam] = useState<any[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -125,38 +125,48 @@ export function useBarberChat(barbershopId: string) {
         checkUpsellAndProceed(newCart);
     };
 
-    const handleDeclineUpsell = async () => {
-        if (!activeUpsell || !activeUpsell.downsellId) {
+    const handleDeclineUpsell = () => {
+        // 1. Verifica se a regra de upsell atual TEM um downsell configurado nela mesma
+        if (!activeUpsell || !activeUpsell.hasDownsell) {
             return setStep(3);
         }
 
         setIsCheckingDownsell(true);
         setStep(2.7);
 
-        try {
-            const res = await fetch(`/api/public/check-downsell?downsellId=${activeUpsell.downsellId}&barbershopId=${barbershopId}`);
-            const data = await res.json();
+        // 2. Como os dados do downsell já vieram da API junto com o Upsell, 
+        // não precisamos fazer outro fetch! Só precisamos montar o objeto.
+        setTimeout(() => {
+            const isProduct = !!activeUpsell.downsellOfferProductId;
+            const offerId = isProduct ? activeUpsell.downsellOfferProductId : activeUpsell.downsellOfferServiceId;
 
-            if (res.ok && data.downsell) {
-                setActiveDownsell(data.downsell);
-            } else {
-                setStep(3);
-            }
-        } catch (error) {
-            console.error("Erro ao checar downsell:", error);
-            setStep(3);
-        } finally {
+            const linkedItem = isProduct
+                ? availableProducts.find(p => p.id === offerId)
+                : availableServices.find(s => s.id === offerId);
+
+            setActiveDownsell({
+                id: activeUpsell.id,
+                offerType: isProduct ? 'PRODUCT' : 'SERVICE',
+                productId: activeUpsell.downsellOfferProductId,
+                serviceId: activeUpsell.downsellOfferServiceId,
+                offerName: linkedItem?.name || "Oferta Especial",
+                originalPrice: linkedItem?.price,
+                discountAmount: activeUpsell.downsellDiscountAmount,
+                discountType: activeUpsell.discountType || 'PERCENTAGE', // Usa a mesma unidade da regra base
+                downsellCustomCopy: activeUpsell.downsellCustomCopy
+            });
+
             setIsCheckingDownsell(false);
-        }
+        }, 600); // Um leve delay apenas para a animação da bolha fluir bem
     };
 
     const acceptDownsellAndProceed = () => {
         if (!activeDownsell) return;
 
         const newItem = {
-            id: activeDownsell.offerType === 'PRODUCT' ? activeDownsell.offerProductId : activeDownsell.offerServiceId,
+            id: activeDownsell.offerType === 'PRODUCT' ? activeDownsell.productId : activeDownsell.serviceId,
             name: activeDownsell.offerName,
-            price: activeDownsell.offerPrice,
+            price: activeDownsell.originalPrice,
             isUpsell: true,
             discount: activeDownsell.discountAmount,
             type: activeDownsell.offerType
@@ -166,6 +176,8 @@ export function useBarberChat(barbershopId: string) {
         setUserData(prev => ({ ...prev, selectedServices: newCart }));
         setStep(3);
     };
+
+
 
     const declineDownsellAndProceed = () => {
         setStep(3);

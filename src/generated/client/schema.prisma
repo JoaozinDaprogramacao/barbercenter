@@ -111,6 +111,12 @@ model UpsellRule {
   updatedAt        DateTime   @updatedAt
   barbershop       Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
+  hasDownsell            Boolean @default(false)
+  downsellOfferServiceId String?
+  downsellOfferProductId String?
+  downsellDiscountAmount Float?
+  downsellCustomCopy     String?
+
   @@index([barbershopId], map: "upsellrules_barbershopId_fkey")
   @@map("upsell_rules")
 }

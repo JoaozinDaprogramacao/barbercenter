@@ -6788,10 +6788,12 @@ export namespace Prisma {
 
   export type UpsellRuleAvgAggregateOutputType = {
     discountAmount: number | null
+    downsellDiscountAmount: number | null
   }
 
   export type UpsellRuleSumAggregateOutputType = {
     discountAmount: number | null
+    downsellDiscountAmount: number | null
   }
 
   export type UpsellRuleMinAggregateOutputType = {
@@ -6806,6 +6808,11 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    hasDownsell: boolean | null
+    downsellOfferServiceId: string | null
+    downsellOfferProductId: string | null
+    downsellDiscountAmount: number | null
+    downsellCustomCopy: string | null
   }
 
   export type UpsellRuleMaxAggregateOutputType = {
@@ -6820,6 +6827,11 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    hasDownsell: boolean | null
+    downsellOfferServiceId: string | null
+    downsellOfferProductId: string | null
+    downsellDiscountAmount: number | null
+    downsellCustomCopy: string | null
   }
 
   export type UpsellRuleCountAggregateOutputType = {
@@ -6834,16 +6846,23 @@ export namespace Prisma {
     isActive: number
     createdAt: number
     updatedAt: number
+    hasDownsell: number
+    downsellOfferServiceId: number
+    downsellOfferProductId: number
+    downsellDiscountAmount: number
+    downsellCustomCopy: number
     _all: number
   }
 
 
   export type UpsellRuleAvgAggregateInputType = {
     discountAmount?: true
+    downsellDiscountAmount?: true
   }
 
   export type UpsellRuleSumAggregateInputType = {
     discountAmount?: true
+    downsellDiscountAmount?: true
   }
 
   export type UpsellRuleMinAggregateInputType = {
@@ -6858,6 +6877,11 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    hasDownsell?: true
+    downsellOfferServiceId?: true
+    downsellOfferProductId?: true
+    downsellDiscountAmount?: true
+    downsellCustomCopy?: true
   }
 
   export type UpsellRuleMaxAggregateInputType = {
@@ -6872,6 +6896,11 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    hasDownsell?: true
+    downsellOfferServiceId?: true
+    downsellOfferProductId?: true
+    downsellDiscountAmount?: true
+    downsellCustomCopy?: true
   }
 
   export type UpsellRuleCountAggregateInputType = {
@@ -6886,6 +6915,11 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    hasDownsell?: true
+    downsellOfferServiceId?: true
+    downsellOfferProductId?: true
+    downsellDiscountAmount?: true
+    downsellCustomCopy?: true
     _all?: true
   }
 
@@ -6987,6 +7021,11 @@ export namespace Prisma {
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    hasDownsell: boolean
+    downsellOfferServiceId: string | null
+    downsellOfferProductId: string | null
+    downsellDiscountAmount: number | null
+    downsellCustomCopy: string | null
     _count: UpsellRuleCountAggregateOutputType | null
     _avg: UpsellRuleAvgAggregateOutputType | null
     _sum: UpsellRuleSumAggregateOutputType | null
@@ -7020,6 +7059,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    hasDownsell?: boolean
+    downsellOfferServiceId?: boolean
+    downsellOfferProductId?: boolean
+    downsellDiscountAmount?: boolean
+    downsellCustomCopy?: boolean
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upsellRule"]>
 
@@ -7037,9 +7081,14 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    hasDownsell?: boolean
+    downsellOfferServiceId?: boolean
+    downsellOfferProductId?: boolean
+    downsellDiscountAmount?: boolean
+    downsellCustomCopy?: boolean
   }
 
-  export type UpsellRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "barbershopId" | "triggerServiceId" | "offerServiceId" | "offerProductId" | "discountAmount" | "discountType" | "customCopy" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["upsellRule"]>
+  export type UpsellRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "barbershopId" | "triggerServiceId" | "offerServiceId" | "offerProductId" | "discountAmount" | "discountType" | "customCopy" | "isActive" | "createdAt" | "updatedAt" | "hasDownsell" | "downsellOfferServiceId" | "downsellOfferProductId" | "downsellDiscountAmount" | "downsellCustomCopy", ExtArgs["result"]["upsellRule"]>
   export type UpsellRuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     barbershop?: boolean | BarbershopDefaultArgs<ExtArgs>
   }
@@ -7061,6 +7110,11 @@ export namespace Prisma {
       isActive: boolean
       createdAt: Date
       updatedAt: Date
+      hasDownsell: boolean
+      downsellOfferServiceId: string | null
+      downsellOfferProductId: string | null
+      downsellDiscountAmount: number | null
+      downsellCustomCopy: string | null
     }, ExtArgs["result"]["upsellRule"]>
     composites: {}
   }
@@ -7442,6 +7496,11 @@ export namespace Prisma {
     readonly isActive: FieldRef<"UpsellRule", 'Boolean'>
     readonly createdAt: FieldRef<"UpsellRule", 'DateTime'>
     readonly updatedAt: FieldRef<"UpsellRule", 'DateTime'>
+    readonly hasDownsell: FieldRef<"UpsellRule", 'Boolean'>
+    readonly downsellOfferServiceId: FieldRef<"UpsellRule", 'String'>
+    readonly downsellOfferProductId: FieldRef<"UpsellRule", 'String'>
+    readonly downsellDiscountAmount: FieldRef<"UpsellRule", 'Float'>
+    readonly downsellCustomCopy: FieldRef<"UpsellRule", 'String'>
   }
     
 
@@ -7907,7 +7966,12 @@ export namespace Prisma {
     customCopy: 'customCopy',
     isActive: 'isActive',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    hasDownsell: 'hasDownsell',
+    downsellOfferServiceId: 'downsellOfferServiceId',
+    downsellOfferProductId: 'downsellOfferProductId',
+    downsellDiscountAmount: 'downsellDiscountAmount',
+    downsellCustomCopy: 'downsellCustomCopy'
   };
 
   export type UpsellRuleScalarFieldEnum = (typeof UpsellRuleScalarFieldEnum)[keyof typeof UpsellRuleScalarFieldEnum]
@@ -8017,7 +8081,10 @@ export namespace Prisma {
     offerServiceId: 'offerServiceId',
     offerProductId: 'offerProductId',
     discountType: 'discountType',
-    customCopy: 'customCopy'
+    customCopy: 'customCopy',
+    downsellOfferServiceId: 'downsellOfferServiceId',
+    downsellOfferProductId: 'downsellOfferProductId',
+    downsellCustomCopy: 'downsellCustomCopy'
   };
 
   export type UpsellRuleOrderByRelevanceFieldEnum = (typeof UpsellRuleOrderByRelevanceFieldEnum)[keyof typeof UpsellRuleOrderByRelevanceFieldEnum]
@@ -8506,6 +8573,11 @@ export namespace Prisma {
     isActive?: BoolFilter<"UpsellRule"> | boolean
     createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
     updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    hasDownsell?: BoolFilter<"UpsellRule"> | boolean
+    downsellOfferServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellOfferProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellDiscountAmount?: FloatNullableFilter<"UpsellRule"> | number | null
+    downsellCustomCopy?: StringNullableFilter<"UpsellRule"> | string | null
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
   }
 
@@ -8521,6 +8593,11 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    hasDownsell?: SortOrder
+    downsellOfferServiceId?: SortOrderInput | SortOrder
+    downsellOfferProductId?: SortOrderInput | SortOrder
+    downsellDiscountAmount?: SortOrderInput | SortOrder
+    downsellCustomCopy?: SortOrderInput | SortOrder
     barbershop?: BarbershopOrderByWithRelationInput
     _relevance?: UpsellRuleOrderByRelevanceInput
   }
@@ -8540,6 +8617,11 @@ export namespace Prisma {
     isActive?: BoolFilter<"UpsellRule"> | boolean
     createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
     updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    hasDownsell?: BoolFilter<"UpsellRule"> | boolean
+    downsellOfferServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellOfferProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellDiscountAmount?: FloatNullableFilter<"UpsellRule"> | number | null
+    downsellCustomCopy?: StringNullableFilter<"UpsellRule"> | string | null
     barbershop?: XOR<BarbershopScalarRelationFilter, BarbershopWhereInput>
   }, "id">
 
@@ -8555,6 +8637,11 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    hasDownsell?: SortOrder
+    downsellOfferServiceId?: SortOrderInput | SortOrder
+    downsellOfferProductId?: SortOrderInput | SortOrder
+    downsellDiscountAmount?: SortOrderInput | SortOrder
+    downsellCustomCopy?: SortOrderInput | SortOrder
     _count?: UpsellRuleCountOrderByAggregateInput
     _avg?: UpsellRuleAvgOrderByAggregateInput
     _max?: UpsellRuleMaxOrderByAggregateInput
@@ -8577,6 +8664,11 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"UpsellRule"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"UpsellRule"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UpsellRule"> | Date | string
+    hasDownsell?: BoolWithAggregatesFilter<"UpsellRule"> | boolean
+    downsellOfferServiceId?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
+    downsellOfferProductId?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
+    downsellDiscountAmount?: FloatNullableWithAggregatesFilter<"UpsellRule"> | number | null
+    downsellCustomCopy?: StringNullableWithAggregatesFilter<"UpsellRule"> | string | null
   }
 
   export type BarbershopCreateInput = {
@@ -9035,6 +9127,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
     barbershop: BarbershopCreateNestedOneWithoutUpsellRulesInput
   }
 
@@ -9050,6 +9147,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
   }
 
   export type UpsellRuleUpdateInput = {
@@ -9063,6 +9165,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
     barbershop?: BarbershopUpdateOneRequiredWithoutUpsellRulesNestedInput
   }
 
@@ -9078,6 +9185,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpsellRuleCreateManyInput = {
@@ -9092,6 +9204,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
   }
 
   export type UpsellRuleUpdateManyMutationInput = {
@@ -9105,6 +9222,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpsellRuleUncheckedUpdateManyInput = {
@@ -9119,6 +9241,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -9692,10 +9819,16 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    hasDownsell?: SortOrder
+    downsellOfferServiceId?: SortOrder
+    downsellOfferProductId?: SortOrder
+    downsellDiscountAmount?: SortOrder
+    downsellCustomCopy?: SortOrder
   }
 
   export type UpsellRuleAvgOrderByAggregateInput = {
     discountAmount?: SortOrder
+    downsellDiscountAmount?: SortOrder
   }
 
   export type UpsellRuleMaxOrderByAggregateInput = {
@@ -9710,6 +9843,11 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    hasDownsell?: SortOrder
+    downsellOfferServiceId?: SortOrder
+    downsellOfferProductId?: SortOrder
+    downsellDiscountAmount?: SortOrder
+    downsellCustomCopy?: SortOrder
   }
 
   export type UpsellRuleMinOrderByAggregateInput = {
@@ -9724,10 +9862,16 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    hasDownsell?: SortOrder
+    downsellOfferServiceId?: SortOrder
+    downsellOfferProductId?: SortOrder
+    downsellDiscountAmount?: SortOrder
+    downsellCustomCopy?: SortOrder
   }
 
   export type UpsellRuleSumOrderByAggregateInput = {
     discountAmount?: SortOrder
+    downsellDiscountAmount?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -10658,6 +10802,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
   }
 
   export type UpsellRuleUncheckedCreateWithoutBarbershopInput = {
@@ -10671,6 +10820,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
   }
 
   export type UpsellRuleCreateOrConnectWithoutBarbershopInput = {
@@ -10835,6 +10989,11 @@ export namespace Prisma {
     isActive?: BoolFilter<"UpsellRule"> | boolean
     createdAt?: DateTimeFilter<"UpsellRule"> | Date | string
     updatedAt?: DateTimeFilter<"UpsellRule"> | Date | string
+    hasDownsell?: BoolFilter<"UpsellRule"> | boolean
+    downsellOfferServiceId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellOfferProductId?: StringNullableFilter<"UpsellRule"> | string | null
+    downsellDiscountAmount?: FloatNullableFilter<"UpsellRule"> | number | null
+    downsellCustomCopy?: StringNullableFilter<"UpsellRule"> | string | null
   }
 
   export type BarbershopCreateWithoutUsersInput = {
@@ -11624,6 +11783,11 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    hasDownsell?: boolean
+    downsellOfferServiceId?: string | null
+    downsellOfferProductId?: string | null
+    downsellDiscountAmount?: number | null
+    downsellCustomCopy?: string | null
   }
 
   export type AppointmentUpdateWithoutBarbershopInput = {
@@ -11769,6 +11933,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpsellRuleUncheckedUpdateWithoutBarbershopInput = {
@@ -11782,6 +11951,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpsellRuleUncheckedUpdateManyWithoutBarbershopInput = {
@@ -11795,6 +11969,11 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasDownsell?: BoolFieldUpdateOperationsInput | boolean
+    downsellOfferServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellOfferProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    downsellDiscountAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    downsellCustomCopy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppointmentCreateManyBarberInput = {

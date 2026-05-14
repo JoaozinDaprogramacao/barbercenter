@@ -21,10 +21,10 @@ export default function BarberChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
-    shopName, 
-    availableServices, 
-    availableProducts, 
-    businessHours, 
+    shopName,
+    availableServices,
+    availableProducts,
+    businessHours,
     team,
     isSubmitting, step, setStep, userData, setUserData,
     handleConfirmAppointment,
@@ -71,6 +71,28 @@ export default function BarberChat() {
     return () => clearTimeout(timeout);
   }, [step, userData.date, userData.time, userData.selectedServices, userData.barberId, activeUpsell, isCheckingUpsell]);
 
+  const formatDisplayDate = (date: string) => {
+    if (!date) return "";
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [year, month, day] = date.split("-").map(Number);
+      const parsedDate = new Date(year, month - 1, day);
+
+      return parsedDate.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+      });
+    }
+
+    const [day, month, year] = date.split("-");
+
+    if (day && month && year) {
+      return `${day} de ${month} de ${year}`;
+    }
+
+    return date;
+  };
+
   return (
     <main className="fixed inset-0 flex flex-col bg-[#050505] max-w-md mx-auto border-x border-white/5 overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.12),transparent_50%)] pointer-events-none" />
@@ -99,7 +121,7 @@ export default function BarberChat() {
 
             {step === 2.5 && (
               <div key="upsell-wrapper" className="pt-4">
-                <UpsellBubble 
+                <UpsellBubble
                   isChecking={isCheckingUpsell}
                   upsell={activeUpsell}
                   availableServices={availableServices}
@@ -112,7 +134,7 @@ export default function BarberChat() {
 
             {step === 2.7 && (
               <div key="downsell-wrapper" className="pt-4">
-                <DownsellBubble 
+                <DownsellBubble
                   isChecking={isCheckingDownsell}
                   downsell={activeDownsell}
                   availableServices={availableServices}
@@ -132,8 +154,8 @@ export default function BarberChat() {
                     disabled={step > 3}
                     onClick={() => setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "Qualquer profissional" }))}
                     className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${userData.barberName === "Qualquer profissional"
-                        ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
-                        : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
+                      ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
+                      : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
                       } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
                   >
                     Qualquer profissional
@@ -145,8 +167,8 @@ export default function BarberChat() {
                       disabled={step > 3}
                       onClick={() => setUserData((prev: any) => ({ ...prev, barberId: member.id, barberName: member.name }))}
                       className={`p-5 rounded-[1.8rem] border text-left text-lg font-bold transition-all backdrop-blur-md ${userData.barberId === member.id
-                          ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
-                          : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
+                        ? "bg-[#B87333]/15 border-[#B87333]/40 text-[#D49A62] shadow-[inset_0_1px_0_rgba(184,115,51,0.2)]"
+                        : "bg-white/[0.02] border-white/5 text-zinc-400 hover:bg-white/[0.04] hover:border-white/10"
                         } ${step > 3 ? "opacity-60 cursor-default" : "active:scale-[0.98]"}`}
                     >
                       {member.name}
@@ -167,7 +189,7 @@ export default function BarberChat() {
 
                 {userData.date && (
                   <div className="space-y-6 pt-4">
-                    <BigChatBubble isAi text={`Perfeito! Escolha um horário para ${userData.date.replace('-', ' de ')}:`} />
+                    <BigChatBubble isAi text={`Perfeito! Escolha um horário para ${formatDisplayDate(userData.date)}:`} />
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <TimeGrid
                         value={userData.time}

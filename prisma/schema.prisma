@@ -16,8 +16,6 @@ model Barbershop {
   businessHours         Json?
   planStatus            String        @default("TRIAL")
   planExpiresAt         DateTime      @default(now())
-  abacateCustomerId     String?       @unique
-  abacateSubscriptionId String?       @unique
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
   appointments          Appointment[]

@@ -4,39 +4,14 @@ import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  barbershopId: string;
-}
-
-interface PlanSummaryActivityProps {
-  onClose: () => void;
-  userData: UserData;
-}
-
-export function PlanSummaryActivity({ onClose, userData }: PlanSummaryActivityProps) {
-  
-  const handleCheckout = () => {
-    // 1. Sua URL base da Kiwify
-    const kiwifyUrl = new URL("https://pay.kiwify.com.br/IqvY0J1");
-    
-    // 2. Pré-preenchendo os dados do cliente no checkout (Aumenta muito a conversão!)
-    if (userData?.email) kiwifyUrl.searchParams.append("email", userData.email);
-    if (userData?.name) kiwifyUrl.searchParams.append("name", userData.name);
-    
-    // 3. Redireciona o usuário para o pagamento
-    window.location.href = kiwifyUrl.toString();
-  };
-
+export function PlanSummaryActivity({ onClose, onNext }: { onClose: () => void, onNext: (t: 'PIX'|'CARD') => void }) {
   return (
     <motion.div 
       initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
       className="absolute inset-0 flex flex-col bg-[#050505] overflow-hidden"
     >
-      {/* Efeitos Artísticos Premium */}
+      {/* Efeitos Artísticos Premium (Glows Acobreados) */}
       <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.15),transparent_60%)] pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-[400px] bg-[radial-gradient(circle_at_bottom,rgba(212,154,98,0.05),transparent_60%)] pointer-events-none" />
 
@@ -57,7 +32,7 @@ export function PlanSummaryActivity({ onClose, userData }: PlanSummaryActivityPr
           <span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">assinatura atual</span>
         </h2>
         
-        {/* Foguete com brilho */}
+        {/* Foguete com brilho em Cobre/Dourado */}
         <motion.div 
           animate={{ y: [0, -10, 0] }} 
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} 
@@ -72,7 +47,7 @@ export function PlanSummaryActivity({ onClose, userData }: PlanSummaryActivityPr
           />
         </motion.div>
 
-        {/* Card de Preço */}
+        {/* Card de Preço - Glassmorphism Premium */}
         <div className="group relative mb-10 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.02] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(184,115,51,0.10),transparent_40%)]" />
           
@@ -94,12 +69,20 @@ export function PlanSummaryActivity({ onClose, userData }: PlanSummaryActivityPr
         </p>
 
         <div className="w-full max-w-sm space-y-3 mt-auto">
-          {/* Botão Único Direto para Kiwify */}
+          {/* Botão PIX - Mantive um tom verde-água luxuoso para remeter ao PIX, mas que combina com o tema dark */}
           <button 
-            onClick={handleCheckout} 
-            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-gradient-to-r from-[#D49A62] to-[#B87333] py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#050505] shadow-[0_10px_20px_rgba(212,154,98,0.2)] transition-all hover:brightness-110 active:scale-95"
+            onClick={() => onNext('PIX')} 
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-gradient-to-r from-[#00BFA6] to-[#00A382] py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#050505] shadow-[0_10px_20px_rgba(0,163,130,0.2)] transition-all hover:brightness-110 active:scale-95"
           >
-            Assinar Agora
+            Pagar com PIX
+          </button>
+          
+          {/* Botão Cartão - Transparente/Glass com hover acobreado */}
+          <button 
+            onClick={() => onNext('CARD')} 
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.03] py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#F7EFE2] backdrop-blur-md transition-all hover:border-[#B87333]/40 hover:bg-white/[0.06] hover:text-[#D49A62] active:scale-95"
+          >
+            Cartão de Crédito
           </button>
         </div>
       </div>

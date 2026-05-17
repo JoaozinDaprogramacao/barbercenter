@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlanSummaryActivity } from '../activities/PlanSummaryActivity';
+import { PixPaymentActivity } from '../activities/PixPaymentActivity';
+import { CardPaymentActivity } from '../activities/CardPaymentActivity';
 
 interface UserData {
     id: string;
@@ -17,43 +19,70 @@ interface TrialWorkflowProps {
     userData: UserData;
 }
 
+type ActivityStack = 'IDLE' | 'PLAN_SUMMARY' | 'PIX_PAYMENT' | 'CARD_PAYMENT' | 'SUCCESS';
+
 export function TrialWorkflow({ forcedOpen = false, onClose, userData }: TrialWorkflowProps) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [currentActivity, setCurrentActivity] = useState<ActivityStack>('IDLE');
 
     useEffect(() => {
         if (forcedOpen) {
-            setIsOpen(true);
+            setCurrentActivity('PLAN_SUMMARY');
         } else {
-            setIsOpen(false);
+            setCurrentActivity('IDLE');
         }
     }, [forcedOpen]);
 
     useEffect(() => {
-        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+        document.body.style.overflow = currentActivity !== 'IDLE' ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
-    }, [isOpen]);
+    }, [currentActivity]);
 
     const handleClose = () => {
-        setIsOpen(false);
+        setCurrentActivity('IDLE');
         if (onClose) onClose();
     };
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[999] bg-[#050505] flex flex-col overflow-hidden"
-                >
-                    {/* Passamos o userData para a tela de resumo poder usar o email na Kiwify */}
-                    <PlanSummaryActivity
-                        onClose={handleClose}
-                        userData={userData}
-                    />
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <>
+            <AnimatePresence>
+                {currentActivity !== 'IDLE' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[999] bg-[#050505] flex flex-col overflow-hidden"
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {currentActivity === 'PLAN_SUMMARY' && (
+                                <PlanSummaryActivity
+                                    key="plan"
+                                    onClose={handleClose}
+                                    onNext={(type) => setCurrentActivity(type === 'PIX' ? 'PIX_PAYMENT' : 'CARD_PAYMENT')}
+                                />
+                            )}
+
+                            {currentActivity === 'PIX_PAYMENT' && (
+                                <PixPaymentActivity
+                                    key="pix"
+                                    onBack={() => setCurrentActivity('PLAN_SUMMARY')}
+                                    onClose={handleClose}
+                                    userData={userData}
+                                />
+                            )}
+
+                            {currentActivity === 'CARD_PAYMENT' && (
+                                <CardPaymentActivity
+                                    key="card"
+                                    onBack={() => setCurrentActivity('PLAN_SUMMARY')}
+                                    onClose={handleClose}
+                                    onSuccess={() => setCurrentActivity('SUCCESS')}
+                                    userData={userData} 
+                                />
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }

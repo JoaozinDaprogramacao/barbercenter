@@ -9,20 +9,22 @@ datasource db {
 }
 
 model Barbershop {
-  id            String        @id @default(uuid())
-  name          String?
-  phone         String?
-  address       String?
-  businessHours Json?
-  planStatus    String        @default("TRIAL")
-  planExpiresAt DateTime      @default(now())
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  appointments  Appointment[]
-  services      Service[]
-  users         User[]
-  products      Product[]
-  upsellRules   UpsellRule[]
+  id                    String        @id @default(uuid())
+  name                  String?
+  phone                 String?
+  address               String?
+  businessHours         Json?
+  planStatus            String        @default("TRIAL")
+  planExpiresAt         DateTime      @default(now())
+  abacateCustomerId     String?       @unique
+  abacateSubscriptionId String?       @unique
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  appointments          Appointment[]
+  services              Service[]
+  users                 User[]
+  products              Product[]
+  upsellRules           UpsellRule[]
 
   @@map("barbershops")
 }

@@ -41,6 +41,7 @@ model User {
   resetTokenExpiry DateTime?
   barbershop       Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments     Appointment[]
+  
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
@@ -61,6 +62,8 @@ model Appointment {
   barber       User?        @relation(fields: [barberId], references: [id], onDelete: SetNull)
   services     Service[]    @relation("AppointmentServices")
   products     Product[]    @relation("AppointmentProducts")
+
+  payments      Payment[]
 
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
   @@index([barberId], map: "appointments_barberId_fkey")
@@ -119,4 +122,28 @@ model UpsellRule {
   downsellOfferProductId  String?
   downsellDiscountAmount  Float?
   downsellCustomCopy      String?
+}
+
+model PaymentMethod {
+  id          String    @id @default(uuid())
+  name        String    @unique // Ex: "PIX", "Dinheiro", "Cartão de Crédito"
+  isActive    Boolean   @default(true)
+  payments    Payment[]
+
+  @@map("payment_methods")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  amount          Float
+  appointmentId   Int
+  paymentMethodId String
+  
+  appointment     Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  createdAt       DateTime      @default(now())
+
+  @@index([appointmentId], map: "payments_appointmentId_fkey")
+  @@index([paymentMethodId], map: "payments_paymentMethodId_fkey")
+  @@map("payments")
 }

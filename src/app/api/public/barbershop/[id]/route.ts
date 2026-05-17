@@ -13,9 +13,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                 services: {
                     select: { id: true, name: true, price: true, duration: true }
                 },
-                // 👇 O SEGREDO AQUI: Agora a API vai mandar os produtos para o frontend!
                 products: {
-                    select: { id: true, name: true, price: true }
+                    // 👇 CORREÇÃO: Adicionado o 'stock' para o frontend saber se pode vender
+                    select: { id: true, name: true, price: true, stock: true } 
                 },
                 users: {
                     select: { id: true, name: true, role: true }
@@ -27,7 +27,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: "Barbearia não encontrada" }, { status: 404 });
         }
 
-        return NextResponse.json(barbershop, { status: 200 });
+        // 👇 O SEGREDO REVELADO: Buscar as formas de pagamento globais ativas no banco
+        const paymentMethods = await prisma.paymentMethod.findMany({
+            where: { isActive: true },
+            select: { id: true, name: true }
+        });
+
+        // 👇 INJEÇÃO: Retorna tudo da barbearia + a lista de formas de pagamento
+        return NextResponse.json({
+            ...barbershop,
+            paymentMethods
+        }, { status: 200 });
+
     } catch (error) {
         console.error("ERRO NA ROTA PUBLICA DE BARBEARIA:", error);
         return NextResponse.json({ error: "Erro ao buscar dados" }, { status: 500 });

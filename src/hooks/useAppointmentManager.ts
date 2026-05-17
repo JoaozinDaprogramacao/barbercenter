@@ -4,6 +4,8 @@ export function useAppointmentManager(appointmentId: string) {
     const [appointment, setAppointment] = useState<any>(null);
     const [businessHours, setBusinessHours] = useState<any>(null);
     const [availableServices, setAvailableServices] = useState<any[]>([]);
+    const [availableProducts, setAvailableProducts] = useState<any[]>([]); // 💡 Novo estado
+    const [paymentMethods, setPaymentMethods] = useState<any[]>([]); // 💡 Novo estado
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -24,6 +26,8 @@ export function useAppointmentManager(appointmentId: string) {
                         const shopData = await shopRes.json();
                         setBusinessHours(shopData.businessHours);
                         setAvailableServices(shopData.services || []);
+                        setAvailableProducts(shopData.products || []); // 💡 Alimenta os produtos da barbearia
+                        setPaymentMethods(shopData.paymentMethods || []); // 💡 Alimenta as formas de pagamento
                     }
                 }
             } catch (e) {
@@ -72,11 +76,10 @@ export function useAppointmentManager(appointmentId: string) {
             alert("Erro ao atualizar data/hora.");
             return false;
         } finally {
-            setIsUpdating(false);
+            setIsUpdating(false); // 💡 Corrigido aqui
         }
     };
 
-    // ATUALIZADO: Agora recebe um array de IDs (múltiplos serviços)
     const updateServices = async (serviceIds: string[]) => {
         setIsUpdating(true);
         try {
@@ -87,9 +90,8 @@ export function useAppointmentManager(appointmentId: string) {
             });
             if (res.ok) {
                 const updatedAppt = await res.json();
-                // Atualiza o estado local com os novos dados vindos do banco
-                setAppointment((prev: any) => ({ 
-                    ...prev, 
+                setAppointment((prev: any) => ({
+                    ...prev,
                     services: updatedAppt.services,
                     price: updatedAppt.services.reduce((acc: number, s: any) => acc + s.price, 0),
                     service: updatedAppt.services.map((s: any) => s.name).join(", ")
@@ -114,8 +116,45 @@ export function useAppointmentManager(appointmentId: string) {
         }
     };
 
+    // 💡 NOVA FUNÇÃO: Executa o fechamento e dá baixa financeira
+    const checkoutAppointment = async (
+        serviceIds: string[],
+        productIds: string[],
+        payments: { methodId: string; amount: number }[]
+    ) => {
+        setIsUpdating(true);
+        try {
+            const res = await fetch(`/api/appointments/${appointmentId}/checkout`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ serviceIds, productIds, payments })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "Erro ao finalizar");
+            }
+
+            return res.ok;
+        } catch (error: any) {
+            alert(error.message || "Erro ao finalizar o agendamento.");
+            return false;
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     return {
-        appointment, isLoading, isUpdating, availableServices, 
-        getAvailableTimes, updateDateTime, updateServices, cancelAppointment
+        appointment,
+        isLoading,
+        isUpdating,
+        availableServices,
+        availableProducts, // 💡 Retornando novos estados
+        paymentMethods,    // 💡 Retornando novos estados
+        getAvailableTimes,
+        updateDateTime,
+        updateServices,
+        cancelAppointment,
+        checkoutAppointment // 💡 Retornando nova função
     };
 }

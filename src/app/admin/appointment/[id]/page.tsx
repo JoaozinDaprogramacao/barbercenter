@@ -12,10 +12,11 @@ import { LoadingScreen } from "@/components/appointment/id/LoadingScreen";
 import { DateSheetContent } from "@/components/appointment/id/DateSheetContent";
 import { ServicesSheetContent } from "@/components/appointment/id/ServicesSheetContent";
 import { CancelSheetContent } from "@/components/appointment/id/CancelSheetContent";
+import { CheckoutSheetContent } from "@/components/appointment/id/CheckoutSheetContent";
 
 import { useAppointmentManager } from "@/hooks/useAppointmentManager";
 
-type SheetType = "date" | "services" | "cancel" | null;
+type SheetType = "date" | "services" | "cancel" | "checkout" | null;
 
 export default function AppointmentDetailPage() {
     const router = useRouter();
@@ -31,7 +32,10 @@ export default function AppointmentDetailPage() {
 
     const {
         appointment, isLoading, isUpdating, availableServices,
-        getAvailableTimes, updateDateTime, updateServices, cancelAppointment
+        availableProducts, 
+        paymentMethods,
+        getAvailableTimes, updateDateTime, updateServices, cancelAppointment,
+        checkoutAppointment
     } = useAppointmentManager(appointmentId);
 
     useEffect(() => {
@@ -66,6 +70,9 @@ export default function AppointmentDetailPage() {
         paymentMethod: appointment.paymentMethod || "Presencial"
     };
 
+    // 👇 Verifica se a baixa já foi dada
+    const isCompleted = appointment.status === "COMPLETED";
+
     return (
         <main className="min-h-screen w-full bg-black max-w-md mx-auto flex flex-col font-sans relative border-x border-zinc-900 overflow-x-hidden">
             <div className="absolute inset-0 pointer-events-none">
@@ -97,13 +104,28 @@ export default function AppointmentDetailPage() {
                     />
                 </motion.div>
 
+                {/* 👇 Botão dinâmico: Muda de cor e texto se já estiver finalizado */}
                 <motion.button
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                    onClick={() => setActiveSheet("cancel")}
-                    className="w-full py-5 rounded-[2rem] border border-red-500/20 text-red-500/60 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-red-500/5 active:scale-95"
+                    onClick={() => setActiveSheet("checkout")}
+                    className={`w-full py-5 rounded-[2rem] text-white font-black uppercase tracking-[0.2em] text-[12px] shadow-lg transition-all hover:scale-[0.98] active:scale-95 ${
+                        isCompleted 
+                        ? "bg-blue-600 shadow-blue-600/20" // Azul para edição
+                        : "bg-green-500 shadow-green-500/20" // Verde para primeira baixa
+                    }`}
                 >
-                    Cancelar Agendamento
+                    {isCompleted ? "Editar Baixa" : "Dar Baixa / Finalizar"}
                 </motion.button>
+
+                {/* 👇 Esconde o botão de cancelar se a baixa já foi dada */}
+                {!isCompleted && (
+                    <motion.button
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                        onClick={() => setActiveSheet("cancel")}
+                        className="w-full py-5 rounded-[2rem] border border-red-500/20 text-red-500/60 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-red-500/5 active:scale-95"
+                    >
+                        Cancelar Agendamento
+                    </motion.button>
+                )}
             </div>
 
             <AppointmentActionSheet
@@ -147,6 +169,22 @@ export default function AppointmentDetailPage() {
                         onConfirm={async () => {
                             const ok = await cancelAppointment();
                             if (ok) router.back();
+                        }}
+                    />
+                )}
+                {activeSheet === "checkout" && (
+                    <CheckoutSheetContent
+                        appointment={appointment}
+                        availableServices={availableServices}
+                        availableProducts={availableProducts || []}
+                        paymentMethods={paymentMethods || []}
+                        isUpdating={isUpdating}
+                        onConfirm={async (finalServiceIds, finalProductIds, payments) => { 
+                            const ok = await checkoutAppointment(finalServiceIds, finalProductIds, payments);
+                            if (ok) {
+                                setActiveSheet(null);
+                                router.back();
+                            }
                         }}
                     />
                 )}

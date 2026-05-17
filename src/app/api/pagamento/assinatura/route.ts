@@ -8,7 +8,15 @@ export async function POST(request: Request) {
 
     if (!userId) return NextResponse.json({ error: "O ID do usuário é obrigatório" }, { status: 400 });
 
-    // 🔥 MUDANÇA 1: Incluir a barbearia na busca do usuário
+    // 🔥 Puxando o ID do produto da variável de ambiente
+    const productId = process.env.ABACATEPAY_PRODUCT_ID;
+    
+    // Trava de segurança: se esquecer de botar no .env em prod, ele avisa
+    if (!productId) {
+      console.error("❌ ABACATEPAY_PRODUCT_ID não configurado no .env");
+      return NextResponse.json({ error: "Erro de configuração do servidor" }, { status: 500 });
+    }
+
     const user = await prisma.user.findUnique({ 
       where: { id: userId },
       include: { barbershop: true }
@@ -18,7 +26,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Usuário ou Barbearia não encontrado" }, { status: 404 });
     }
 
-    // 🔥 MUDANÇA 2: Pegar o customerId da barbearia
     let customerId = user.barbershop.abacateCustomerId;
 
     if (!customerId) {
@@ -37,7 +44,6 @@ export async function POST(request: Request) {
 
       customerId = customerData.data.id;
 
-      // 🔥 MUDANÇA 3: Atualizar a tabela Barbershop, e não User
       await prisma.barbershop.update({
         where: { id: user.barbershopId },
         data: { abacateCustomerId: customerId }
@@ -52,7 +58,8 @@ export async function POST(request: Request) {
         'Authorization': `Bearer ${process.env.ABACATEPAY_API_KEY}`
       },
       body: JSON.stringify({
-        items: [{ id: "prod_f1p0jFTuxDXpzftezmxwZjwR", quantity: 1 }],
+        // 🔥 Usando a variável de ambiente aqui
+        items: [{ id: productId, quantity: 1 }],
         customerId: customerId,
         externalId: `subs-${userId}-${Date.now()}`,
         completionUrl: `${process.env.NEXTAUTH_URL}/sucesso`,

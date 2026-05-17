@@ -10,7 +10,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const appointment = await prisma.appointment.findUnique({
             where: { id: appointmentId as any },
-            include: { services: true, products: true } // 🔥 Busca ambos
+            // 👇 CORREÇÃO 1: Adicionado payments: true
+            include: { services: true, products: true, payments: true } 
         });
 
         if (!appointment) return NextResponse.json({ error: "404" }, { status: 404 });
@@ -34,7 +35,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             service: allItems || "Nenhum item",
             price: finalPrice, 
             services: appointment.services,
-            products: appointment.products
+            products: appointment.products,
+            // 👇 CORREÇÃO 2: Enviando os pagamentos para o frontend
+            payments: appointment.payments 
         });
     } catch (error) {
         return NextResponse.json({ error: "500" }, { status: 500 });
@@ -50,40 +53,33 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const { serviceIds, ...otherData } = body;
         const updateData: any = { ...otherData };
 
-        // 1. Busca o agendamento ANTES de alterar para descobrirmos se ele teve desconto
         const currentAppt = await prisma.appointment.findUnique({
             where: { id: appointmentId as any },
             include: { services: true, products: true }
         });
 
-        // 2. Se o barbeiro está editando a lista de serviços...
         if (serviceIds && Array.isArray(serviceIds) && currentAppt) {
-            // Calcula qual era o valor "cheio" (sem desconto)
             const oldBasePrice = currentAppt.services.reduce((acc, s) => acc + s.price, 0) + 
                                  currentAppt.products.reduce((acc, p) => acc + p.price, 0);
             
-            // Descobre quanto de desconto de Upsell foi dado no chat
             const discountApplied = oldBasePrice - (currentAppt.price || oldBasePrice);
 
             updateData.services = {
                 set: serviceIds.map((sid: string) => ({ id: sid }))
             };
 
-            // Faz a atualização dos serviços no banco
             const updated = await prisma.appointment.update({
                 where: { id: appointmentId as any },
                 data: updateData,
-                include: { services: true, products: true }
+                // 👇 CORREÇÃO 3: Incluir payments no retorno do update
+                include: { services: true, products: true, payments: true } 
             });
 
-            // Calcula o NOVO valor cheio (novos serviços + produtos mantidos)
             const newBasePrice = updated.services.reduce((acc, s) => acc + s.price, 0) + 
                                  updated.products.reduce((acc, p) => acc + p.price, 0);
 
-            // Mantém o desconto antigo e gera o preço final!
             const finalPrice = Math.max(0, newBasePrice - discountApplied);
 
-            // Salva o preço corrigido
             await prisma.appointment.update({
                 where: { id: appointmentId as any },
                 data: { price: finalPrice }
@@ -93,11 +89,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             return NextResponse.json(updated);
         }
 
-        // Se ele está mudando apenas a Data/Hora (sem mexer nos serviços)
         const updated = await prisma.appointment.update({
             where: { id: appointmentId as any },
             data: updateData,
-            include: { services: true, products: true }
+            // 👇 CORREÇÃO 4: Incluir payments no retorno do update
+            include: { services: true, products: true, payments: true }
         });
 
         return NextResponse.json(updated);

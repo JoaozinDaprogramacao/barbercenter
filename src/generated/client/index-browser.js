@@ -198,6 +198,20 @@ exports.Prisma.UpsellRuleScalarFieldEnum = {
   downsellCustomCopy: 'downsellCustomCopy'
 };
 
+exports.Prisma.PaymentMethodScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  appointmentId: 'appointmentId',
+  paymentMethodId: 'paymentMethodId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -278,6 +292,16 @@ exports.Prisma.UpsellRuleOrderByRelevanceFieldEnum = {
   downsellCustomCopy: 'downsellCustomCopy'
 };
 
+exports.Prisma.PaymentMethodOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  paymentMethodId: 'paymentMethodId'
+};
+
 
 exports.Prisma.ModelName = {
   Barbershop: 'Barbershop',
@@ -285,7 +309,9 @@ exports.Prisma.ModelName = {
   Appointment: 'Appointment',
   Service: 'Service',
   Product: 'Product',
-  UpsellRule: 'UpsellRule'
+  UpsellRule: 'UpsellRule',
+  PaymentMethod: 'PaymentMethod',
+  Payment: 'Payment'
 };
 
 /**

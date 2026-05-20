@@ -29,18 +29,33 @@ model Barbershop {
   @@map("barbershops")
 }
 
+model PushSubscription {
+  id       String @id @default(uuid())
+  barberId String
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  // Aponta para o model User, mas o nome do campo é barberId e a relação chama barber
+  barber User @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@index([barberId], map: "push_subscriptions_barberId_fkey")
+  @@map("push_subscriptions")
+}
+
 model User {
-  id               String        @id @default(uuid())
+  id               String             @id @default(uuid())
   name             String
-  email            String        @unique
+  email            String             @unique
   password         String
-  role             String        @default("OWNER")
-  createdAt        DateTime      @default(now())
+  role             String             @default("OWNER")
+  createdAt        DateTime           @default(now())
   barbershopId     String
   resetToken       String?
   resetTokenExpiry DateTime?
-  barbershop       Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  barbershop       Barbershop         @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments     Appointment[]
+  subscriptions    PushSubscription[]
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")
@@ -61,8 +76,7 @@ model Appointment {
   barber       User?      @relation(fields: [barberId], references: [id], onDelete: SetNull)
   services     Service[]  @relation("AppointmentServices")
   products     Product[]  @relation("AppointmentProducts")
-
-  payments Payment[]
+  payments     Payment[]
 
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
   @@index([barberId], map: "appointments_barberId_fkey")
@@ -100,20 +114,19 @@ model Product {
 }
 
 model UpsellRule {
-  id               String     @id @default(uuid())
-  barbershopId     String
-  triggerServiceId String
-  offerServiceId   String?
-  offerProductId   String?
-  discountAmount   Float
-  discountType     String     @default("PERCENTAGE")
-  customCopy       String?
-  isActive         Boolean    @default(true)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  barbershop       Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-
-  hasDownsell            Boolean @default(false)
+  id                     String     @id @default(uuid())
+  barbershopId           String
+  triggerServiceId       String
+  offerServiceId         String?
+  offerProductId         String?
+  discountAmount         Float
+  discountType           String     @default("PERCENTAGE")
+  customCopy             String?
+  isActive               Boolean    @default(true)
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+  barbershop             Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  hasDownsell            Boolean    @default(false)
   downsellOfferServiceId String?
   downsellOfferProductId String?
   downsellDiscountAmount Float?
@@ -125,7 +138,7 @@ model UpsellRule {
 
 model PaymentMethod {
   id       String    @id @default(uuid())
-  name     String    @unique // Ex: "PIX", "Dinheiro", "Cartão de Crédito"
+  name     String    @unique
   isActive Boolean   @default(true)
   payments Payment[]
 
@@ -133,14 +146,13 @@ model PaymentMethod {
 }
 
 model Payment {
-  id              String @id @default(uuid())
+  id              String        @id @default(uuid())
   amount          Float
   appointmentId   Int
   paymentMethodId String
-
-  appointment   Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
-  createdAt     DateTime      @default(now())
+  appointment     Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  createdAt       DateTime      @default(now())
 
   @@index([appointmentId], map: "payments_appointmentId_fkey")
   @@index([paymentMethodId], map: "payments_paymentMethodId_fkey")

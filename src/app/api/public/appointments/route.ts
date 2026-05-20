@@ -1,5 +1,19 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+// Use o caminho relativo correto para o seu Prisma, conforme ajustamos antes
+import { PrismaClient } from '@/generated/client'; 
+import webpush from "web-push";
+
+const prisma = new PrismaClient();
+
+// 🔥 NOVO: Configuração do Web Push
+// Importante: garanta que essas variáveis existam no seu .env
+if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT) {
+    webpush.setVapidDetails(
+        process.env.VAPID_SUBJECT,
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    );
+}
 
 export async function POST(req: Request) {
     try {
@@ -61,6 +75,52 @@ export async function POST(req: Request) {
             );
         }
 
+        // ==========================================
+        // 🔥 NOVO: DISPARO DA NOTIFICAÇÃO PUSH
+        // ==========================================
+        try {
+            // 1. Busca todas as inscrições ativas DESTE barbeiro específico
+            const subscriptions = await prisma.pushSubscription.findMany({
+                where: { barberId: assignedBarberId }
+            });
+
+            if (subscriptions.length > 0) {
+                // 2. Monta a mensagem
+                const payload = JSON.stringify({
+                    title: '✂️ Novo Agendamento!',
+                    body: `${clientName} agendou para ${date} às ${time}.`,
+                    url: '/painel/agenda' // Link para onde o barbeiro vai ao clicar na notificação
+                });
+
+                // 3. Dispara para todos os aparelhos do barbeiro (celular, PC, etc)
+                const pushPromises = subscriptions.map(async (sub: any) => {
+                    const pushConfig = {
+                        endpoint: sub.endpoint,
+                        keys: { p256dh: sub.p256dh, auth: sub.auth }
+                    };
+
+                    try {
+                        await webpush.sendNotification(pushConfig, payload);
+                    } catch (error: any) {
+                        // Se o erro for 410 (Gone) ou 404 (Not Found), significa que 
+                        // o barbeiro removeu a permissão no navegador. Limpamos o banco.
+                        if (error.statusCode === 410 || error.statusCode === 404) {
+                            await prisma.pushSubscription.delete({ where: { id: sub.id } });
+                        } else {
+                            console.error('Erro ao enviar push para endpoint:', sub.endpoint, error);
+                        }
+                    }
+                });
+
+                await Promise.all(pushPromises);
+            }
+        } catch (pushError) {
+            // Envolvemos em um try/catch separado para que, se a notificação falhar,
+            // o cliente ainda receba o "sucesso" do agendamento (status 201) abaixo.
+            console.error('Erro geral ao processar notificações push:', pushError);
+        }
+        // ==========================================
+
         return NextResponse.json({ success: true, appointment: newAppointment }, { status: 201 });
     } catch (error) {
         console.error("Erro ao agendar via chat:", error);
@@ -90,8 +150,8 @@ export async function GET(req: Request) {
             }
         });
 
-        const formattedAppointments = appointments.map((app) => {
-            const totalDuration = app.services.reduce((acc, s) => acc + (s.duration || 30), 0);
+        const formattedAppointments = appointments.map((app: any) => {
+            const totalDuration = app.services.reduce((acc: number, s: any) => acc + (s.duration || 30), 0);
             return {
                 time: app.time,
                 duration: totalDuration,

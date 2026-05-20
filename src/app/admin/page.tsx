@@ -3,7 +3,9 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { CheckCircle, Plus } from "lucide-react"; // <-- Ícone Plus adicionado
+import { Plus } from "lucide-react";
+
+import EnableNotifications from "@/components/EnableNotifications";
 
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
@@ -239,6 +241,10 @@ export default function BarberDashboard() {
                         <Plus size={16} strokeWidth={3} />
                         Novo Agendamento
                     </button>
+
+                    {/* 🔥 BOTÃO DE NOTIFICAÇÕES AQUI 🔥 */}
+                    {/* Ele só vai aparecer se o barbeiro ainda não tiver ativado */}
+                    <EnableNotifications barberId={currentUser.id} />
                 </div>
             </div>
         </main>

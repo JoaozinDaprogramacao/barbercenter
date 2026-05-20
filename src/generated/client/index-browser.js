@@ -134,6 +134,14 @@ exports.Prisma.BarbershopScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  barberId: 'barberId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -248,6 +256,14 @@ exports.Prisma.BarbershopOrderByRelevanceFieldEnum = {
   abacateSubscriptionId: 'abacateSubscriptionId'
 };
 
+exports.Prisma.PushSubscriptionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  barberId: 'barberId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth'
+};
+
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
   id: 'id',
   name: 'name',
@@ -305,6 +321,7 @@ exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
 
 exports.Prisma.ModelName = {
   Barbershop: 'Barbershop',
+  PushSubscription: 'PushSubscription',
   User: 'User',
   Appointment: 'Appointment',
   Service: 'Service',

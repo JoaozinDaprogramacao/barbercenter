@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
-// 🔥 IMPORTANTE: Importe o SEU prisma centralizado (use o caminho correto de onde esse arquivo está salvo)
-// Como ele usa "export default", importamos sem as chaves { }
-import prisma from '@/lib/prisma'; 
 
-// ❌ REMOVEMOS as linhas antigas:
-// import { PrismaClient } from '@prisma/client';
-// const prisma = new PrismaClient();
+import prisma from '@/lib/prisma'; 
 
 export async function POST(request: Request) {
   try {

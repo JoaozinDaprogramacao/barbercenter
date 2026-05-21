@@ -38,7 +38,7 @@ export const SummaryCards = ({
         {/* HEADER: ICON + TITLE */}
         <div className="flex items-center gap-2.5">
           <div className={`
-            flex h-9 w-9 items-center justify-center rounded-xl border backdrop-blur-md
+            flex h-9 w-9 items-center justify-center rounded-xl border backdrop-blur-md shrink-0
             ${accent ? "border-[#D49A62]/30 bg-[#D49A62]/10 text-[#D49A62]" : "border-white/10 bg-white/5 text-zinc-400"}
           `}>
             {accent ? (
@@ -47,17 +47,17 @@ export const SummaryCards = ({
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20V10M18 20V4M6 20v-6" /></svg>
             )}
           </div>
-          <span className={`text-[11px] font-bold uppercase tracking-[0.2em] ${accent ? "text-[#D49A62]" : "text-zinc-400"}`}>
+          <span className={`text-[11px] font-bold uppercase tracking-[0.2em] truncate ${accent ? "text-[#D49A62]" : "text-zinc-400"}`}>
             {title}
           </span>
         </div>
 
         {/* BODY: DATA STACK */}
-        <div className="flex flex-col gap-1.5 mt-4">
+        <div className="flex flex-col gap-2.5 mt-4">
           {/* AGENDAMENTOS CONTAINER */}
-          <div className="flex items-end justify-between px-1">
-             <span className="text-[9px] font-medium uppercase tracking-wider text-zinc-500 mb-1">Agendamentos:</span>
-             <span className="text-2xl font-black leading-none text-white tracking-tighter">
+          <div className="flex flex-col px-1">
+             <span className="text-[9px] font-medium uppercase tracking-wider text-zinc-500 mb-1">Agendamentos</span>
+             <span className="text-2xl font-black leading-none text-white tracking-tighter truncate">
                 {count}
              </span>
           </div>
@@ -66,16 +66,16 @@ export const SummaryCards = ({
           <div className="h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
 
           {/* FATURAMENTO CONTAINER */}
-          <div className="flex flex-col px-1 pt-1">
+          <div className="flex flex-col px-1">
              <span className="text-[9px] font-medium uppercase tracking-wider text-zinc-500 mb-1">Faturamento</span>
-             <span className={`text-lg font-black leading-none tracking-tight ${accent ? "text-[#F2A86B]" : "text-white"}`}>
+             <span className={`text-lg font-black leading-none tracking-tight truncate ${accent ? "text-[#F2A86B]" : "text-white"}`}>
                 {showValues ? revenue : "••••••"}
              </span>
           </div>
         </div>
 
         {/* FOOTER DECORATION */}
-        <div className="flex justify-center mt-3">
+        <div className="flex justify-start px-1 mt-3">
            <div className={`h-1 w-8 rounded-full ${accent ? "bg-[#D49A62]/30" : "bg-white/10"}`} />
         </div>
       </div>
@@ -89,7 +89,6 @@ export const SummaryCards = ({
         whileTap={{ scale: 0.96 }}
         className="relative min-h-[190px] overflow-hidden rounded-[2.2rem] border border-[#B87333]/30 bg-[#0C0B0A] p-5 shadow-2xl"
       >
-        {/* Background Image com Overlay melhorado para legibilidade */}
         {todayImage && (
           <img
             src={todayImage}

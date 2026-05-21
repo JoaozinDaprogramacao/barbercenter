@@ -1,11 +1,22 @@
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../src/generated/client"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
 }
 
 datasource db {
   provider = "mysql"
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relacionamento: a notificação pertence a um barbeiro
+  barberId String
+  barber   User   @relation(fields: [barberId], references: [id], onDelete: Cascade)
 }
 
 model Barbershop {
@@ -56,6 +67,8 @@ model User {
   barbershop       Barbershop         @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   appointments     Appointment[]
   subscriptions    PushSubscription[]
+
+  notifications Notification[]
 
   @@index([barbershopId], map: "users_barbershopId_fkey")
   @@map("users")

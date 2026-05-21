@@ -54,6 +54,18 @@ export async function POST(req: Request) {
             }
         });
 
+        const formattedDate = date.includes('-') 
+            ? date.split('-').reverse().join('/') 
+            : new Date(date).toLocaleDateString('pt-BR');
+
+        await prisma.notification.create({
+            data: {
+                barberId: assignedBarberId,
+                title: 'Novo Agendamento!',
+                message: `${clientName} agendou para ${formattedDate} às ${time}.`,
+            }
+        });
+
         if (connectProducts.length > 0) {
             await Promise.all(
                 connectProducts.map(async (p: { id: string }) => {
@@ -72,8 +84,8 @@ export async function POST(req: Request) {
 
             if (subscriptions.length > 0) {
                 const payload = JSON.stringify({
-                    title: '✂️ Novo Agendamento!',
-                    body: `${clientName} agendou para ${date} às ${time}.`,
+                    title: 'Novo Agendamento!',
+                    body: `${clientName} agendou para ${formattedDate} às ${time}.`,
                     url: '/painel/agenda'
                 });
 

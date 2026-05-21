@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Plus } from "lucide-react";
 
 import EnableNotifications from "@/components/EnableNotifications";
-
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { WeeklyCalendar } from "@/components/admin/dashboard/WeeklyCalendar";
 import { SummaryCards } from "@/components/admin/dashboard/SummaryCards";
@@ -15,7 +14,6 @@ import { CalendarPickerModal } from "@/components/admin/dashboard/CalendarPicker
 import { Sidebar } from "@/components/admin/settings/layout/Sidebar";
 import { TrialBanner } from "@/components/TrialBanner";
 import { TrialWorkflow } from "@/components/admin/settings/billing/TrialWorkflow";
-
 import { useAgenda } from "@/hooks/useAgenda";
 
 const getStartOfWeek = (date: Date) => {
@@ -87,12 +85,33 @@ export default function BarberDashboard() {
     const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
     const [selectedDate, setSelectedDate] = useState(formatDateKey(new Date()));
 
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        if (!currentUser.id) return;
+
+        const fetchNotifications = async () => {
+            try {
+                const res = await fetch(`/api/notifications/in-app?barberId=${currentUser.id}`);
+                const data = await res.json();
+                if (data.notifications) {
+                    setNotifications(data.notifications);
+                    setUnreadCount(data.unreadCount);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar notificações", error);
+            }
+        };
+
+        fetchNotifications();
+    }, [currentUser.id]);
+
     const weekDays = useMemo(() => {
         return generateWeekDays(currentWeekStart);
     }, [currentWeekStart]);
 
     const todaysAppointments = agendaData[selectedDate] || [];
-
     const todayCount = todaysAppointments.length;
 
     const todayRevenue = useMemo(() => {
@@ -147,22 +166,41 @@ export default function BarberDashboard() {
         setSelectedDate(formattedDate);
     };
 
+    const handleMarkAsRead = async () => {
+        if (unreadCount === 0) return;
+
+        setUnreadCount(0);
+        setNotifications(prev => prev.map(notif => ({ ...notif, isRead: true })));
+
+        try {
+            await fetch('/api/notifications/in-app', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ barberId: currentUser.id })
+            });
+        } catch (error) {
+            console.error("Erro ao marcar como lido", error);
+        }
+    };
+
     return (
         <main className="min-h-screen w-full flex flex-col bg-[#050505] max-w-md mx-auto relative font-sans text-white">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-            <div className="relative min-h-[560px] overflow-visible">
+            {/* Container do Topo ajustado para não ter altura fixa, preservando seu visual original */}
+            <div className="relative w-full flex flex-col">
                 <div
-                    className="absolute inset-x-0 top-0 h-[500px] bg-cover bg-center bg-no-repeat"
+                    className="absolute inset-x-0 top-0 h-[500px] bg-cover bg-center bg-no-repeat pointer-events-none"
                     style={{
                         backgroundImage: "url('/imgs/barber-header.jpg')",
                     }}
                 />
 
-                <div className="absolute inset-x-0 top-0 h-[500px] bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.70)_45%,rgba(5,5,5,1)_100%)]" />
-                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.20),transparent_38%)]" />
-                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(212,154,98,0.12),transparent_32%)]" />
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.70)_45%,rgba(5,5,5,1)_100%)] pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,rgba(184,115,51,0.20),transparent_38%)] pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(212,154,98,0.12),transparent_32%)] pointer-events-none" />
 
+                {/* Exatamente o seu espaçamento de antes */}
                 <div className="relative z-20">
                     <DashboardHeader
                         userName={firstName}
@@ -170,6 +208,9 @@ export default function BarberDashboard() {
                         onToggleValues={() => setShowValues(!showValues)}
                         onOpenMenu={() => setIsSidebarOpen(true)}
                         onOpenSchedule={() => {}}
+                        notifications={notifications}
+                        unreadCount={unreadCount}
+                        onMarkAsRead={handleMarkAsRead}
                     />
 
                     <div className="relative z-30 -mt-2">
@@ -187,7 +228,8 @@ export default function BarberDashboard() {
                 </div>
             </div>
 
-            <div className="flex-1 pb-24">
+            {/* O pt-6 aqui empurra os cards apenas o necessário para limpar o calendário */}
+            <div className="flex-1 pb-24 relative z-30">
                 <TrialBanner onUpgradeClick={() => setIsUpgradeOpen(true)} />
 
                 <TrialWorkflow
@@ -211,7 +253,7 @@ export default function BarberDashboard() {
                     weekCount={weekStats.count}
                 />
 
-                <div className="px-6 space-y-4">
+                <div className="px-6 space-y-4 mt-2">
                     {isLoadingAgenda ? (
                         <div className="flex justify-center py-10">
                             <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
@@ -233,7 +275,6 @@ export default function BarberDashboard() {
                         </div>
                     )}
 
-                    {/* Botão de Adicionar Agendamento */}
                     <button
                         onClick={() => router.push("/admin/agendar")}
                         className="w-full mt-4 py-4 bg-[#100D0B] hover:bg-white/[0.02] border border-white/10 text-[#D49A62] rounded-[1.2rem] font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-all active:scale-95"
@@ -242,8 +283,6 @@ export default function BarberDashboard() {
                         Novo Agendamento
                     </button>
 
-                    {/* 🔥 BOTÃO DE NOTIFICAÇÕES AQUI 🔥 */}
-                    {/* Ele só vai aparecer se o barbeiro ainda não tiver ativado */}
                     <EnableNotifications barberId={currentUser.id} />
                 </div>
             </div>

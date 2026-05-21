@@ -19,6 +19,10 @@ export const CalendarPickerModal = ({ isOpen, onClose, onSelect, currentData }: 
     setViewDate(next);
   };
 
+  // Cálculos do calendário
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+  const firstDayOfMonth = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -82,27 +86,35 @@ export const CalendarPickerModal = ({ isOpen, onClose, onSelect, currentData }: 
               </div>
 
               <div className="mb-8 grid grid-cols-7 gap-1.5">
-                {Array.from({ length: 31 }).map((_, i) => (
-                  <motion.button
-                    key={i}
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.92 }}
-                    onClick={() => {
-                      const selected = new Date(viewDate);
-                      selected.setDate(i + 1);
-
-                      const year = selected.getFullYear();
-                      const month = String(selected.getMonth() + 1).padStart(2, "0");
-                      const day = String(selected.getDate()).padStart(2, "0");
-
-                      onSelect(`${year}-${month}-${day}`);
-                      onClose();
-                    }}
-                    className="flex aspect-square items-center justify-center rounded-xl text-sm font-black text-zinc-300 transition-all hover:bg-[#B87333] hover:text-[#F7EFE2]"
-                  >
-                    {i + 1}
-                  </motion.button>
+                {/* Espaços vazios para alinhar o primeiro dia do mês */}
+                {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                  <div key={`empty-${i}`} className="aspect-square" />
                 ))}
+
+                {/* Dias reais do mês */}
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const dayNumber = i + 1;
+                  return (
+                    <motion.button
+                      key={dayNumber}
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={() => {
+                        const selected = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNumber);
+                        
+                        const year = selected.getFullYear();
+                        const month = String(selected.getMonth() + 1).padStart(2, "0");
+                        const day = String(selected.getDate()).padStart(2, "0");
+
+                        onSelect(`${year}-${month}-${day}`);
+                        onClose();
+                      }}
+                      className="flex aspect-square items-center justify-center rounded-xl text-sm font-black text-zinc-300 transition-all hover:bg-[#B87333] hover:text-[#F7EFE2]"
+                    >
+                      {dayNumber}
+                    </motion.button>
+                  );
+                })}
               </div>
 
               <motion.button

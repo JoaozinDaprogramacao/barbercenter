@@ -67,7 +67,7 @@ export default function EnableNotifications({ barberId }: { barberId: string }) 
       });
 
       setIsSubscribed(true);
-      alert('Tudo certo! Você receberá um aviso a cada novo agendamento. ✂️');
+      alert('Tudo certo! Você receberá um aviso a cada novo agendamento.');
     } catch (error) {
       console.error('Erro ao assinar notificações:', error);
       alert('Não foi possível ativar. Verifique se você bloqueou no navegador ou, se usa iPhone, lembre de adicionar à Tela de Início primeiro.');

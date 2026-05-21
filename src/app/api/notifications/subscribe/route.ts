@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+// 🔥 IMPORTANTE: Importe o SEU prisma centralizado (use o caminho correto de onde esse arquivo está salvo)
+// Como ele usa "export default", importamos sem as chaves { }
+import prisma from '@/lib/prisma'; 
 
-const prisma = new PrismaClient();
+// ❌ REMOVEMOS as linhas antigas:
+// import { PrismaClient } from '@prisma/client';
+// const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +15,7 @@ export async function POST(request: Request) {
     const p256dh = subscription.keys.p256dh;
     const auth = subscription.keys.auth;
 
+    // Agora vai rodar usando o seu adaptador correto do MariaDB
     await prisma.pushSubscription.upsert({
       where: { endpoint },
       update: { barberId, p256dh, auth },

@@ -6,19 +6,13 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(fetch(event.request));
-});
-
 self.addEventListener('push', function (event) {
   if (event.data) {
     const data = event.data.json();
     
+    // Deixamos apenas o essencial que a Apple não pode recusar
     const options = {
       body: data.body,
-      icon: '/icon.png',
-      badge: '/badge.png',
-      vibrate: [200, 100, 200, 100, 200, 100, 200],
       data: {
         url: data.url || '/'
       }

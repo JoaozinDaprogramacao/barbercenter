@@ -34,17 +34,24 @@ export default function EnableNotifications({ barberId }: { barberId: string }) 
   }, []);
 
   const subscribeButton = async () => {
-    // Double Opt-in: Explica antes do navegador jogar o popup nativo
     const wantsToSubscribe = window.confirm(
-      "Para receber avisos na hora, permita as notificações a seguir.\n\n📱 iOS (iPhone): Você obrigatoriamente precisa adicionar este sistema à sua Tela de Início (Compartilhar -> Adicionar à Tela de Início) antes de clicar aqui."
+      "Para receber avisos na hora, permita as notificações a seguir.\n\n📱 Se estiver usando iPhone, você precisa antes clicar em 'Compartilhar' e 'Adicionar à Tela de Início' para o botão funcionar."
     );
 
     if (!wantsToSubscribe) return;
 
     setIsLoading(true);
     try {
+      // 🔥 NOVO: Força o iOS a perguntar a permissão nativa primeiro
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        alert('Você precisa permitir as notificações no aviso do navegador.');
+        setIsLoading(false);
+        return;
+      }
+
       const registration = await navigator.serviceWorker.ready;
-      
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
@@ -68,13 +75,12 @@ export default function EnableNotifications({ barberId }: { barberId: string }) 
       setIsLoading(false);
     }
   };
-
   // Se não suporta (aba anônima restrita, etc) ou já ativou, esconde o componente
-  if (!isSupported || isSubscribed) return null; 
+  if (!isSupported || isSubscribed) return null;
 
   return (
-    <button 
-      onClick={subscribeButton} 
+    <button
+      onClick={subscribeButton}
       disabled={isLoading}
       className="w-full mt-2 py-4 bg-[#D49A62]/10 hover:bg-[#D49A62]/20 border border-[#D49A62]/30 text-[#D49A62] rounded-[1.2rem] font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-all active:scale-95"
     >

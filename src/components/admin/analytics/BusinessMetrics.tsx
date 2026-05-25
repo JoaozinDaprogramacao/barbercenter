@@ -6,7 +6,6 @@ import {
     AlertTriangle,
     Crown,
     UserMinus,
-    Scissors
 } from "lucide-react";
 
 interface BarberRevenue {
@@ -113,37 +112,6 @@ export function BusinessMetrics({ metrics }: BusinessMetricsProps) {
                     alert={data.evasaoRate > 10}
                     success={data.evasaoRate === 0 && data.occupancyRate > 0}
                 />
-            </div>
-            {/* Faturamento por Barbeiro */}
-            <div>
-                <div className="flex items-center gap-2 mb-6">
-                    <Scissors size={16} strokeWidth={2.5} className="text-[#D49A62]" />
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Repasse & Comissões</h4>
-                </div>
-
-                {data.faturamentoBarbeiros.length > 0 ? (
-                    <div className="flex flex-col">
-                        {data.faturamentoBarbeiros.map((barber, idx) => (
-                            <div key={idx} className="flex flex-col py-5 border-b border-white/5 last:border-0">
-                                <span className="text-xl font-black text-[#F7EFE2] mb-4">{barber.nome}</span>
-                                <div className="flex justify-between items-end">
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Produção</span>
-                                        <span className="text-[#D49A62] font-black text-2xl">{formatCurrency(barber.faturamento)}</span>
-                                    </div>
-                                    <div className="flex flex-col text-right">
-                                        <span className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Comissão</span>
-                                        <span className="text-zinc-400 font-black text-xl">{formatCurrency(barber.comissao)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="py-4">
-                        <span className="text-xs font-bold text-zinc-600 uppercase tracking-widest">Sem dados no período</span>
-                    </div>
-                )}
             </div>
         </div>
     );

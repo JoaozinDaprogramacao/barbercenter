@@ -166,6 +166,7 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  workingHours: 'workingHours',
   createdAt: 'createdAt',
   barbershopId: 'barbershopId',
   resetToken: 'resetToken',
@@ -175,15 +176,16 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.AppointmentScalarFieldEnum = {
   id: 'id',
   clientName: 'clientName',
+  clientId: 'clientId',
   date: 'date',
   time: 'time',
+  duration: 'duration',
   status: 'status',
   price: 'price',
   discount: 'discount',
   barbershopId: 'barbershopId',
   barberId: 'barberId',
-  createdAt: 'createdAt',
-  clientId: 'clientId'
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.ServiceScalarFieldEnum = {
@@ -309,12 +311,12 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AppointmentOrderByRelevanceFieldEnum = {
   clientName: 'clientName',
+  clientId: 'clientId',
   date: 'date',
   time: 'time',
   status: 'status',
   barbershopId: 'barbershopId',
-  barberId: 'barberId',
-  clientId: 'clientId'
+  barberId: 'barberId'
 };
 
 exports.Prisma.ServiceOrderByRelevanceFieldEnum = {

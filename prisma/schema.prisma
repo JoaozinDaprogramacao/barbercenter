@@ -77,6 +77,7 @@ model User {
   email            String             @unique
   password         String
   role             String             @default("OWNER")
+  workingHours     Json?              // <- NOVO: Escala individual do barbeiro
   createdAt        DateTime           @default(now())
   barbershopId     String
   resetToken       String?
@@ -92,28 +93,28 @@ model User {
 }
 
 model Appointment {
-  id           Int        @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   clientName   String
+  clientId     String?       // (Que adicionamos na etapa anterior)
   date         String
   time         String
-  status       String     @default("CONFIRMED")
-  price        Float?     @default(0)
-  discount     Float?     @default(0)
+  duration     Int           @default(0) // <- NOVO: Duração total em minutos travada no momento do agendamento
+  status       String        @default("CONFIRMED") 
+  price        Float?        @default(0)
+  discount     Float?        @default(0)
   barbershopId String
   barberId     String?
-  createdAt    DateTime   @default(now())
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  barber       User?      @relation(fields: [barberId], references: [id], onDelete: SetNull)
-  services     Service[]  @relation("AppointmentServices")
-  products     Product[]  @relation("AppointmentProducts")
+  createdAt    DateTime      @default(now())
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  barber       User?         @relation(fields: [barberId], references: [id], onDelete: SetNull)
+  client       Client?       @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  services     Service[]     @relation("AppointmentServices")
+  products     Product[]     @relation("AppointmentProducts")
   payments     Payment[]
-  clientId String?
-  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  
-  // E adicione o index lá no final do model Appointment:
-  @@index([clientId], map: "appointments_clientId_fkey")
+
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
   @@index([barberId], map: "appointments_barberId_fkey")
+  @@index([clientId], map: "appointments_clientId_fkey")
   @@map("appointments")
 }
 

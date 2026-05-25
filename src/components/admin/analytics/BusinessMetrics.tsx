@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { 
-    CalendarRange, 
-    Receipt, 
-    RefreshCw, 
-    AlertTriangle, 
-    Crown, 
-    UserMinus, 
-    Scissors 
+import {
+    CalendarRange,
+    Receipt,
+    RefreshCw,
+    AlertTriangle,
+    Crown,
+    UserMinus,
+    Scissors
 } from "lucide-react";
 
 interface BarberRevenue {
@@ -38,25 +38,32 @@ export function BusinessMetrics({ metrics }: BusinessMetricsProps) {
         faturamentoBarbeiros: []
     };
 
-    const formatCurrency = (val: number) => 
+    const formatCurrency = (val: number) =>
         new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
-    const MetricCard = ({ title, value, subtitle, icon: Icon, alert = false }: any) => (
-        <div className="flex flex-col py-4">
-            <div className="flex items-center gap-2 mb-2">
-                <Icon size={18} strokeWidth={2.5} className={alert ? 'text-red-500' : 'text-[#D49A62]'} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 line-clamp-1">
-                    {title}
-                </span>
+    const MetricCard = ({ title, value, subtitle, icon: Icon, alert = false, success = false }: any) => {
+        // Define a cor de destaque (Vermelho pro alerta, Verde pro sucesso, Dourado pro padrão)
+        let colorClass = 'text-[#D49A62]';
+        if (alert) colorClass = 'text-red-500';
+        if (success) colorClass = 'text-green-500';
+
+        return (
+            <div className="flex flex-col py-4">
+                <div className="flex items-center gap-2 mb-2">
+                    <Icon size={18} strokeWidth={2.5} className={colorClass} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 line-clamp-1">
+                        {title}
+                    </span>
+                </div>
+                <div className={`text-3xl font-black tracking-tighter ${colorClass === 'text-[#D49A62]' ? 'text-[#F7EFE2]' : colorClass}`}>
+                    {value}
+                </div>
+                <div className="text-[10px] font-bold text-zinc-600 mt-1 uppercase tracking-widest">
+                    {subtitle}
+                </div>
             </div>
-            <div className={`text-3xl font-black tracking-tighter ${alert ? 'text-red-500' : 'text-[#F7EFE2]'}`}>
-                {value}
-            </div>
-            <div className="text-[10px] font-bold text-zinc-600 mt-1 uppercase tracking-widest">
-                {subtitle}
-            </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="mt-8 pt-8 border-t border-white/5 pb-12">
@@ -65,53 +72,55 @@ export function BusinessMetrics({ metrics }: BusinessMetricsProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-10">
-                <MetricCard 
-                    title="Ocupação" 
-                    value={`${data.occupancyRate}%`} 
-                    subtitle="Tempo produtivo" 
-                    icon={CalendarRange} 
+                <MetricCard
+                    title="Ocupação"
+                    value={`${data.occupancyRate}%`}
+                    subtitle="Tempo produtivo"
+                    icon={CalendarRange}
                 />
-                <MetricCard 
-                    title="Ticket Médio" 
-                    value={formatCurrency(data.ticketMedio)} 
-                    subtitle="Gasto por visita" 
-                    icon={Receipt} 
+                <MetricCard
+                    title="Ticket Médio"
+                    value={data.ticketMedio > 0 ? formatCurrency(data.ticketMedio) : '-'}
+                    subtitle="Gasto por visita"
+                    icon={Receipt}
                 />
-                <MetricCard 
-                    title="Retorno" 
-                    value={`${data.frequenciaMedia}d`} 
-                    subtitle="Frequência média" 
-                    icon={RefreshCw} 
+                <MetricCard
+                    title="Retorno"
+                    value={data.frequenciaMedia > 0 ? `${data.frequenciaMedia}d` : '-'}
+                    subtitle="Frequência média"
+                    icon={RefreshCw}
                 />
-                <MetricCard 
-                    title="Risco Churn" 
-                    value={data.clientesRisco} 
-                    subtitle="Clientes sumidos" 
-                    icon={AlertTriangle} 
+                <MetricCard
+                    title="Risco Churn"
+                    value={data.clientesRisco > 0 ? data.clientesRisco : '-'}
+                    subtitle="Clientes sumidos"
+                    icon={AlertTriangle}
                     alert={data.clientesRisco > 0}
                 />
-                <MetricCard 
-                    title="LTV Bruto" 
-                    value={formatCurrency(data.ltvBruto)} 
-                    subtitle="Valor vitalício" 
-                    icon={Crown} 
+                {/* 👇 Atualizado para LTV Médio */}
+                <MetricCard
+                    title="LTV Médio"
+                    value={data.ltvBruto > 0 ? formatCurrency(data.ltvBruto) : '-'}
+                    subtitle="Valor Vitalício Médio"
+                    icon={Crown}
                 />
-                <MetricCard 
-                    title="Evasão" 
-                    value={`${data.evasaoRate}%`} 
-                    subtitle="No-shows/Cancel." 
-                    icon={UserMinus} 
+                {/* 👇 Atualizado com estado de Success (Verde se for 0%) */}
+                <MetricCard
+                    title="Evasão"
+                    value={`${data.evasaoRate}%`}
+                    subtitle="No-shows/Cancel."
+                    icon={UserMinus}
                     alert={data.evasaoRate > 10}
+                    success={data.evasaoRate === 0 && data.occupancyRate > 0}
                 />
             </div>
-
             {/* Faturamento por Barbeiro */}
             <div>
                 <div className="flex items-center gap-2 mb-6">
                     <Scissors size={16} strokeWidth={2.5} className="text-[#D49A62]" />
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Repasse & Comissões</h4>
                 </div>
-                
+
                 {data.faturamentoBarbeiros.length > 0 ? (
                     <div className="flex flex-col">
                         {data.faturamentoBarbeiros.map((barber, idx) => (

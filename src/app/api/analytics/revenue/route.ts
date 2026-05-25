@@ -103,7 +103,7 @@ export async function GET(req: Request) {
             return appDate >= startDate && appDate <= endDate;
         });
 
-        const validAppointments = appointmentsInPeriod.filter(app => 
+        const validAppointments = appointmentsInPeriod.filter(app =>
             !["CANCELED", "CANCELADO"].includes((app.status || "").toUpperCase())
         );
         const canceledAppointmentsCount = appointmentsInPeriod.length - validAppointments.length;
@@ -197,14 +197,14 @@ export async function GET(req: Request) {
             if (!app.barber) return;
             const bName = app.barber.name;
             const bPrice = getAppPrice(app);
-            
+
             if (!barberStatsMap.has(bName)) {
                 barberStatsMap.set(bName, { faturamento: 0, comissao: 0 });
             }
-            
+
             const stats = barberStatsMap.get(bName);
             stats.faturamento += bPrice;
-            stats.comissao += (bPrice * 0.5); 
+            stats.comissao += (bPrice * 0.5);
         });
 
         const faturamentoBarbeiros = Array.from(barberStatsMap, ([nome, dados]) => ({
@@ -216,12 +216,12 @@ export async function GET(req: Request) {
         const clientIds = [...new Set(validAppointments.map(a => a.clientId).filter(Boolean))] as string[];
         const clientsData = await prisma.client.findMany({
             where: { id: { in: clientIds } },
-            include: { 
+            include: {
                 appointments: {
-                    where: { 
-                        status: { notIn: ["CANCELED", "CANCELADO"] } 
+                    where: {
+                        status: { notIn: ["CANCELED", "CANCELADO"] }
                     }
-                } 
+                }
             }
         });
 
@@ -232,27 +232,37 @@ export async function GET(req: Request) {
 
         clientsData.forEach(client => {
             const apps = client.appointments.sort((a, b) => getScheduledDate(b.date).getTime() - getScheduledDate(a.date).getTime());
-            
+
             somaLTVBruto += apps.reduce((acc, app) => acc + getAppPrice(app), 0);
 
-            if (apps.length >= 2) {
+            if (apps.length > 0) {
+                // Pega a data da última visita do cliente
                 const lastVisit = getScheduledDate(apps[0].date);
-                const previousVisit = getScheduledDate(apps[1].date);
-                const diffDays = differenceInDays(lastVisit, previousVisit);
-                
-                if (diffDays > 0) {
-                    somaFrequencia += diffDays;
-                    clientesContadosFrequencia++;
-                }
 
+                // 1. RISCO DE CHURN: Passou de 35 dias sem vir? Caiu na malha fina (mesmo se veio só 1 vez)
                 const daysSinceLast = differenceInDays(now, lastVisit);
                 if (daysSinceLast > 35) {
                     clientesRisco++;
                 }
+
+                // 2. FREQUÊNCIA: Só calcula se o cara veio pelo menos 2 vezes para termos um intervalo
+                if (apps.length >= 2) {
+                    const previousVisit = getScheduledDate(apps[1].date);
+                    const diffDays = differenceInDays(lastVisit, previousVisit);
+
+                    if (diffDays > 0) {
+                        somaFrequencia += diffDays;
+                        clientesContadosFrequencia++;
+                    }
+                }
             }
         });
 
+        // Se não tiver dados, devolve 0
         const frequenciaMedia = clientesContadosFrequencia > 0 ? Math.round(somaFrequencia / clientesContadosFrequencia) : 0;
+
+        // 👇 ADICIONE ESTA LINHA PARA CALCULAR A MÉDIA
+        const ltvMedio = clientsData.length > 0 ? (somaLTVBruto / clientsData.length) : 0;
 
         return NextResponse.json({
             balance: {
@@ -268,7 +278,7 @@ export async function GET(req: Request) {
                 ticketMedio,
                 frequenciaMedia,
                 clientesRisco,
-                ltvBruto: somaLTVBruto,
+                ltvBruto: ltvMedio, // 👇 AGORA MANDAMOS A MÉDIA AQUI
                 evasaoRate: Math.round(evasaoRate),
                 faturamentoBarbeiros
             }

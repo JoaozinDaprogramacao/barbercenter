@@ -10,7 +10,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const appointment = await prisma.appointment.findUnique({
             where: { id: appointmentId as any },
-            // 👇 CORREÇÃO 1: Adicionado payments: true
             include: { services: true, products: true, payments: true } 
         });
 
@@ -36,7 +35,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             price: finalPrice, 
             services: appointment.services,
             products: appointment.products,
-            // 👇 CORREÇÃO 2: Enviando os pagamentos para o frontend
             payments: appointment.payments 
         });
     } catch (error) {
@@ -71,7 +69,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             const updated = await prisma.appointment.update({
                 where: { id: appointmentId as any },
                 data: updateData,
-                // 👇 CORREÇÃO 3: Incluir payments no retorno do update
                 include: { services: true, products: true, payments: true } 
             });
 
@@ -92,7 +89,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const updated = await prisma.appointment.update({
             where: { id: appointmentId as any },
             data: updateData,
-            // 👇 CORREÇÃO 4: Incluir payments no retorno do update
             include: { services: true, products: true, payments: true }
         });
 
@@ -111,11 +107,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         const { id } = await params;
         const appointmentId = isNaN(Number(id)) ? id : Number(id);
 
-        await prisma.appointment.delete({
-            where: { id: appointmentId as any }
+        // Atualiza o status para CANCELED em vez de apagar do banco
+        await prisma.appointment.update({
+            where: { id: appointmentId as any },
+            data: { status: "CANCELED" }
         });
 
-        return NextResponse.json({ message: "Deletado" });
+        return NextResponse.json({ message: "Cancelado" });
     } catch (error: any) {
         return NextResponse.json({ error: "500" }, { status: 500 });
     }

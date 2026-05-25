@@ -12,7 +12,8 @@ import {
   X,
   User,
   ChevronLeft,
-  Share2
+  Share2,
+  Users
 } from "lucide-react";
 
 interface SidebarProps {
@@ -34,6 +35,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const menuItems = [
     { name: "Agenda", icon: <CalendarDays size={22} />, href: "/admin" },
     { name: "Faturamento", icon: <BarChart3 size={22} />, href: "/admin/analytics" },
+    { name: "Clientes", icon: <Users size={22} />, href: "/admin/clientes" },
     { name: "Configurações", icon: <Settings size={22} />, href: "/admin/settings" },
     { name: "Compartilhar", icon: <Share2 size={22} />, href: "/admin/share" },
   ];

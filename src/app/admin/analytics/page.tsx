@@ -7,6 +7,7 @@ import { AnalyticsHeader } from "@/components/admin/analytics/AnalyticsHeader";
 import { BalanceSection } from "@/components/admin/analytics/BalanceSection";
 import { InteractiveChart } from "@/components/admin/analytics/InteractiveChart";
 import { ServicesRealized } from "@/components/admin/analytics/ServicesRealized";
+import { BusinessMetrics } from "@/components/admin/analytics/BusinessMetrics";
 
 const getPeriodLabel = (timeframe: string, offset: number) => {
     const date = new Date();
@@ -107,7 +108,11 @@ export default function FaturamentoPage() {
                                             <InteractiveChart data={data.chartData} />
                                         </div>
 
+                                        {/* Secão de Serviços sobe... */}
                                         <ServicesRealized services={data.services} />
+                                        
+                                        {/* Inteligência de Negócios desce pra virar a última e crua */}
+                                        <BusinessMetrics metrics={data.businessMetrics} />
                                     </>
                                 )}
                             </motion.div>

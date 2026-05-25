@@ -163,13 +163,22 @@ export default function BarberChat() {
               text={`Olá! Bem-vindo(a) à ${shopName}. Como podemos te chamar?`}
             />
 
-            {step >= 2 && (
-              <motion.div layout key="step-2-container" className="space-y-8 pt-4">
+            {/* PASSO 1.5 - Mostra o nome do usuário e pergunta o telefone */}
+            {step >= 1.5 && (
+              <motion.div layout key="step-1.5-container" className="space-y-8 pt-4">
                 <BigChatBubble text={userData.name} isUser />
                 <BigChatBubble
                   isAi
-                  text={`Prazer, ${userData.name.split(" ")[0]}! Qual serviço vamos fazer hoje?`}
+                  text={`Prazer, ${userData.name.split(" ")[0]}! Qual é o seu número de WhatsApp com DDD?`}
                 />
+              </motion.div>
+            )}
+
+            {/* PASSO 2 - Mostra o telefone do usuário e pergunta o serviço */}
+            {step >= 2 && (
+              <motion.div layout key="step-2-container" className="space-y-8 pt-4">
+                {userData.phone && <BigChatBubble text={userData.phone} isUser />}
+                <BigChatBubble isAi text="Qual serviço vamos fazer hoje?" />
               </motion.div>
             )}
 
@@ -320,11 +329,13 @@ export default function BarberChat() {
         availableServices={availableServices}
         isSubmitting={isSubmitting}
         onNextName={(name) => {
-          setUserData((prev: any) => ({
-            ...prev,
-            name,
-          }));
-          setStep(2);
+          setUserData((prev: any) => ({ ...prev, name }));
+          setStep(1.5); // Ao invés de ir pro 2, vai pro 1.5 pedir o telefone
+        }}
+        // Nova propriedade adicionada para lidar com o telefone
+        onNextPhone={(phone: string) => {
+          setUserData((prev: any) => ({ ...prev, phone }));
+          setStep(2); // Após pegar o telefone, vai para os serviços (passo 2)
         }}
         onConfirm={handleConfirmAppointment}
       />

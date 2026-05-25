@@ -11,12 +11,14 @@ export function useBarberChat(barbershopId: string) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [bookedAppointments, setBookedAppointments] = useState<{ time: string, duration: number }[]>([]);
 
-    const [step, setStep] = useState<1 | 2 | 2.5 | 2.7 | 3 | 4 | 5>(1);
+    const [step, setStep] = useState<1 | 1.5 | 2 | 2.5 | 2.7 | 3 | 4 | 5>(1);
     const [activeUpsell, setActiveUpsell] = useState<any>(null);
     const [isCheckingUpsell, setIsCheckingUpsell] = useState(false);
 
+    // Adicione 'phone: ""' no userData
     const [userData, setUserData] = useState({
         name: "",
+        phone: "",
         selectedServices: [] as any[],
         barberId: "",
         barberName: "",
@@ -211,6 +213,7 @@ export function useBarberChat(barbershopId: string) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     clientName: userData.name,
+                    phone: userData.phone, // <--- ADICIONE ESTA LINHA
                     serviceIds: serviceIds,
                     productIds: productIds,
                     date: userData.date,

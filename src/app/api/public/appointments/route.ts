@@ -12,7 +12,7 @@ if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY &&
 
 export async function POST(req: Request) {
     try {
-        const { clientName, serviceIds, productIds, date, time, barbershopId, barberId, totalPrice } = await req.json();
+        const { clientName, phone, serviceIds, productIds, date, time, barbershopId, barberId, totalPrice } = await req.json();
 
         if (!serviceIds || !Array.isArray(serviceIds) || serviceIds.length === 0) {
             return NextResponse.json({ error: "Nenhum serviço selecionado" }, { status: 400 });
@@ -20,6 +20,7 @@ export async function POST(req: Request) {
 
         let assignedBarberId = barberId;
 
+        // Se não houver barbeiro selecionado, pega o primeiro disponível
         if (!assignedBarberId) {
             const firstAvailableBarber = await prisma.user.findFirst({
                 where: { barbershopId: barbershopId }
@@ -29,16 +30,46 @@ export async function POST(req: Request) {
             }
         }
 
+        // Lógica de Cliente: Procura por telefone ou cria um novo
+        let clientId = null;
+        if (phone) {
+            let client = await prisma.client.findFirst({
+                where: { phone, barbershopId }
+            });
+
+            if (!client) {
+                client = await prisma.client.create({
+                    data: { name: clientName, phone, barbershopId }
+                });
+            } else if (client.name !== clientName) {
+                client = await prisma.client.update({
+                    where: { id: client.id },
+                    data: { name: clientName }
+                });
+            }
+            clientId = client.id;
+        }
+
+        // NOVO: Busca os serviços no banco para somar a duração exata
+        const servicesData = await prisma.service.findMany({
+            where: { id: { in: serviceIds } }
+        });
+
+        const totalDuration = servicesData.reduce((acc, curr) => acc + (curr.duration || 30), 0);
+
         const connectServices = serviceIds.map((id: string) => ({ id }));
         const connectProducts = (productIds || []).map((id: string) => ({ id }));
 
+        // Cria o agendamento já com a duração cravada (Snapshot)
         const newAppointment = await prisma.appointment.create({
             data: {
                 clientName,
+                clientId,
                 date,
                 time,
+                duration: totalDuration, // <- DURAÇÃO SALVA AQUI
                 barbershopId,
-                barberId: assignedBarberId, 
+                barberId: assignedBarberId,
                 price: parseFloat(totalPrice) || 0,
                 services: {
                     connect: connectServices
@@ -50,14 +81,16 @@ export async function POST(req: Request) {
             include: {
                 services: true,
                 products: true,
-                barber: { select: { name: true } } 
+                barber: { select: { name: true } }
             }
         });
 
-        const formattedDate = date.includes('-') 
-            ? date.split('-').reverse().join('/') 
+        // Formatação de data para a notificação
+        const formattedDate = date.includes('-')
+            ? date.split('-').reverse().join('/')
             : new Date(date).toLocaleDateString('pt-BR');
 
+        // Notificação Interna
         await prisma.notification.create({
             data: {
                 barberId: assignedBarberId,
@@ -66,6 +99,7 @@ export async function POST(req: Request) {
             }
         });
 
+        // Baixa de Estoque
         if (connectProducts.length > 0) {
             await Promise.all(
                 connectProducts.map(async (p: { id: string }) => {
@@ -77,6 +111,7 @@ export async function POST(req: Request) {
             );
         }
 
+        // Web Push Notifications
         try {
             const subscriptions = await prisma.pushSubscription.findMany({
                 where: { barberId: assignedBarberId }
@@ -101,7 +136,7 @@ export async function POST(req: Request) {
                         if (error.statusCode === 410 || error.statusCode === 404) {
                             await prisma.pushSubscription.delete({ where: { id: sub.id } });
                         } else {
-                            console.error('Erro ao enviar push para endpoint:', sub.endpoint, error);
+                            console.error('Erro ao enviar push:', sub.endpoint, error);
                         }
                     }
                 });
@@ -109,7 +144,7 @@ export async function POST(req: Request) {
                 await Promise.all(pushPromises);
             }
         } catch (pushError) {
-            console.error('Erro geral ao processar notificações push:', pushError);
+            console.error('Erro geral push:', pushError);
         }
 
         return NextResponse.json({ success: true, appointment: newAppointment }, { status: 201 });
@@ -149,7 +184,7 @@ export async function GET(req: Request) {
                 barberId: app.barberId
             };
         });
-        
+
         return NextResponse.json({ appointments: formattedAppointments }, { status: 200 });
     } catch (error) {
         console.error("Erro na busca de agendamentos:", error);

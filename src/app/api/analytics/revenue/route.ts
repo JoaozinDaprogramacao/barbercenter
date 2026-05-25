@@ -14,7 +14,8 @@ import {
     addWeeks,
     addMonths,
     addYears,
-    eachMonthOfInterval
+    eachMonthOfInterval,
+    differenceInDays
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -50,10 +51,8 @@ function getScheduledDate(dateStr: string): Date {
     return isNaN(d.getTime()) ? new Date(0) : d;
 }
 
-// 🔥 Helper para pegar o valor REAL do agendamento (Respeitando descontos)
 function getAppPrice(app: any) {
     if (app.price && app.price > 0) return app.price;
-    // Fallback para agendamentos antigos
     const servicesTotal = (app.services || []).reduce((acc: number, s: any) => acc + s.price, 0);
     const productsTotal = (app.products || []).reduce((acc: number, p: any) => acc + p.price, 0);
     return servicesTotal + productsTotal;
@@ -94,23 +93,28 @@ export async function GET(req: Request) {
             },
             include: {
                 services: true,
-                products: true // 🔥 Busca os produtos vendidos também
+                products: true,
+                barber: true
             }
         });
 
-        const appointments = allAppointments.filter(app => {
+        const appointmentsInPeriod = allAppointments.filter(app => {
             const appDate = getScheduledDate(app.date);
             return appDate >= startDate && appDate <= endDate;
         });
 
-        // 🔥 Calcula o faturamento usando o helper seguro (com descontos)
-        const brutoTotal = appointments.reduce((acc, app) => acc + getAppPrice(app), 0);
+        const validAppointments = appointmentsInPeriod.filter(app =>
+            !["CANCELED", "CANCELADO"].includes((app.status || "").toUpperCase())
+        );
+        const canceledAppointmentsCount = appointmentsInPeriod.length - validAppointments.length;
+
+        const brutoTotal = validAppointments.reduce((acc, app) => acc + getAppPrice(app), 0);
 
         let chartData = [];
 
         if (timeframe === "semana") {
             chartData = eachDayOfInterval({ start: startDate, end: endDate }).map(day => {
-                const dayApps = appointments.filter(app => {
+                const dayApps = validAppointments.filter(app => {
                     const d = getScheduledDate(app.date);
                     return d.getDate() === day.getDate() && d.getMonth() === day.getMonth() && d.getFullYear() === day.getFullYear();
                 });
@@ -125,7 +129,7 @@ export async function GET(req: Request) {
             });
         } else if (timeframe === "mês") {
             chartData = [0, 1, 2, 3].map(weekIndex => {
-                const weekApps = appointments.filter(app => {
+                const weekApps = validAppointments.filter(app => {
                     const d = getScheduledDate(app.date);
                     const day = d.getDate();
                     return day > (weekIndex * 7) && day <= ((weekIndex + 1) * 7 + (weekIndex === 3 ? 3 : 0));
@@ -141,7 +145,7 @@ export async function GET(req: Request) {
             });
         } else {
             chartData = eachMonthOfInterval({ start: startDate, end: endDate }).map(month => {
-                const monthApps = appointments.filter(app => {
+                const monthApps = validAppointments.filter(app => {
                     const d = getScheduledDate(app.date);
                     return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear();
                 });
@@ -157,8 +161,7 @@ export async function GET(req: Request) {
             });
         }
 
-        // 🔥 Ranking de Vendas: Agrupa Serviços E Produtos vendidos!
-        const serviceSummary = appointments.reduce((acc: any, app) => {
+        const serviceSummary = validAppointments.reduce((acc: any, app) => {
             const soldItems = [...(app.services || []), ...(app.products || [])];
 
             if (soldItems.length === 0) {
@@ -169,10 +172,7 @@ export async function GET(req: Request) {
             }
 
             soldItems.forEach(item => {
-                // 🔥 CORREÇÃO: Usamos o operador 'in' para o TypeScript entender a diferença
-                // sem reclamar que a propriedade não existe no Produto
                 const itemType = 'duration' in item ? "SERVICE" : "PRODUCT";
-
                 const existing = acc.find((s: any) => s.name === item.name);
                 if (existing) {
                     existing.count += 1;
@@ -183,15 +183,105 @@ export async function GET(req: Request) {
             return acc;
         }, []);
 
+        const ticketMedio = validAppointments.length > 0 ? brutoTotal / validAppointments.length : 0;
+        const evasaoRate = appointmentsInPeriod.length > 0 ? (canceledAppointmentsCount / appointmentsInPeriod.length) * 100 : 0;
+
+        const barbersCount = await prisma.user.count({ where: { barbershopId: session.user.barbershopId } });
+        const daysInPeriod = differenceInDays(endDate, startDate) || 1;
+        const totalAvailableMinutes = daysInPeriod * 480 * Math.max(barbersCount, 1);
+        const totalProductiveMinutes = validAppointments.reduce((acc, app) => acc + (app.duration || 30), 0);
+        const occupancyRate = totalAvailableMinutes > 0 ? Math.min(100, (totalProductiveMinutes / totalAvailableMinutes) * 100) : 0;
+
+        const barberStatsMap = new Map();
+        validAppointments.forEach(app => {
+            if (!app.barber) return;
+            const bName = app.barber.name;
+            const bPrice = getAppPrice(app);
+
+            if (!barberStatsMap.has(bName)) {
+                barberStatsMap.set(bName, { faturamento: 0, comissao: 0 });
+            }
+
+            const stats = barberStatsMap.get(bName);
+            stats.faturamento += bPrice;
+            stats.comissao += (bPrice * 0.5);
+        });
+
+        const faturamentoBarbeiros = Array.from(barberStatsMap, ([nome, dados]) => ({
+            nome,
+            faturamento: dados.faturamento,
+            comissao: dados.comissao
+        })).sort((a, b) => b.faturamento - a.faturamento);
+
+        const clientIds = [...new Set(validAppointments.map(a => a.clientId).filter(Boolean))] as string[];
+        const clientsData = await prisma.client.findMany({
+            where: { id: { in: clientIds } },
+            include: {
+                appointments: {
+                    where: {
+                        status: { notIn: ["CANCELED", "CANCELADO"] }
+                    }
+                }
+            }
+        });
+
+        let somaFrequencia = 0;
+        let clientesContadosFrequencia = 0;
+        let clientesRisco = 0;
+        let somaLTVBruto = 0;
+
+        clientsData.forEach(client => {
+            const apps = client.appointments.sort((a, b) => getScheduledDate(b.date).getTime() - getScheduledDate(a.date).getTime());
+
+            somaLTVBruto += apps.reduce((acc, app) => acc + getAppPrice(app), 0);
+
+            if (apps.length > 0) {
+                // Pega a data da última visita do cliente
+                const lastVisit = getScheduledDate(apps[0].date);
+
+                // 1. RISCO DE CHURN: Passou de 35 dias sem vir? Caiu na malha fina (mesmo se veio só 1 vez)
+                const daysSinceLast = differenceInDays(now, lastVisit);
+                if (daysSinceLast > 35) {
+                    clientesRisco++;
+                }
+
+                // 2. FREQUÊNCIA: Só calcula se o cara veio pelo menos 2 vezes para termos um intervalo
+                if (apps.length >= 2) {
+                    const previousVisit = getScheduledDate(apps[1].date);
+                    const diffDays = differenceInDays(lastVisit, previousVisit);
+
+                    if (diffDays > 0) {
+                        somaFrequencia += diffDays;
+                        clientesContadosFrequencia++;
+                    }
+                }
+            }
+        });
+
+        // Se não tiver dados, devolve 0
+        const frequenciaMedia = clientesContadosFrequencia > 0 ? Math.round(somaFrequencia / clientesContadosFrequencia) : 0;
+
+        // 👇 ADICIONE ESTA LINHA PARA CALCULAR A MÉDIA
+        const ltvMedio = clientsData.length > 0 ? (somaLTVBruto / clientsData.length) : 0;
+
         return NextResponse.json({
             balance: {
                 total: brutoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
                 bruto: brutoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
                 comissao: "(Total Real)",
-                atendimentos: appointments.length
+                atendimentos: validAppointments.length
             },
             chartData,
-            services: serviceSummary.sort((a: any, b: any) => b.count - a.count)
+            services: serviceSummary.sort((a: any, b: any) => b.count - a.count),
+            businessMetrics: {
+                occupancyRate: Math.round(occupancyRate),
+                ticketMedio,
+                frequenciaMedia,
+                clientesRisco,
+                ltvBruto: ltvMedio, // 👇 AGORA MANDAMOS A MÉDIA AQUI
+                evasaoRate: Math.round(evasaoRate),
+                faturamentoBarbeiros
+            }
         });
 
     } catch (error) {

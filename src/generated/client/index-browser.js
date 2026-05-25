@@ -120,6 +120,15 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  barbershopId: 'barbershopId'
+};
+
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -173,7 +182,8 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   discount: 'discount',
   barbershopId: 'barbershopId',
   barberId: 'barberId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  clientId: 'clientId'
 };
 
 exports.Prisma.ServiceScalarFieldEnum = {
@@ -239,6 +249,13 @@ exports.Prisma.NullableJsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
+exports.Prisma.ClientOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  barbershopId: 'barbershopId'
+};
+
 exports.Prisma.NotificationOrderByRelevanceFieldEnum = {
   id: 'id',
   title: 'title',
@@ -296,7 +313,8 @@ exports.Prisma.AppointmentOrderByRelevanceFieldEnum = {
   time: 'time',
   status: 'status',
   barbershopId: 'barbershopId',
-  barberId: 'barberId'
+  barberId: 'barberId',
+  clientId: 'clientId'
 };
 
 exports.Prisma.ServiceOrderByRelevanceFieldEnum = {
@@ -336,6 +354,7 @@ exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
 
 
 exports.Prisma.ModelName = {
+  Client: 'Client',
   Notification: 'Notification',
   Barbershop: 'Barbershop',
   PushSubscription: 'PushSubscription',

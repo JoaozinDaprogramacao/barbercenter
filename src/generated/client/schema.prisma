@@ -7,6 +7,22 @@ datasource db {
   provider = "mysql"
 }
 
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  appointments Appointment[]
+
+  @@index([barbershopId], map: "clients_barbershopId_fkey")
+  @@map("clients")
+}
+
 model Notification {
   id        String   @id @default(uuid())
   title     String
@@ -36,6 +52,7 @@ model Barbershop {
   users                 User[]
   products              Product[]
   upsellRules           UpsellRule[]
+  clients               Client[]
 
   @@map("barbershops")
 }
@@ -90,7 +107,11 @@ model Appointment {
   services     Service[]  @relation("AppointmentServices")
   products     Product[]  @relation("AppointmentProducts")
   payments     Payment[]
+  clientId     String?
+  client       Client?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
+  // E adicione o index lá no final do model Appointment:
+  @@index([clientId], map: "appointments_clientId_fkey")
   @@index([barbershopId], map: "appointments_barbershopId_fkey")
   @@index([barberId], map: "appointments_barberId_fkey")
   @@map("appointments")

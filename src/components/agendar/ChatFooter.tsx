@@ -10,11 +10,12 @@ interface ChatFooterProps {
   availableServices: any[];
   isSubmitting: boolean;
   onNextName: (name: string) => void;
+  onNextPhone: (phone: string) => void;
   onConfirm: () => void;
 }
 
 export function ChatFooter({
-  step, setStep, userData, setUserData, availableServices, isSubmitting, onNextName, onConfirm
+  step, setStep, userData, setUserData, availableServices, isSubmitting, onNextName, onNextPhone, onConfirm
 }: ChatFooterProps) {
   const [inputValue, setInputValue] = useState("");
   const actionLockRef = useRef(false);
@@ -23,6 +24,14 @@ export function ChatFooter({
     if (actionLockRef.current || inputValue.trim().length < 2) return;
     actionLockRef.current = true;
     onNextName(inputValue.trim());
+    setInputValue("");
+    setTimeout(() => { actionLockRef.current = false; }, 300);
+  };
+
+  const handlePhoneSubmit = () => {
+    if (actionLockRef.current || inputValue.trim().length < 8) return;
+    actionLockRef.current = true;
+    onNextPhone(inputValue.trim());
     setInputValue("");
     setTimeout(() => { actionLockRef.current = false; }, 300);
   };
@@ -38,6 +47,8 @@ export function ChatFooter({
       setUserData((prev: any) => ({ ...prev, barberId: "", barberName: "" }));
       setStep(2);
     } else if (step === 2) {
+      setStep(1.5);
+    } else if (step === 1.5) {
       setStep(1);
     }
   };
@@ -67,6 +78,33 @@ export function ChatFooter({
         </div>
       )}
 
+      {step === 1.5 && (
+        <div className="flex gap-2">
+          <button
+            onClick={handleGoBack}
+            className="w-14 h-14 bg-white/[0.03] border border-white/10 rounded-[1.5rem] flex items-center justify-center text-zinc-400 active:scale-95 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2] shrink-0"
+          >
+            <ChevronLeft size={24} strokeWidth={2.5} />
+          </button>
+          <div className="flex flex-1 gap-2 bg-white/[0.03] border border-white/10 p-2 rounded-[2rem] focus-within:border-[#B87333]/50 transition-all shadow-inner">
+            <input
+              type="tel"
+              placeholder="DDD + WhatsApp..."
+              className="flex-1 bg-transparent px-4 py-2 text-[#F7EFE2] outline-none text-sm font-medium placeholder:text-zinc-600 w-full"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handlePhoneSubmit()}
+            />
+            <button
+              onClick={handlePhoneSubmit}
+              className="w-12 h-12 bg-gradient-to-r from-[#D49A62] to-[#B87333] text-[#050505] rounded-[1.5rem] flex items-center justify-center active:scale-90 transition-all shadow-[0_5px_15px_rgba(184,115,51,0.25)] shrink-0"
+            >
+              <Send size={18} strokeWidth={2.5} className="-ml-0.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {(step >= 2 && step <= 4) && (
         <div className="flex flex-col gap-4">
 
@@ -90,7 +128,6 @@ export function ChatFooter({
           )}
 
           <div className="flex gap-3">
-            {/* Botão Voltar Premium */}
             <button
               onClick={handleGoBack}
               className="w-14 h-14 bg-white/[0.03] border border-white/10 rounded-[1.5rem] flex items-center justify-center text-zinc-400 active:scale-95 transition-all hover:border-[#B87333]/40 hover:text-[#F7EFE2]"

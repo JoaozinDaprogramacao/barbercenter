@@ -10,7 +10,6 @@ export function Navbar() {
 
     const links = [
         { name: 'Benefícios', href: '#beneficios' },
-        { name: 'Preços', href: '#precos' },
         { name: 'Dúvidas', href: '#duvidas' },
     ];
 

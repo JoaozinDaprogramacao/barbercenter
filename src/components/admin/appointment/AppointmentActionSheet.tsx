@@ -35,11 +35,11 @@ export const AppointmentActionSheet = ({
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md bg-zinc-950 border-t border-zinc-900 rounded-t-[3rem] shadow-2xl max-h-[92vh] flex flex-col z-10 will-change-transform"
+            className="relative w-full max-w-md bg-[#050505] border-t border-white/5 rounded-t-[3rem] shadow-2xl max-h-[92vh] flex flex-col z-10 will-change-transform"
           >
             {/* Header / Arraste */}
             <div className="pt-6 px-8 shrink-0 relative">
-              <div className="w-14 h-1.5 bg-zinc-800 rounded-full mx-auto mb-4" />
+              <div className="w-14 h-1.5 bg-white/10 rounded-full mx-auto mb-4" />
             </div>
 
             {/* Conteúdo com Scroll Suave */}
@@ -55,7 +55,7 @@ export const AppointmentActionSheet = ({
 
             {/* Footer Fixo */}
             {footer && (
-              <div className="p-8 pt-4 shrink-0 bg-zinc-950 border-t border-zinc-900 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+              <div className="p-8 pt-4 shrink-0 bg-[#050505] border-t border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
                 {footer}
               </div>
             )}

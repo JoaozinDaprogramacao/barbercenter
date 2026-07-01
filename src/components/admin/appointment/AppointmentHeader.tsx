@@ -15,7 +15,7 @@ export const AppointmentHeader = ({ onBack, onSendReminder, reminderSent }: Appo
     <motion.button 
       whileTap={{ scale: 0.9 }}
       onClick={onBack} 
-      className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+      className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[#F7EFE2]/50 hover:text-[#F7EFE2] transition-colors"
     >
       <ChevronLeft size={24} strokeWidth={2.5} />
     </motion.button>

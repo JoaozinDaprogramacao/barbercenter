@@ -13,11 +13,11 @@ export function CancelSheetContent({ onKeep, onConfirm }: CancelSheetContentProp
                 <AlertTriangle size={40} className="text-red-600" />
             </div>
             <div className="space-y-3">
-                <h3 className="text-3xl font-black text-white tracking-tighter leading-tight">Confirmar Cancelamento?</h3>
-                <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-[280px] mx-auto">Esta ação é irreversível e o cliente será notificado via WhatsApp.</p>
+                <h3 className="text-3xl font-black text-[#F7EFE2] tracking-tighter leading-tight">Confirmar Cancelamento?</h3>
+                <p className="text-[#F7EFE2]/40 text-sm font-medium leading-relaxed max-w-[280px] mx-auto">Esta ação é irreversível e o cliente será notificado via WhatsApp.</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
-                <motion.button whileTap={{ scale: 0.95 }} onClick={onKeep} className="py-5 bg-zinc-900 border border-zinc-800 rounded-2xl text-zinc-400 font-black uppercase tracking-widest text-[10px]">Manter</motion.button>
+                <motion.button whileTap={{ scale: 0.95 }} onClick={onKeep} className="py-5 bg-white/[0.05] border border-white/8 rounded-2xl text-[#F7EFE2]/50 font-black uppercase tracking-widest text-[10px]">Manter</motion.button>
                 <motion.button whileTap={{ scale: 0.95 }} onClick={onConfirm} className="py-5 bg-red-600 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-600/20">Cancelar</motion.button>
             </div>
         </div>

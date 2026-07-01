@@ -1,6 +1,6 @@
 'use client';
 
-import { Smartphone, Star } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -27,13 +27,13 @@ export function Hero() {
             Tenha o controle total da sua barbearia na palma da mão. Agendamento online, finanças e equipe em um só lugar.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3 bg-white/[0.03] border border-white/5 w-fit px-5 py-3 rounded-full backdrop-blur-sm">
-            <div className="flex text-[#D49A62]">
-              {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
+          <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-3 w-fit">
+            <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 px-5 py-3 rounded-full backdrop-blur-sm">
+              <span className="w-2 h-2 rounded-full bg-[#D49A62] animate-pulse" />
+              <span className="text-xs font-black text-zinc-300 tracking-widest uppercase">
+                Novo · 45 dias grátis · Sem cartão
+              </span>
             </div>
-            <span className="text-xs font-black text-zinc-300 tracking-widest uppercase">
-              +3.5 mil avaliações
-            </span>
           </div>
         </motion.div>
 

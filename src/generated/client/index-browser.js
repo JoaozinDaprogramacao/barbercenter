@@ -203,6 +203,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   name: 'name',
   price: 'price',
   stock: 'stock',
+  commissionType: 'commissionType',
+  commissionValue: 'commissionValue',
   barbershopId: 'barbershopId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -328,6 +330,7 @@ exports.Prisma.ServiceOrderByRelevanceFieldEnum = {
 exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   id: 'id',
   name: 'name',
+  commissionType: 'commissionType',
   barbershopId: 'barbershopId'
 };
 

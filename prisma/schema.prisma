@@ -134,15 +134,17 @@ model Service {
 }
 
 model Product {
-  id           String        @id @default(uuid())
-  name         String
-  price        Float
-  stock        Int           @default(0)
-  barbershopId String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
-  appointments Appointment[] @relation("AppointmentProducts")
+  id               String        @id @default(uuid())
+  name             String
+  price            Float
+  stock            Int           @default(0)
+  commissionType   String        @default("PERCENTAGE")
+  commissionValue  Float         @default(0)
+  barbershopId     String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  barbershop       Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  appointments     Appointment[] @relation("AppointmentProducts")
 
   @@index([barbershopId], map: "products_barbershopId_fkey")
   @@map("products")

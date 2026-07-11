@@ -51,11 +51,25 @@ function getScheduledDate(dateStr: string): Date {
     return isNaN(d.getTime()) ? new Date(0) : d;
 }
 
+const SERVICE_COMMISSION_RATE = 0.5;
+
 function getAppPrice(app: any) {
     if (app.price && app.price > 0) return app.price;
     const servicesTotal = (app.services || []).reduce((acc: number, s: any) => acc + s.price, 0);
     const productsTotal = (app.products || []).reduce((acc: number, p: any) => acc + p.price, 0);
     return servicesTotal + productsTotal;
+}
+
+function getProductCommission(product: any) {
+    if (product.commissionType === "FIXED") return product.commissionValue || 0;
+    return (product.price || 0) * ((product.commissionValue || 0) / 100);
+}
+
+function getAppCommission(app: any) {
+    const servicesTotal = (app.services || []).reduce((acc: number, s: any) => acc + s.price, 0);
+    const servicesCommission = servicesTotal * SERVICE_COMMISSION_RATE;
+    const productsCommission = (app.products || []).reduce((acc: number, p: any) => acc + getProductCommission(p), 0);
+    return servicesCommission + productsCommission;
 }
 
 export async function GET(req: Request) {
@@ -193,18 +207,21 @@ export async function GET(req: Request) {
         const occupancyRate = totalAvailableMinutes > 0 ? Math.min(100, (totalProductiveMinutes / totalAvailableMinutes) * 100) : 0;
 
         const barberStatsMap = new Map();
+        let comissaoTotal = 0;
         validAppointments.forEach(app => {
+            const appCommission = getAppCommission(app);
+            comissaoTotal += appCommission;
+
             if (!app.barber) return;
             const bName = app.barber.name;
-            const bPrice = getAppPrice(app);
 
             if (!barberStatsMap.has(bName)) {
                 barberStatsMap.set(bName, { faturamento: 0, comissao: 0 });
             }
 
             const stats = barberStatsMap.get(bName);
-            stats.faturamento += bPrice;
-            stats.comissao += (bPrice * 0.5);
+            stats.faturamento += getAppPrice(app);
+            stats.comissao += appCommission;
         });
 
         const faturamentoBarbeiros = Array.from(barberStatsMap, ([nome, dados]) => ({
@@ -268,7 +285,7 @@ export async function GET(req: Request) {
             balance: {
                 total: brutoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
                 bruto: brutoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-                comissao: "(Total Real)",
+                comissao: comissaoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
                 atendimentos: validAppointments.length
             },
             chartData,

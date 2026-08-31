@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { trackForBarbershop } from '@/lib/platform/track';
 
 // Função auxiliar para traduzir erros comuns de Gateways/AbacatePay
 function translateAbacateError(rawError: string): string {
@@ -32,9 +35,14 @@ export async function POST(request: Request) {
     if (!rawBody) return NextResponse.json({ error: "Preencha todos os dados solicitados." }, { status: 400 });
     
     const body = JSON.parse(rawBody);
-    const { userId, name, email, taxId, cellphone } = body;
+    const { name, email, taxId, cellphone } = body;
 
-    if (!userId) return NextResponse.json({ error: "Sua sessão expirou. Faça login novamente." }, { status: 400 });
+    // O userId sai da sessão, não do body: se viesse do cliente, dava pra
+    // gerar cobrança PIX em nome de qualquer outra barbearia.
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.scope === 'PLATFORM' ? null : session?.user?.id;
+
+    if (!userId) return NextResponse.json({ error: "Sua sessão expirou. Faça login novamente." }, { status: 401 });
     if (!taxId || !cellphone) return NextResponse.json({ error: "CPF/CNPJ e Celular são obrigatórios." }, { status: 400 });
 
     const user = await prisma.user.findUnique({ 
@@ -45,6 +53,13 @@ export async function POST(request: Request) {
     if (!user || !user.barbershop) {
         return NextResponse.json({ error: "Não encontramos o cadastro da sua barbearia." }, { status: 404 });
     }
+
+    // 📊 Funil: a pessoa chegou na tela de pagamento e pediu a cobrança.
+
+
+    await trackForBarbershop(user.barbershopId, 'CHECKOUT_START', { key: 'pix' });
+
+
 
     let customerId = user.barbershop.abacateCustomerId;
 

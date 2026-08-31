@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { trackForBarbershop } from '@/lib/platform/track';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { userId, name, email, taxId, cellphone } = body;
+    const { name, email, taxId, cellphone } = body;
 
-    if (!userId) return NextResponse.json({ error: "O ID do usuário é obrigatório" }, { status: 400 });
+    // O userId sai da sessão, não do body: se viesse do cliente, dava pra
+    // criar assinatura em nome de qualquer outra barbearia.
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.scope === 'PLATFORM' ? null : session?.user?.id;
+
+    if (!userId) return NextResponse.json({ error: "Sua sessão expirou. Faça login novamente." }, { status: 401 });
 
     // 🔥 Puxando o ID do produto da variável de ambiente
     const productId = process.env.ABACATEPAY_PRODUCT_ID;
@@ -25,6 +33,13 @@ export async function POST(request: Request) {
     if (!user || !user.barbershop) {
       return NextResponse.json({ error: "Usuário ou Barbearia não encontrado" }, { status: 404 });
     }
+
+    // 📊 Funil: a pessoa chegou na tela de pagamento e pediu a cobrança.
+
+
+    await trackForBarbershop(user.barbershopId, 'CHECKOUT_START', { key: 'assinatura' });
+
+
 
     let customerId = user.barbershop.abacateCustomerId;
 

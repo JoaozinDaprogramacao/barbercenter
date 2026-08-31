@@ -53,6 +53,8 @@ model Barbershop {
   products              Product[]
   upsellRules           UpsellRule[]
   clients Client[]
+  referral              Referral?
+  platformTransactions  PlatformTransaction[]
 
   @@map("barbershops")
 }
@@ -194,4 +196,265 @@ model Payment {
   @@index([appointmentId], map: "payments_appointmentId_fkey")
   @@index([paymentMethodId], map: "payments_paymentMethodId_fkey")
   @@map("payments")
+}
+// ============================================================
+// PLATAFORMA (SaaS) — painel /console
+// Tabela de admins da plataforma TOTALMENTE separada de `users`.
+// Um dono de barbearia comprometido não tem como escalar pra cá:
+// a identidade dele nem existe neste modelo.
+// ============================================================
+
+model PlatformUser {
+  id                  String    @id @default(uuid())
+  name                String
+  email               String    @unique
+  password            String
+  role                String    @default("ANALYST") // SUPERADMIN | ANALYST
+  isActive            Boolean   @default(true)
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  auditLogs AdminAuditLog[]
+
+  @@map("platform_users")
+}
+
+model AdminAuditLog {
+  id             String   @id @default(uuid())
+  platformUserId String?
+  actorEmail     String
+  action         String // ex: AFFILIATE_CREATE, COMMISSION_PAY, BARBERSHOP_EXTEND_TRIAL
+  targetType     String? // Affiliate | Barbershop | Commission | ...
+  targetId       String?
+  metadata       Json?
+  ip             String?
+  userAgent      String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  platformUser PlatformUser? @relation(fields: [platformUserId], references: [id], onDelete: SetNull)
+
+  @@index([platformUserId], map: "admin_audit_logs_platformUserId_fkey")
+  @@index([createdAt])
+  @@index([action])
+  @@map("admin_audit_logs")
+}
+
+// ============================================================
+// PROGRAMA DE EMBAIXADORES / AFILIADOS
+// ============================================================
+
+model Affiliate {
+  id               String   @id @default(uuid())
+  code             String   @unique // slug do link: /r/JOAOBARBER
+  name             String
+  email            String   @unique
+  phone            String?
+  document         String? // CPF/CNPJ para o repasse
+  pixKey           String?
+  pixKeyType       String? // CPF | EMAIL | PHONE | RANDOM
+  instagram        String?
+  commissionPercent Float   @default(50)
+  status           String   @default("PENDING") // PENDING | ACTIVE | PAUSED | BANNED
+  notes            String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  clicks      ReferralClick[]
+  referrals   Referral[]
+  commissions Commission[]
+  payouts     AffiliatePayout[]
+  visitors    Visitor[]
+
+  @@index([status])
+  @@map("affiliates")
+}
+
+model ReferralClick {
+  id          String   @id @default(uuid())
+  affiliateId String
+  ipHash      String? // hash, nunca o IP cru (LGPD)
+  userAgent   String?  @db.Text
+  referer     String?  @db.Text
+  landingPath String?
+  createdAt   DateTime @default(now())
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId], map: "referral_clicks_affiliateId_fkey")
+  @@index([createdAt])
+  @@map("referral_clicks")
+}
+
+model Referral {
+  id           String    @id @default(uuid())
+  affiliateId  String
+  barbershopId String    @unique // uma barbearia pertence a no máximo um afiliado
+  status       String    @default("TRIAL") // TRIAL | ACTIVE | CHURNED
+  attributedAt DateTime  @default(now())
+  firstPaidAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  affiliate   Affiliate    @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  barbershop  Barbershop   @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  commissions Commission[]
+
+  @@index([affiliateId], map: "referrals_affiliateId_fkey")
+  @@index([status])
+  @@map("referrals")
+}
+
+// Pagamento da ASSINATURA do SaaS (não confundir com `payments`,
+// que é o pagamento do cliente final dentro da barbearia).
+// É a fonte de verdade do MRR e a base de cálculo da comissão.
+model PlatformTransaction {
+  id           String   @id @default(uuid())
+  externalId   String   @unique // id da AbacatePay — garante idempotência do webhook
+  barbershopId String
+  amount       Float
+  kind         String // SUBSCRIPTION | PIX | RENEWAL
+  status       String   @default("PAID") // PAID | REFUNDED
+  eventType    String
+  paidAt       DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  barbershop Barbershop  @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  commission Commission?
+
+  @@index([barbershopId], map: "platform_transactions_barbershopId_fkey")
+  @@index([paidAt])
+  @@index([status])
+  @@map("platform_transactions")
+}
+
+model Commission {
+  id            String    @id @default(uuid())
+  affiliateId   String
+  referralId    String
+  transactionId String    @unique // 1 transação = no máximo 1 comissão
+  baseAmount    Float
+  percent       Float
+  amount        Float
+  competence    String // YYYY-MM
+  status        String    @default("PENDING") // PENDING | APPROVED | PAID | REVERSED
+  payoutId      String?
+  approvedAt    DateTime?
+  paidAt        DateTime?
+  reversedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  affiliate   Affiliate           @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  referral    Referral            @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  transaction PlatformTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  payout      AffiliatePayout?    @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+
+  @@index([affiliateId], map: "commissions_affiliateId_fkey")
+  @@index([referralId], map: "commissions_referralId_fkey")
+  @@index([payoutId], map: "commissions_payoutId_fkey")
+  @@index([status])
+  @@index([competence])
+  @@map("commissions")
+}
+
+model AffiliatePayout {
+  id          String    @id @default(uuid())
+  affiliateId String
+  amount      Float
+  periodStart DateTime
+  periodEnd   DateTime
+  status      String    @default("PENDING") // PENDING | PAID | CANCELLED
+  method      String    @default("PIX")
+  reference   String? // comprovante / end-to-end id
+  notes       String?   @db.Text
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  affiliate   Affiliate    @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  commissions Commission[]
+
+  @@index([affiliateId], map: "affiliate_payouts_affiliateId_fkey")
+  @@index([status])
+  @@map("affiliate_payouts")
+}
+
+// Acesso a /r/[code] que NÃO atribuiu ninguém.
+//
+// Existe por causa de um risco operacional real: se o embaixador publica o link
+// com o código errado para 80 mil seguidores, todo mundo se cadastra, ninguém é
+// atribuído, e nem você nem ele ficam sabendo — a conta só aparece quando ele
+// cobrar a comissão. Aqui isso vira número no painel.
+model ReferralMiss {
+  id        String   @id @default(uuid())
+  code      String // o que veio na URL, normalizado
+  reason    String // NOT_FOUND | INACTIVE
+  ipHash    String?
+  userAgent String?  @db.Text
+  referer   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([code])
+  @@index([createdAt])
+  @@map("referral_misses")
+}
+
+// ============================================================
+// FUNIL DE AQUISIÇÃO
+// Mede o caminho inteiro: clique no link do embaixador → landing →
+// cadastro campo a campo → ativação dentro do app → pagamento.
+// Separado por embaixador e por orgânico.
+// ============================================================
+
+// Visitante anônimo, identificado por um cookie httpOnly de 1 ano.
+// É a espinha que liga "clicou no link do Carlos" a "virou pagante 3 meses
+// depois" — sem isso o funil só sabe contar totais soltos.
+model Visitor {
+  id            String    @id @default(uuid())
+  affiliateId   String? // atribuição do primeiro toque
+  affiliateCode String?
+  barbershopId  String? // preenchido quando o cadastro acontece
+  source        String? // host do referer (instagram, youtube, direto...)
+  device        String? // mobile | tablet | desktop
+  landingPath   String?
+  firstSeenAt   DateTime  @default(now())
+  lastSeenAt    DateTime  @default(now())
+
+  affiliate Affiliate?    @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  events    FunnelEvent[]
+
+  @@index([affiliateId], map: "visitors_affiliateId_fkey")
+  @@index([barbershopId])
+  @@index([firstSeenAt])
+  @@map("visitors")
+}
+
+// Uma linha por (visitante, etapa, chave) — a PRIMEIRA vez que aquele
+// visitante chegou naquela etapa. Repetições incrementam `occurrences` em vez
+// de criar linha nova: é o que um funil precisa, e impede a tabela de explodir
+// com um LP_VIEW por refresh.
+model FunnelEvent {
+  id           String   @id @default(uuid())
+  visitorId    String
+  step         String
+  key          String   @default("") // campo do form, qual CTA, etc.
+  occurrences  Int      @default(1)
+  affiliateId  String? // desnormalizado: evita join em toda agregação
+  barbershopId String?
+  metadata     Json?
+  firstAt      DateTime @default(now())
+  lastAt       DateTime @default(now())
+
+  visitor Visitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  @@unique([visitorId, step, key])
+  @@index([step])
+  @@index([affiliateId, step])
+  @@index([barbershopId])
+  @@index([firstAt])
+  @@map("funnel_events")
 }

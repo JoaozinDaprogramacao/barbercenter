@@ -1,8 +1,11 @@
 'use client';
 
-import { Smartphone } from 'lucide-react';
+import { Smartphone, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { ReferralBanner } from './ReferralBanner';
+import { trackEvent } from '@/lib/track-client';
 
 export function Hero() {
   return (
@@ -27,11 +30,27 @@ export function Hero() {
             Tenha o controle total da sua barbearia na palma da mão. Agendamento online, finanças e equipe em um só lugar.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-3 w-fit">
+          {/* Quem chegou por link de embaixador vê de quem veio a indicação. */}
+          <div className="mt-6 empty:mt-0">
+            <ReferralBanner />
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 w-fit">
+            {/* A primeira dobra precisa de ação: antes disso, o único botão da
+                página ficava no menu ou a quatro seções de scroll daqui. */}
+            <Link
+              href="/registro"
+              onClick={() => trackEvent('CTA_CLICK', { key: 'hero' })}
+              className="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#D49A62] to-[#B87333] px-8 py-4 text-sm font-black uppercase tracking-widest text-[#1A0F07] shadow-lg shadow-[#B87333]/20 transition-all hover:shadow-xl hover:shadow-[#B87333]/30 active:scale-95"
+            >
+              Começar grátis
+              <ArrowRight size={16} strokeWidth={3} className="transition-transform group-hover:translate-x-1" />
+            </Link>
+
             <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 px-5 py-3 rounded-full backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-[#D49A62] animate-pulse" />
               <span className="text-xs font-black text-zinc-300 tracking-widest uppercase">
-                Novo · 45 dias grátis · Sem cartão
+                45 dias grátis · Sem cartão
               </span>
             </div>
           </div>

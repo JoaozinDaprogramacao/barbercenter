@@ -243,6 +243,152 @@ exports.Prisma.PaymentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PlatformUserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  lastLoginIp: 'lastLoginIp',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedUntil: 'lockedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  platformUserId: 'platformUserId',
+  actorEmail: 'actorEmail',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  metadata: 'metadata',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AffiliateScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  document: 'document',
+  pixKey: 'pixKey',
+  pixKeyType: 'pixKeyType',
+  instagram: 'instagram',
+  commissionPercent: 'commissionPercent',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReferralClickScalarFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  referer: 'referer',
+  landingPath: 'landingPath',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReferralScalarFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  barbershopId: 'barbershopId',
+  status: 'status',
+  attributedAt: 'attributedAt',
+  firstPaidAt: 'firstPaidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PlatformTransactionScalarFieldEnum = {
+  id: 'id',
+  externalId: 'externalId',
+  barbershopId: 'barbershopId',
+  amount: 'amount',
+  kind: 'kind',
+  status: 'status',
+  eventType: 'eventType',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommissionScalarFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  referralId: 'referralId',
+  transactionId: 'transactionId',
+  baseAmount: 'baseAmount',
+  percent: 'percent',
+  amount: 'amount',
+  competence: 'competence',
+  status: 'status',
+  payoutId: 'payoutId',
+  approvedAt: 'approvedAt',
+  paidAt: 'paidAt',
+  reversedAt: 'reversedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AffiliatePayoutScalarFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  amount: 'amount',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  status: 'status',
+  method: 'method',
+  reference: 'reference',
+  notes: 'notes',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReferralMissScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  reason: 'reason',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  referer: 'referer',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.VisitorScalarFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  affiliateCode: 'affiliateCode',
+  barbershopId: 'barbershopId',
+  source: 'source',
+  device: 'device',
+  landingPath: 'landingPath',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt'
+};
+
+exports.Prisma.FunnelEventScalarFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  step: 'step',
+  key: 'key',
+  occurrences: 'occurrences',
+  affiliateId: 'affiliateId',
+  barbershopId: 'barbershopId',
+  metadata: 'metadata',
+  firstAt: 'firstAt',
+  lastAt: 'lastAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -357,6 +503,112 @@ exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
   paymentMethodId: 'paymentMethodId'
 };
 
+exports.Prisma.PlatformUserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  lastLoginIp: 'lastLoginIp'
+};
+
+exports.Prisma.AdminAuditLogOrderByRelevanceFieldEnum = {
+  id: 'id',
+  platformUserId: 'platformUserId',
+  actorEmail: 'actorEmail',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  ip: 'ip',
+  userAgent: 'userAgent'
+};
+
+exports.Prisma.AffiliateOrderByRelevanceFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  document: 'document',
+  pixKey: 'pixKey',
+  pixKeyType: 'pixKeyType',
+  instagram: 'instagram',
+  status: 'status',
+  notes: 'notes'
+};
+
+exports.Prisma.ReferralClickOrderByRelevanceFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  referer: 'referer',
+  landingPath: 'landingPath'
+};
+
+exports.Prisma.ReferralOrderByRelevanceFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  barbershopId: 'barbershopId',
+  status: 'status'
+};
+
+exports.Prisma.PlatformTransactionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  externalId: 'externalId',
+  barbershopId: 'barbershopId',
+  kind: 'kind',
+  status: 'status',
+  eventType: 'eventType'
+};
+
+exports.Prisma.CommissionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  referralId: 'referralId',
+  transactionId: 'transactionId',
+  competence: 'competence',
+  status: 'status',
+  payoutId: 'payoutId'
+};
+
+exports.Prisma.AffiliatePayoutOrderByRelevanceFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  status: 'status',
+  method: 'method',
+  reference: 'reference',
+  notes: 'notes'
+};
+
+exports.Prisma.ReferralMissOrderByRelevanceFieldEnum = {
+  id: 'id',
+  code: 'code',
+  reason: 'reason',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  referer: 'referer'
+};
+
+exports.Prisma.VisitorOrderByRelevanceFieldEnum = {
+  id: 'id',
+  affiliateId: 'affiliateId',
+  affiliateCode: 'affiliateCode',
+  barbershopId: 'barbershopId',
+  source: 'source',
+  device: 'device',
+  landingPath: 'landingPath'
+};
+
+exports.Prisma.FunnelEventOrderByRelevanceFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  step: 'step',
+  key: 'key',
+  affiliateId: 'affiliateId',
+  barbershopId: 'barbershopId'
+};
+
 
 exports.Prisma.ModelName = {
   Client: 'Client',
@@ -369,7 +621,18 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   UpsellRule: 'UpsellRule',
   PaymentMethod: 'PaymentMethod',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  PlatformUser: 'PlatformUser',
+  AdminAuditLog: 'AdminAuditLog',
+  Affiliate: 'Affiliate',
+  ReferralClick: 'ReferralClick',
+  Referral: 'Referral',
+  PlatformTransaction: 'PlatformTransaction',
+  Commission: 'Commission',
+  AffiliatePayout: 'AffiliatePayout',
+  ReferralMiss: 'ReferralMiss',
+  Visitor: 'Visitor',
+  FunnelEvent: 'FunnelEvent'
 };
 
 /**

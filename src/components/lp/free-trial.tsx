@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { trackEvent } from '@/lib/track-client';
 
 export function FreeTrial() {
     return (
@@ -32,7 +33,7 @@ export function FreeTrial() {
                 </p>
 
                 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Link href="/registro">
+                    <Link href="/registro" onClick={() => trackEvent('CTA_CLICK', { key: 'free-trial' })}>
                         <motion.button
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.97 }}

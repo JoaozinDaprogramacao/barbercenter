@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import webpush from "web-push";
+import { trackForBarbershop } from "@/lib/platform/track";
 
 if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT) {
     webpush.setVapidDetails(
@@ -84,6 +85,10 @@ export async function POST(req: Request) {
                 barber: { select: { name: true } }
             }
         });
+
+        // 📊 Ativação: o primeiro agendamento é o momento em que a barbearia
+        // deixa de estar testando e passa a depender do sistema.
+        await trackForBarbershop(barbershopId, "ACTIVATION_APPOINTMENT_CREATED");
 
         // Formatação de data para a notificação
         const formattedDate = date.includes('-')

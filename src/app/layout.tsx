@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { PwaRegister } from "@/components/PwaRegister";
+import { Clarity } from "@/components/tracking/Clarity";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <PwaRegister />
+        <Clarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
         <AuthProvider>
           {children}
         </AuthProvider>

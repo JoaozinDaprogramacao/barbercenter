@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     try {
-        const { barbershopId, name, price, stock } = await req.json();
+        const { barbershopId, name, price, stock, commissionType, commissionValue } = await req.json();
 
         if (!barbershopId || !name || !price) {
             return NextResponse.json({ error: "Preencha todos os campos" }, { status: 400 });
@@ -32,7 +32,9 @@ export async function POST(req: Request) {
                 barbershopId,
                 name,
                 price: parseFloat(price),
-                stock: parseInt(stock) || 0
+                stock: parseInt(stock) || 0,
+                commissionType: commissionType === "FIXED" ? "FIXED" : "PERCENTAGE",
+                commissionValue: parseFloat(commissionValue) || 0
             }
         });
 
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
     try {
-        const { id, name, price, stock } = await req.json();
+        const { id, name, price, stock, commissionType, commissionValue } = await req.json();
 
         if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
 
@@ -53,7 +55,9 @@ export async function PUT(req: Request) {
             data: {
                 name,
                 price: parseFloat(price),
-                stock: parseInt(stock) || 0
+                stock: parseInt(stock) || 0,
+                commissionType: commissionType === "FIXED" ? "FIXED" : "PERCENTAGE",
+                commissionValue: parseFloat(commissionValue) || 0
             }
         });
 

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `products` ADD COLUMN `commissionType` VARCHAR(191) NOT NULL DEFAULT 'PERCENTAGE',
+    ADD COLUMN `commissionValue` DOUBLE NOT NULL DEFAULT 0;

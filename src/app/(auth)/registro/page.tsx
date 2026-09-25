@@ -1,15 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/use-register';
+import { ReferralBanner } from '@/components/lp/ReferralBanner';
+import { PageTracker } from '@/components/tracking/PageTracker';
+import { trackEvent } from '@/lib/track-client';
 
 export default function RegisterPage() {
   const { register: registerUser, isLoading, error: registerError } = useRegister();
   const { register, handleSubmit, formState: { errors } } = useForm();
+
+  // Erro no cadastro é uma das maiores fugas do funil — "e-mail já cadastrado"
+  // faz a pessoa fechar a aba achando que não consegue entrar.
+  useEffect(() => {
+    if (registerError) trackEvent('SIGNUP_ERROR', { key: registerError.slice(0, 60), once: false });
+  }, [registerError]);
+
+  /**
+   * Envolve o register() do react-hook-form para medir o preenchimento campo a
+   * campo, sem substituir o onBlur original.
+   *
+   * Só o NOME do campo é enviado, nunca o valor: o que a pessoa digitou —
+   * inclusive a senha — jamais sai do navegador por aqui.
+   */
+  const trackedRegister = (name: string, options?: Parameters<typeof register>[1]) => {
+    const field = register(name, options);
+
+    return {
+      ...field,
+      onFocus: () => trackEvent('SIGNUP_START'),
+      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+        if (event.target.value.trim()) trackEvent('SIGNUP_FIELD', { key: name });
+        return field.onBlur(event);
+      },
+    };
+  };
 
   const benefits = [
     "45 dias totalmente grátis",
@@ -19,12 +48,14 @@ export default function RegisterPage() {
   ];
 
   const onSubmit = (data: any) => {
+    trackEvent('SIGNUP_SUBMIT');
     registerUser(data);
   };
 
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col md:flex-row font-sans overflow-hidden">
-      
+      <PageTracker step="SIGNUP_VIEW" />
+
       {/* LADO ESQUERDO: MARKETING (Oculto no mobile) */}
       <div className="hidden md:flex md:w-1/2 bg-[#050505] p-12 lg:p-24 flex-col justify-between relative border-r border-white/5">
         {/* Efeitos Radiais Premium */}
@@ -87,10 +118,30 @@ export default function RegisterPage() {
           className="w-full max-w-md relative z-10"
         >
           {/* Logo Mobile */}
-          <div className="md:hidden flex justify-center mb-10">
+          <div className="md:hidden flex justify-center mb-6">
              <span className="text-[2rem] font-black text-[#F7EFE2] tracking-tighter uppercase leading-none">
               Barber<span className="bg-gradient-to-r from-[#D49A62] to-[#B87333] bg-clip-text text-transparent">Center</span>
             </span>
+          </div>
+
+          {/* Os benefícios do painel esquerdo são `hidden md:flex`, então no
+              celular — de onde vem quase todo o tráfego de Instagram — a página
+              era um formulário nu, sem um único motivo para preencher. */}
+          <div className="md:hidden mb-6 space-y-3">
+            <ReferralBanner variant="compact" />
+            <ul className="grid grid-cols-2 gap-2">
+              {benefits.map((benefit) => (
+                <li key={benefit} className="flex items-start gap-2 rounded-2xl border border-white/5 bg-white/[0.02] px-3 py-2.5">
+                  <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[#D49A62]" />
+                  <span className="text-[11px] font-medium leading-snug text-zinc-400">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* No desktop a tarja fica acima do card, o painel já vende o resto. */}
+          <div className="hidden md:block mb-5 empty:mb-0">
+            <ReferralBanner variant="compact" />
           </div>
 
           <div className="bg-white/[0.02] p-8 md:p-10 rounded-[2.5rem] shadow-[0_0_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] border border-white/5 backdrop-blur-xl">
@@ -109,7 +160,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Seu Nome</label>
                 <input 
-                  {...register('userName', { required: true })}
+                  {...trackedRegister('userName', { required: true })}
                   type="text" 
                   placeholder="Ex: João Emanuel"
                   className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
@@ -119,7 +170,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">E-mail</label>
                 <input 
-                  {...register('userEmail', { required: true })}
+                  {...trackedRegister('userEmail', { required: true })}
                   type="email" 
                   placeholder="seu@email.com"
                   className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
@@ -129,7 +180,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Nome da Barbearia</label>
                 <input 
-                  {...register('barbershopName', { required: true })}
+                  {...trackedRegister('barbershopName', { required: true })}
                   type="text" 
                   placeholder="Ex: Barber Center Matriz"
                   className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"
@@ -139,7 +190,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-[10px] font-black text-[#B87333]/90 uppercase tracking-[0.2em] mb-2 ml-4">Senha</label>
                 <input 
-                  {...register('password', { required: true })}
+                  {...trackedRegister('password', { required: true })}
                   type="password" 
                   placeholder="••••••••"
                   className="w-full h-14 px-6 rounded-[1.5rem] bg-[#0A0A0A] border border-white/10 text-[#F7EFE2] placeholder:text-zinc-600 focus:border-[#B87333]/50 focus:ring-1 focus:ring-[#B87333]/50 outline-none transition-all font-medium shadow-inner"

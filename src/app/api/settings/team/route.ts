@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import bcrypt from "bcryptjs";
+import { trackForBarbershop } from "@/lib/platform/track";
 
 export async function GET() {
     try {
@@ -68,6 +69,9 @@ export async function POST(req: Request) {
                 barbershopId: currentUser.barbershopId!
             }
         });
+
+        // 📊 Ativação: montar equipe indica barbearia com mais de uma cadeira.
+        await trackForBarbershop(currentUser.barbershopId!, "ACTIVATION_TEAM_ADDED");
 
         return NextResponse.json({ message: "Barbeiro criado!", user: newBarber }, { status: 201 });
     } catch (error) {

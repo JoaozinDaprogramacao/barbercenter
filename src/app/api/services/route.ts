@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { trackForBarbershop } from "@/lib/platform/track";
 
 export async function GET() {
     try {
@@ -44,6 +45,11 @@ export async function POST(req: Request) {
                     barbershopId: session.user.barbershopId
                 }
             });
+
+            // 📊 Ativação: cadastrar o primeiro serviço é o passo que mais
+            // separa quem vira pagante de quem some depois do cadastro.
+            await trackForBarbershop(session.user.barbershopId, "ACTIVATION_SERVICE_CREATED");
+
             return NextResponse.json({ service: created }, { status: 201 });
         }
     } catch (error) {

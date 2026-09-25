@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { trackEvent } from '@/lib/track-client';
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +60,7 @@ export function Navbar() {
                             Login
                         </Link>
 
-                        <Link href="/registro">
+                        <Link href="/registro" onClick={() => trackEvent('CTA_CLICK', { key: 'navbar' })}>
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { PLAN_ACTIVE_STATUSES } from "@/lib/platform/constants";
 
 export async function checkSubscription(barbershopId: string) {
   const barbershop = await prisma.barbershop.findUnique({
@@ -8,8 +9,12 @@ export async function checkSubscription(barbershopId: string) {
 
   if (!barbershop) return false;
 
-  // Se o plano está ativo (pagamento confirmado), liberado
-  if (barbershop.planStatus === "ACTIVE") return true;
+  // O webhook grava "PRO"; "ACTIVE" fica aceito por compatibilidade com
+  // registros antigos. Antes só "ACTIVE" era testado, então esta checagem
+  // nunca liberava ninguém que tivesse pago.
+  if ((PLAN_ACTIVE_STATUSES as readonly string[]).includes(barbershop.planStatus)) {
+    return new Date() <= new Date(barbershop.planExpiresAt);
+  }
 
   // Se está em TRIAL, verifica se ainda não expirou
   if (barbershop.planStatus === "TRIAL") {

@@ -111,6 +111,13 @@ export function ProductsSection() {
                                         <span className={`text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md ${inStock ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
                                             Estoque: {product.stock}
                                         </span>
+                                        {!!product.commissionValue && (
+                                            <span className="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-[#B87333]/10 text-[#D49A62]">
+                                                {product.commissionType === "FIXED"
+                                                    ? `Comissão: R$ ${product.commissionValue.toFixed(2).replace('.', ',')}`
+                                                    : `Comissão: ${product.commissionValue}%`}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -144,19 +151,29 @@ function ProductBottomSheet({ onClose, barbershopId, onSuccess, initialData }: a
     const [name, setName] = useState(initialData?.name || "");
     const [price, setPrice] = useState(initialData?.price ? (initialData.price * 100).toFixed(0) : "");
     const [stock, setStock] = useState(initialData?.stock || "");
-    
+    const [commissionType, setCommissionType] = useState<"PERCENTAGE" | "FIXED">(initialData?.commissionType === "FIXED" ? "FIXED" : "PERCENTAGE");
+    const [commissionPercent, setCommissionPercent] = useState(
+        initialData?.commissionValue && initialData?.commissionType !== "FIXED" ? String(initialData.commissionValue) : ""
+    );
+    const [commissionFixedCents, setCommissionFixedCents] = useState(
+        initialData?.commissionValue && initialData?.commissionType === "FIXED" ? (initialData.commissionValue * 100).toFixed(0) : ""
+    );
+
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const handleSave = async () => {
         const numericPrice = Number(price) / 100;
+        const numericCommission = commissionType === "FIXED"
+            ? Number(commissionFixedCents) / 100
+            : Number(commissionPercent) || 0;
 
         if (!name || !numericPrice) return alert("Preencha o nome e preço válidos!");
         setIsSaving(true);
         try {
             const method = initialData ? 'PUT' : 'POST';
-            const bodyPayload: any = { barbershopId, name, price: numericPrice, stock };
+            const bodyPayload: any = { barbershopId, name, price: numericPrice, stock, commissionType, commissionValue: numericCommission };
             if (initialData) bodyPayload.id = initialData.id;
 
             const res = await fetch('/api/products', {
@@ -231,13 +248,44 @@ function ProductBottomSheet({ onClose, barbershopId, onSuccess, initialData }: a
                             />
                         </div>
 
-                        <div className="flex flex-col px-4 py-3">
+                        <div className="flex flex-col px-4 py-3 border-b border-zinc-900/50">
                             <label className="text-[10px] font-black text-[#B87333] uppercase tracking-widest">Estoque Atual</label>
                             <input
                                 type="number"
                                 className="w-full bg-transparent text-white text-[16px] font-semibold outline-none mt-1 placeholder:text-zinc-700"
                                 value={stock} onChange={(e) => setStock(e.target.value)}
                                 placeholder="Quantidade em unidades"
+                            />
+                        </div>
+
+                        <div className="flex flex-col px-4 py-3">
+                            <label className="text-[10px] font-black text-[#B87333] uppercase tracking-widest">Comissão</label>
+                            <div className="flex items-center gap-2 mt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setCommissionType("PERCENTAGE")}
+                                    className={`flex-1 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-colors ${commissionType === "PERCENTAGE" ? "bg-[#D49A62] text-[#050505]" : "bg-zinc-900 text-zinc-500"}`}
+                                >
+                                    Percentual
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCommissionType("FIXED")}
+                                    className={`flex-1 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-colors ${commissionType === "FIXED" ? "bg-[#D49A62] text-[#050505]" : "bg-zinc-900 text-zinc-500"}`}
+                                >
+                                    Valor Fixo
+                                </button>
+                            </div>
+                            <input
+                                type="tel"
+                                className="w-full bg-transparent text-white text-[16px] font-semibold outline-none mt-3 placeholder:text-zinc-700"
+                                value={commissionType === "FIXED" ? maskMoeda(commissionFixedCents) : commissionPercent}
+                                onChange={(e) => {
+                                    const digits = e.target.value.replace(/\D/g, "");
+                                    if (commissionType === "FIXED") setCommissionFixedCents(digits);
+                                    else setCommissionPercent(digits);
+                                }}
+                                placeholder={commissionType === "FIXED" ? "R$ 0,00 por unidade vendida" : "0% sobre o valor de venda"}
                             />
                         </div>
 

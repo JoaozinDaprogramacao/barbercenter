@@ -37,8 +37,5 @@ CREATE TABLE `funnel_events` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- AddForeignKey
-ALTER TABLE `visitors` ADD CONSTRAINT `visitors_affiliateId_fkey` FOREIGN KEY (`affiliateId`) REFERENCES `affiliates`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `funnel_events` ADD CONSTRAINT `funnel_events_visitorId_fkey` FOREIGN KEY (`visitorId`) REFERENCES `visitors`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- As FKs ficam em 20260831120001_add_funnel_foreign_keys: visitors aponta
+-- para affiliates, que so e criada em 20260831120000.
